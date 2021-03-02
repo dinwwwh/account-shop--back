@@ -9,10 +9,10 @@ Include infos to make rule for validate in front-end and back-end.
 - Controller: `RuleController`
 - Resource: `RuleResource`
 
-1. Create -> done
-2. Show -> done
-3. Update -> done
-4. Destroy -> done
+1. Create `done`
+2. Show `done`
+3. Update `done`
+4. Destroy `done`
 5. Middleware
 
 ## Feature publisher
