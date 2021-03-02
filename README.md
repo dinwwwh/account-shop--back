@@ -35,7 +35,9 @@ Contain infos, action, require to account when publish in website.
 
 ## Relationship: account type
 
-Be long to publisher. Describe account type for account.
+Be long to publisher.
+
+Describe account type for account.
 
 - Table: `account_types`
 - Model: `AccountType`
@@ -51,6 +53,7 @@ Be long to publisher. Describe account type for account.
 ### Relationship: Infos
 
 Be long to account type.
+
 Contain necessary infos of a account type to user provide.
 
 - Table: `account_infos`
