@@ -1,7 +1,7 @@
 # ACCOUNT SHOP VERSION API
 
-[Facebook](https://fb.com/dinhdjj)
-[Mail](mailto:dinhdjj@gmail.com)
+- [Facebook](https://fb.com/dinhdjj)
+- [Mail: dinhdjj@gmail.com](mailto:dinhdjj@gmail.com)
 
 ## Feature rule
 
