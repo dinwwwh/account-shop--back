@@ -1,4 +1,7 @@
-# todo list
+# ACCOUNT SHOP VERSION API
+
+[Facebook](https://fb.com/dinhdjj)
+[Mail](mailto:dinhdjj@gmail.com)
 
 ## Feature rule
 
