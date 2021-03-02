@@ -35,14 +35,13 @@ Contain infos, action, require to account when publish in website.
 
 ## Relationship: account type
 
-Be long to publisher.
-
 Describe account type for account.
 
 - Table: `account_types`
 - Model: `AccountType`
 - Controller: `AccountTypeController`
 - Resource: `AccountTypeResource`
+- Relationship: `hasMany-AccountInfo` `hasMany-AccountAction`
 
 1. Create
 2. Show
@@ -52,14 +51,13 @@ Describe account type for account.
 
 ### Relationship: Infos
 
-Be long to account type.
-
 Contain necessary infos of a account type to user provide.
 
 - Table: `account_infos`
 - Model: `AccountInfo`
 - Controller: `AccountInfoController`
 - Resource: `AccountInfoResource`
+- Relationship: `belongTo-AccountType`
 
 1. Create
 2. Show
@@ -69,13 +67,13 @@ Contain necessary infos of a account type to user provide.
 
 ### Relationship: Actions
 
-Be long to account type.
 Contain necessary accounts of a account type to user implementation.
 
 - Table: `account_actions`
 - Model: `AccountAction`
 - Controller: `AccountActionController`
 - Resource: `AccountActionResource`
+- Relationship: `belongTo-AccountType`
 
 1. Create
 2. Show
