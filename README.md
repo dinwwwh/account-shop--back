@@ -33,4 +33,49 @@ Contain infos, action, require to account when publish in website.
 4. Destroy
 5. Middleware
 
-### Relationship: infos
+## Relationship: account type
+
+Be long to publisher. Describe account type for account.
+
+- Table: `account_types`
+- Model: `AccountType`
+- Controller: `AccountTypeController`
+- Resource: `AccountTypeResource`
+
+1. Create
+2. Show
+3. Update
+4. Destroy
+5. Middleware
+
+### Relationship: Infos
+
+Be long to account type.
+Contain necessary infos of a account type to user provide.
+
+- Table: `account_infos`
+- Model: `AccountInfo`
+- Controller: `AccountInfoController`
+- Resource: `AccountInfoResource`
+
+1. Create
+2. Show
+3. Update
+4. Destroy
+5. Middleware
+
+### Relationship: Actions
+
+Be long to account type.
+Contain necessary accounts of a account type to user implementation.
+
+- Table: `account_actions`
+- Model: `AccountAction`
+- Controller: `AccountActionController`
+- Resource: `AccountActionResource`
+
+1. Create
+2. Show
+3. Update
+4. Destroy
+5. Middleware
