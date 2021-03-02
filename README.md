@@ -26,6 +26,7 @@ Contain infos, action, require to account when publish in website.
 - Model: `Publisher`
 - Controller: `PublisherController`
 - Resource: `PublisherResource`
+- Relationship: `hasMany-AccountType`
 
 1. Create
 2. Show
@@ -41,7 +42,7 @@ Describe account type for account.
 - Model: `AccountType`
 - Controller: `AccountTypeController`
 - Resource: `AccountTypeResource`
-- Relationship: `hasMany-AccountInfo` `hasMany-AccountAction`
+- Relationship: `belongTo-Publisher` `hasMany-AccountInfo` `hasMany-AccountAction`
 
 1. Create
 2. Show
