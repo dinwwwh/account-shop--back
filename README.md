@@ -28,10 +28,10 @@ Contain infos, action, require to account when publish in website.
 - Resource: `PublisherResource`
 - Relationship: `hasMany-AccountType`
 
-1. Create
-2. Show
-3. Update
-4. Destroy
+1. Create `done`
+2. Show `done`
+3. Update `done`
+4. Destroy `done`
 5. Middleware
 
 ## Relationship: account type
@@ -81,3 +81,8 @@ Contain necessary accounts of a account type to user implementation.
 3. Update
 4. Destroy
 5. Middleware
+
+## HTTP error States
+
+- `422` failed validation
+- `500` Sever error

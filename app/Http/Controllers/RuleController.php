@@ -6,6 +6,8 @@ use App\Models\Rule;
 use Illuminate\Http\Request;
 use App\Http\Resources\RuleResource;
 use DB;
+use App\Http\Requests\StoreRuleRequest;
+use App\Http\Requests\UpdateRuleRequest;
 
 class RuleController extends Controller
 {
@@ -25,7 +27,7 @@ class RuleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreRuleRequest $request)
     {
         // Initialize rule data
         $ruleData = [];
@@ -47,7 +49,7 @@ class RuleController extends Controller
             DB::rollback();
             return response()->json([
                 'message' => 'Tạo rule thất bại, vui lòng thừ lại sau.',
-            ], 404);
+            ], 500);
         }
 
         return new RuleResource($rule->refresh());
@@ -71,7 +73,7 @@ class RuleController extends Controller
      * @param  \App\Models\Rule  $rule
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Rule $rule)
+    public function update(UpdateRuleRequest $request, Rule $rule)
     {
         // Initialize rule data
         $ruleData = [];
@@ -93,7 +95,7 @@ class RuleController extends Controller
             DB::rollback();
             return response()->json([
                 'message' => 'Cập nhật rule thất bại, vui lòng thừ lại sau.',
-            ], 404);
+            ], 500);
         }
 
         return new RuleResource($rule);
@@ -115,8 +117,8 @@ class RuleController extends Controller
         } catch (\Throwable $th) {
             DB::rollback();
             return response()->json([
-                'message' => 'Cập nhật rule thất bại, vui lòng thừ lại sau.',
-            ], 404);
+                'message' => 'Xoá rule thất bại, vui lòng thừ lại sau.',
+            ], 500);
         }
 
         return response()->json([
