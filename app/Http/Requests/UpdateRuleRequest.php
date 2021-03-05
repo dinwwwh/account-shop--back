@@ -26,6 +26,7 @@ class UpdateRuleRequest extends FormRequest
         return [
             'type' => 'nullable|string',
             'datatype' => 'nullable|string',
+            'placeholder' => 'nullable|string',
             'required' => 'nullable|boolean',
             'multiple' => 'nullable|boolean',
             'min' => 'nullable|integer',

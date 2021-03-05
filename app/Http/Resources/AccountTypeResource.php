@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PublisherResource extends JsonResource
+class AccountTypeResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,14 +14,16 @@ class PublisherResource extends JsonResource
      */
     public function toArray($request)
     {
+        // Need to middleware ware in here
         return [
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'accountTypes' => AccountTypeResource::collection($this->accountTypes),
             'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
             'creator' => new UserResource($this->creator),
+            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at,
         ];
     }
 }

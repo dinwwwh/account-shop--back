@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,8 +48,8 @@ Route::prefix('rule')->group(function () {
  */
 Route::prefix('publisher')->group(function () {
     // Index
-    Route::get('', [App\Http\Controllers\PublisherController::class, 'index'])
-        ->name('publisher.index');
+    Route::get('manage', [App\Http\Controllers\PublisherController::class, 'manage'])
+        ->name('publisher.manage');
     // Store
     Route::post('', [App\Http\Controllers\PublisherController::class, 'store'])
         ->name('publisher.store');
@@ -63,4 +62,28 @@ Route::prefix('publisher')->group(function () {
     // Destroy
     Route::delete('{publisher}', [App\Http\Controllers\PublisherController::class, 'destroy'])
         ->name('publisher.destroy');
+});
+
+/**
+ * --------------------------------
+ * FEATURE ACCOUNT TYPE
+ * --------------------------------
+ * Contain infos of account type.
+ */
+Route::prefix('account-type')->group(function () {
+    // Index
+    Route::get('manage', [App\Http\Controllers\AccountTypeController::class, 'manage'])
+        ->name('accountType.manage');
+    // Store
+    Route::post('{publisher}', [App\Http\Controllers\AccountTypeController::class, 'store'])
+        ->name('accountType.store');
+    // Show
+    Route::get('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'show'])
+        ->name('accountType.show');
+    // Update
+    Route::put('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'update'])
+        ->name('accountType.update');
+    // Destroy
+    Route::delete('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'destroy'])
+        ->name('accountType.destroy');
 });

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePublisher extends FormRequest
+class StoreAccountTypeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,22 @@ class StorePublisher extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:publishers|string',
-            'description' => 'nullable|string'
+            'name' => 'required|string',
+            'description' => 'nullable|string',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            // 'email.required' => 'Email is required!',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            // 'name' => 'tên',
         ];
     }
 }

@@ -32,7 +32,7 @@ class RuleController extends Controller
         // Initialize rule data
         $ruleData = [];
         foreach ([
-            'type', 'datatype', 'required', 'multiple',
+            'type', 'datatype', 'required', 'multiple', 'placeholder',
             'min', 'minlength', 'max', 'maxlength', 'values'
         ] as $key) {
             if ($request->filled($key)) {
@@ -78,7 +78,7 @@ class RuleController extends Controller
         // Initialize rule data
         $ruleData = [];
         foreach ([
-            'type', 'datatype', 'required', 'multiple',
+            'type', 'datatype', 'required', 'multiple', 'placeholder',
             'min', 'minlength', 'max', 'maxlength', 'values'
         ] as $key) {
             if ($request->filled($key)) {

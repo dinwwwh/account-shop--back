@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Publisher;
-use Illuminate\Http\Request;
 use App\Http\Resources\PublisherResource;
 use Str;
 use DB;
 use Auth;
-use App\Http\Requests\StorePublisher;
-use App\Http\Requests\UpdatePublisher;
+use App\Http\Requests\StorePublisherRequest;
+use App\Http\Requests\UpdatePublisherRequest;
 
 class PublisherController extends Controller
 {
@@ -20,6 +19,15 @@ class PublisherController extends Controller
      */
     public function index()
     {
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function manage()
+    {
         return PublisherResource::collection(Publisher::all());
     }
 
@@ -29,7 +37,7 @@ class PublisherController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorePublisher $request)
+    public function store(StorePublisherRequest $request)
     {
         // Initialize data
         $publisherData = [];
@@ -77,7 +85,7 @@ class PublisherController extends Controller
      * @param  \App\Models\Publisher  $publisher
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePublisher $request, Publisher $publisher)
+    public function update(UpdatePublisherRequest $request, Publisher $publisher)
     {
         // Initialize data
         $publisherData = [];
@@ -89,12 +97,6 @@ class PublisherController extends Controller
             }
         }
         if (array_key_exists('name', $publisherData)) {
-            $publisherCheck = Publisher::where('name', $publisherData['name'])->first();
-            if (!is_null($publisherCheck) && $publisherCheck->id != $publisher->id) {
-                return response()->json([
-                    'errors' => ['name' => 'The name has already been taken.']
-                ], 422);
-            }
             $publisherData['slug'] = Str::slug($publisherData['name']);
         }
         $publisherData['last_updated_editor_id'] = Auth::user()->id;

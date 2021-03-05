@@ -27,6 +27,7 @@ class StoreRuleRequest extends FormRequest
         return [
             'type' => 'required|string',
             'datatype' => 'required|string',
+            'placeholder' => 'nullable|string',
             'required' => 'nullable|boolean',
             'multiple' => 'nullable|boolean',
             'min' => 'nullable|integer',
