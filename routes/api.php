@@ -114,3 +114,27 @@ Route::prefix('account-info')->group(function () {
     Route::delete('{accountInfo}', [App\Http\Controllers\AccountInfoController::class, 'destroy'])
         ->name('account-info.destroy');
 });
+
+/**
+ * --------------------------------
+ * FEATURE ACCOUNT ACTION
+ * --------------------------------
+ * Contain infos of account type.
+ */
+Route::prefix('account-action')->group(function () {
+    // Index
+    Route::get('manage', [App\Http\Controllers\AccountActionController::class, 'manage'])
+        ->name('account-action.manage');
+    // Store
+    Route::post('{accountType}', [App\Http\Controllers\AccountActionController::class, 'store'])
+        ->name('account-action.store');
+    // Show
+    Route::get('{accountAction}', [App\Http\Controllers\AccountActionController::class, 'show'])
+        ->name('account-action.show');
+    // Update
+    Route::put('{accountAction}', [App\Http\Controllers\AccountActionController::class, 'update'])
+        ->name('account-action.update');
+    // Destroy
+    Route::delete('{accountAction}', [App\Http\Controllers\AccountActionController::class, 'destroy'])
+        ->name('account-action.destroy');
+});

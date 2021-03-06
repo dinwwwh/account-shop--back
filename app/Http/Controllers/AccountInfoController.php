@@ -62,7 +62,6 @@ class AccountInfoController extends Controller
             $accountInfo = AccountInfo::create($accountInfoData); // Save account info to database
             DB::commit();
         } catch (\Throwable $th) {
-            return $th;
             DB::rollback();
             return response()->json([
                 'message' => 'Thêm mới thông tin tài khoản cần thiết thất bại, vui lòng thừ lại sau.',

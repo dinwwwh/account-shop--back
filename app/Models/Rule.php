@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use DB;
+use Str;
 
 class Rule extends Model
 {
@@ -49,7 +49,7 @@ class Rule extends Model
             $data = [];
         }
 
-        $rule = Rule::create([
+        $rule = static::create([
             'placeholder' => $data['placeholder'] ?? null,
             'type' => $data['type'] ?? 'text',
             'datatype' => $data['datatype'] ?? 'string',
@@ -81,8 +81,8 @@ class Rule extends Model
         // Initial data
         $ruleData = [];
         foreach ($this->fillable as $key) {
-            if (!is_null($data[$key] ?? null)) {
-                $ruleData[$key] = $data[$key];
+            if (!is_null($data[Str::camel($key)] ?? null)) {
+                $ruleData[$key] = $data[Str::camel($key)];
             }
         };
 
