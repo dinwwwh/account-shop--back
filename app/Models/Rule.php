@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Rule extends Model
 {
@@ -34,4 +35,58 @@ class Rule extends Model
         'maxlength' => 'integer',
         'values' => 'array',
     ];
+
+    /**
+     * Function uses to store rule to database
+     * Try to always store success regardless of initial value
+     *
+     * @param  mixed $data
+     * @return Models\Rule or null
+     */
+    static public function tryStore($data = [])
+    {
+        if (!is_array($data)) {
+            $data = [];
+        }
+
+        $rule = Rule::create([
+            'placeholder' => $data['placeholder'] ?? null,
+            'type' => $data['type'] ?? 'text',
+            'datatype' => $data['datatype'] ?? 'string',
+            'required' => $data['required'] ?? false,
+            'multiple' => $data['multiple'] ?? false,
+            'min' => $data['min'] ?? null,
+            'minlength' => $data['minlength'] ?? null,
+            'max' => $data['max'] ?? null,
+            'maxlength' => $data['maxlength'] ?? null,
+            'values' => $data['values'] ?? null,
+        ]); // Save rule to database
+
+        return $rule->refresh();
+    }
+
+    /**
+     * Function uses to store rule to database
+     * Try to always store success regardless of initial value
+     *
+     * @param  mixed $data
+     * @return Models\Rule or null
+     */
+    public function tryUpdate($data = [])
+    {
+        if (!is_array($data)) {
+            $data = [];
+        }
+
+        // Initial data
+        $ruleData = [];
+        foreach ($this->fillable as $key) {
+            if (!is_null($data[$key] ?? null)) {
+                $ruleData[$key] = $data[$key];
+            }
+        };
+
+        $this->update($ruleData); // Save rule to database
+        return $this;
+    }
 }

@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\AccountInfo;
 use App\Models\AccountType;
+use App\Models\Rule;
 use DB;
 use Str;
 use App\Http\Resources\AccountInfoResource;
-use App\Helpers\RuleHelper;
 use App\Http\Requests\StoreAccountInfoRequest;
 use App\Http\Requests\UpdateAccountInfoRequest;
 
@@ -51,7 +51,6 @@ class AccountInfoController extends Controller
             }
         }
         $accountInfoData['slug'] = Str::slug($accountInfoData['name']);
-        $accountInfoData['rule_id'] = RuleHelper::store($request->rule)->id;
         $accountInfoData['account_type_id'] = $accountType->id;
         $accountInfoData['last_updated_editor_id'] = auth()->user()->id;
         $accountInfoData['creator_id'] = auth()->user()->id;
@@ -59,9 +58,11 @@ class AccountInfoController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $accountInfo = AccountInfo::create($accountInfoData); // Save rule to database
+            $accountInfoData['rule_id'] = Rule::tryStore($request->rule)->id; // Save rule in database
+            $accountInfo = AccountInfo::create($accountInfoData); // Save account info to database
             DB::commit();
         } catch (\Throwable $th) {
+            return $th;
             DB::rollback();
             return response()->json([
                 'message' => 'Thêm mới thông tin tài khoản cần thiết thất bại, vui lòng thừ lại sau.',
@@ -104,13 +105,12 @@ class AccountInfoController extends Controller
             $accountInfoData['slug'] = Str::slug($accountInfoData['name']);
         }
         $accountInfoData['last_updated_editor_id'] = auth()->user()->id;
-        $ruleData = RuleHelper::makeDataToUpdate($request->rule);
 
         // DB transaction
         try {
             DB::beginTransaction();
             $accountInfo->update($accountInfoData); // Save rule to database
-            $accountInfo->rule->update($ruleData);
+            $accountInfo->rule->tryUpdate($request->rule);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
