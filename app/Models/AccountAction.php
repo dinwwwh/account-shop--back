@@ -33,4 +33,26 @@ class AccountAction extends Model
         'last_updated_editor_id' => 'integer',
         'creator_id' => 'integer',
     ];
+
+    /**
+     * Relationship one-one with User
+     * Include infos of model creator
+     *
+     * @return void
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'creator_id');
+    }
+
+    /**
+     * Relationship one-one with User
+     * Include infos of editor last updated model
+     *
+     * @return void
+     */
+    public function lastUpdatedEditor()
+    {
+        return $this->belongsTo(User::class, 'last_updated_editor_id');
+    }
 }

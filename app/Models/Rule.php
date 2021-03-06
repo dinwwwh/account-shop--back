@@ -10,6 +10,7 @@ class Rule extends Model
     use HasFactory;
 
     protected $fillable = [
+        'placeholder',
         'type',
         'datatype',
         'required',
@@ -22,6 +23,7 @@ class Rule extends Model
     ];
 
     protected $casts = [
+        'placeholder' => 'string',
         'type' => 'string',
         'datatype' => 'string',
         'required' => 'boolean',

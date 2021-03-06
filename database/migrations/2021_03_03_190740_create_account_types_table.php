@@ -15,7 +15,7 @@ class CreateAccountTypesTable extends Migration
     {
         Schema::create('account_types', function (Blueprint $table) {
             $table->id();
-            $table->integer('order');
+            $table->integer('order')->nullable();
             $table->string('name');
             $table->string('slug');
             $table->string('description')->nullable();

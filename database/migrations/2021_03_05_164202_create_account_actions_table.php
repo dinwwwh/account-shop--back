@@ -15,7 +15,7 @@ class CreateAccountActionsTable extends Migration
     {
         Schema::create('account_actions', function (Blueprint $table) {
             $table->id();
-            $table->integer('order')->nullable;
+            $table->integer('order')->nullable();
             $table->string('name');
             $table->string('slug');
             $table->string('description')->nullable();

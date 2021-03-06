@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 \Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
+Route::get('test', function () {
+    \App\Helpers\RuleHelper::store(['type' => 'haha']);
+});
 
 /**
  * --------------------------------
@@ -73,17 +76,41 @@ Route::prefix('publisher')->group(function () {
 Route::prefix('account-type')->group(function () {
     // Index
     Route::get('manage', [App\Http\Controllers\AccountTypeController::class, 'manage'])
-        ->name('accountType.manage');
+        ->name('account-type.manage');
     // Store
     Route::post('{publisher}', [App\Http\Controllers\AccountTypeController::class, 'store'])
-        ->name('accountType.store');
+        ->name('account-type.store');
     // Show
     Route::get('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'show'])
-        ->name('accountType.show');
+        ->name('account-type.show');
     // Update
     Route::put('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'update'])
-        ->name('accountType.update');
+        ->name('account-type.update');
     // Destroy
     Route::delete('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'destroy'])
-        ->name('accountType.destroy');
+        ->name('account-type.destroy');
+});
+
+/**
+ * --------------------------------
+ * FEATURE ACCOUNT INFO
+ * --------------------------------
+ * Contain infos of account type.
+ */
+Route::prefix('account-info')->group(function () {
+    // Index
+    Route::get('manage', [App\Http\Controllers\AccountInfoController::class, 'manage'])
+        ->name('account-info.manage');
+    // Store
+    Route::post('{accountType}', [App\Http\Controllers\AccountInfoController::class, 'store'])
+        ->name('account-info.store');
+    // Show
+    Route::get('{accountInfo}', [App\Http\Controllers\AccountInfoController::class, 'show'])
+        ->name('account-info.show');
+    // Update
+    Route::put('{accountInfo}', [App\Http\Controllers\AccountInfoController::class, 'update'])
+        ->name('account-info.update');
+    // Destroy
+    Route::delete('{accountInfo}', [App\Http\Controllers\AccountInfoController::class, 'destroy'])
+        ->name('account-info.destroy');
 });

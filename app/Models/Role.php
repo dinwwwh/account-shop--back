@@ -49,7 +49,7 @@ class Role extends Model
      */
     public function canCreatedGame()
     {
-        $result =  $this->belongsToMany(AccountType::class, 'role_can_created_game')
+        $result = $this->belongsToMany(Game::class, 'role_can_created_game')
             ->get();
         return $result;
     }
@@ -61,8 +61,30 @@ class Role extends Model
      */
     public function canCreatedGameMustNotApproving()
     {
-        $result =  $this->belongsToMany(AccountType::class, 'role_can_created_game_must_not_approving')
+        $result =  $this->belongsToMany(Game::class, 'role_can_created_game_must_not_approving')
             ->get();
         return $result;
+    }
+
+    /**
+     * Relationship one-one with User
+     * Include infos of model creator
+     *
+     * @return void
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'creator_id');
+    }
+
+    /**
+     * Relationship one-one with User
+     * Include infos of editor last updated model
+     *
+     * @return void
+     */
+    public function lastUpdatedEditor()
+    {
+        return $this->belongsTo(User::class, 'last_updated_editor_id');
     }
 }
