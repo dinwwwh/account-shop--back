@@ -52,4 +52,34 @@ class AccountType extends Model
     {
         return $this->belongsTo(User::class, 'last_updated_editor_id');
     }
+
+    /**
+     * Include account infos model user must filling to create game
+     * Relationship many-many with Models\Role
+     *
+     * @param  mixed $game
+     * @return void
+     */
+    public function currentRoleNeedFillingAccountInfos()
+    {
+        $result = auth()->user()->role->belongsToMany(AccountInfo::class, 'role_must_filling_account_info')
+            ->where('account_type_id', $this->id)
+            ->get();
+        return $result;
+    }
+
+    /**
+     * Include account Actions model, user need performing to create game
+     * Relationship many-many with Models\Role
+     *
+     * @param  mixed $game
+     * @return void
+     */
+    public function  currentRoleNeedPerformingAccountActions()
+    {
+        $result = auth()->user()->role->belongsToMany(AccountAction::class, 'role_must_performing_account_action')
+            ->where('account_type_id', $this->id)
+            ->get();
+        return $result;
+    }
 }

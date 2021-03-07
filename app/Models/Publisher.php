@@ -62,19 +62,19 @@ class Publisher extends Model
 
     /**
      * Include infos account types
-     * Relationship many-many with account type model
+     * Relationship many-many with account type Models\Role
      * 1. Contain account types user can use it for create account
      * 2. ...
      * If $result is empty then return all account type
      * @return void
      */
-    public function canUsedAccountTypes(Game $game)
+    public function currentRoleCanUsedAccountTypes()
     {
-        $result =  $this->belongsToMany(AccountType::class, 'role_can_used_account_type')
-            ->where('publisher_id', $game->id)
+        $result =  auth()->user()->role->belongsToMany(AccountType::class, 'role_can_used_account_type')
+            ->where('publisher_id', $this->id)
             ->get();
         if ($result->isEmpty()) {
-            $result = AccountType::where('publisher_id', $game->id)->get();
+            $result = AccountType::where('publisher_id', $this->id)->get();
         }
         return $result;
     }

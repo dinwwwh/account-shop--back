@@ -24,25 +24,6 @@ class Role extends Model
     ];
 
     /**
-     * Include infos account types
-     * Relationship many-many with account type model
-     * 1. Contain account types user can use it for create account
-     * 2. ...
-     * If $result is empty then return all account type
-     * @return void
-     */
-    public function canUsedAccountTypes(Game $game)
-    {
-        $result =  $this->belongsToMany(AccountType::class, 'role_can_used_account_type')
-            ->where('publisher_id', $game->id)
-            ->get();
-        if ($result->isEmpty()) {
-            $result = AccountType::where('publisher_id', $game->id)->get();
-        }
-        return $result;
-    }
-
-    /**
      * Include games that role can created
      *
      * @return void

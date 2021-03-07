@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 \Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
 Route::get('test', function () {
-    \App\Helpers\RuleHelper::store(['type' => 'haha']);
+    return App\Models\Publisher::find(1)->roleCanUsedAccountTypes();
 });
 
 /**
