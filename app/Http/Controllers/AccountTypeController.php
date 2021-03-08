@@ -57,6 +57,16 @@ class AccountTypeController extends Controller
         try {
             DB::beginTransaction();
             $accountType = AccountType::create($accountTypeData); // Save rule to database
+
+            // Relationship many-many with Models\Role
+            $role = Role::all();
+            $syncRoleIds = [];
+            foreach ($request->roleIds ?? [] as $roleId) {
+                if ($role->contains($roleId)) {
+                    $syncRoleIds[] = $roleId;
+                }
+            }
+            $accountType->roles()->sync($syncRoleIds);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -106,6 +116,16 @@ class AccountTypeController extends Controller
         try {
             DB::beginTransaction();
             $accountType->update($accountTypeData); // Save rule to database
+
+            // Relationship many-many with Models\Role
+            $role = Role::all();
+            $syncRoleIds = [];
+            foreach ($request->roleIds ?? [] as $roleId) {
+                if ($role->contains($roleId)) {
+                    $syncRoleIds[] = $roleId;
+                }
+            }
+            $accountType->roles()->sync($syncRoleIds);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -128,6 +148,7 @@ class AccountTypeController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
+            $accountType->roles()->sync([]); // Delete relationship with Models\Role
             $accountType->delete(); // Update publisher to database
             DB::commit();
         } catch (\Throwable $th) {

@@ -27,6 +27,8 @@ class StoreAccountTypeRequest extends FormRequest
             'publisherId' => 'required|integer',
             'name' => 'required|string',
             'description' => 'nullable|string',
+            'roleIds' => 'nullable|array',
+            'roleIds.*' => 'integer',
         ];
     }
 

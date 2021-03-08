@@ -62,7 +62,7 @@ class AccountInfoController extends Controller
 
             // Relationship many-many with Models\Role
             $role = Role::all();
-            foreach ($request->roleIds as $roleId) {
+            foreach ($request->roleIds ?? [] as $roleId) {
                 if ($role->contains($roleId)) {
                     $accountInfo->roles()->attach($roleId);
                 }
