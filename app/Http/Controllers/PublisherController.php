@@ -19,15 +19,6 @@ class PublisherController extends Controller
      */
     public function index()
     {
-    }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function manage()
-    {
         return PublisherResource::collection(Publisher::all());
     }
 

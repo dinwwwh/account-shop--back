@@ -20,16 +20,6 @@ class AccountTypeController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Return all account type user can manage
-     *
-     * @return void
-     */
-    public function manage()
-    {
         return AccountTypeResource::collection(AccountType::all());
     }
 

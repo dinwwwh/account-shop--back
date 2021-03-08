@@ -52,8 +52,8 @@ Route::prefix('rule')->group(function () {
  */
 Route::prefix('publisher')->group(function () {
     // Index
-    Route::get('manage', [App\Http\Controllers\PublisherController::class, 'manage'])
-        ->name('publisher.manage');
+    Route::get('', [App\Http\Controllers\PublisherController::class, 'index'])
+        ->name('publisher.index');
     // Store
     Route::post('', [App\Http\Controllers\PublisherController::class, 'store'])
         ->name('publisher.store');
@@ -76,8 +76,8 @@ Route::prefix('publisher')->group(function () {
  */
 Route::prefix('account-type')->group(function () {
     // Index
-    Route::get('manage', [App\Http\Controllers\AccountTypeController::class, 'manage'])
-        ->name('account-type.manage');
+    Route::get('', [App\Http\Controllers\AccountTypeController::class, 'index'])
+        ->name('account-type.index');
     // Store
     Route::post('{publisher}', [App\Http\Controllers\AccountTypeController::class, 'store'])
         ->name('account-type.store');
@@ -100,8 +100,8 @@ Route::prefix('account-type')->group(function () {
  */
 Route::prefix('account-info')->group(function () {
     // Index
-    Route::get('manage', [App\Http\Controllers\AccountInfoController::class, 'manage'])
-        ->name('account-info.manage');
+    Route::get('', [App\Http\Controllers\AccountInfoController::class, 'index'])
+        ->name('account-info.index');
     // Store
     Route::post('{accountType}', [App\Http\Controllers\AccountInfoController::class, 'store'])
         ->name('account-info.store');
