@@ -69,7 +69,7 @@ class AccountInfo extends Model
      * Relationship many-many with Models\Role
      * Include roles need filling account info
      *
-     * @return void
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function roles()
     {

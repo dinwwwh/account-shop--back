@@ -60,7 +60,7 @@ class AccountAction extends Model
      * Relationship many-many with Models\Role
      * Include roles need perform account action
      * 
-     * @return void
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function roles()
     {

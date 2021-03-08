@@ -149,6 +149,7 @@ class AccountInfoController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
+            $accountInfo->roles()->sync([]); // Delete relationship with Models\Role
             $accountInfo->delete(); // Update publisher to database
             DB::commit();
         } catch (\Throwable $th) {

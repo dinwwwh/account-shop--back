@@ -149,6 +149,7 @@ class AccountActionController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
+            $accountAction->roles()->sync([]); // Delete relationship with Models\Role
             $accountAction->delete(); // Update publisher to database
             DB::commit();
         } catch (\Throwable $th) {
