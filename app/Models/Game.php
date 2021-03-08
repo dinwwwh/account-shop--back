@@ -61,4 +61,24 @@ class Game extends Model
     {
         return $this->belongsTo(Publisher::class);
     }
+
+    /**
+     * Relationship many-many with Models\Role
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function rolesCanCreatedGame()
+    {
+        return $this->belongsToMany(Role::class, 'role_can_created_game');
+    }
+
+    /**
+     * Relationship many-many with Models\Role
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function rolesCanCreatedGameMustNotApproving()
+    {
+        return $this->belongsToMany(Role::class, 'role_can_created_game_must_not_approving');
+    }
 }
