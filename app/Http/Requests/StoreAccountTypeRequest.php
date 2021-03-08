@@ -24,6 +24,7 @@ class StoreAccountTypeRequest extends FormRequest
     public function rules()
     {
         return [
+            'publisherId' => 'required|integer',
             'name' => 'required|string',
             'description' => 'nullable|string',
         ];

@@ -29,8 +29,16 @@ class AccountTypeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAccountTypeRequest $request, Publisher $publisher)
+    public function store(StoreAccountTypeRequest $request)
     {
+        // Get publisher
+        $publisher = Publisher::find($request->publisherId);
+        if (is_null($publisher)) {
+            return response()->json([
+                'message' => 'ID nhà phát hành không tồn tại.',
+            ], 404);
+        }
+
         // Initialize data
         $accountTypeData = [];
         foreach ([

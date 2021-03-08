@@ -29,8 +29,16 @@ class AccountActionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAccountActionRequest $request, AccountType $accountType)
+    public function store(StoreAccountActionRequest $request)
     {
+        // get account type
+        $accountType = AccountType::find($request->accountTypeId);
+        if (is_null($accountType)) {
+            return response()->json([
+                'message' => 'ID kiểu tài khoản không tồn tại trong hệ thống.',
+            ], 404);
+        }
+
         // Initialize data
         $accountActionData = [];
         foreach ([

@@ -24,6 +24,7 @@ class StoreAccountActionRequest extends FormRequest
     public function rules()
     {
         return [
+            'accountTypeId' => 'required|integer',
             'order' => 'nullable|integer',
             'name' => 'required|string',
             'description' => 'nullable|string',

@@ -79,7 +79,7 @@ Route::prefix('account-type')->group(function () {
     Route::get('', [App\Http\Controllers\AccountTypeController::class, 'index'])
         ->name('account-type.index');
     // Store
-    Route::post('{publisher}', [App\Http\Controllers\AccountTypeController::class, 'store'])
+    Route::post('', [App\Http\Controllers\AccountTypeController::class, 'store'])
         ->name('account-type.store');
     // Show
     Route::get('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'show'])
@@ -103,7 +103,7 @@ Route::prefix('account-info')->group(function () {
     Route::get('', [App\Http\Controllers\AccountInfoController::class, 'index'])
         ->name('account-info.index');
     // Store
-    Route::post('{accountType}', [App\Http\Controllers\AccountInfoController::class, 'store'])
+    Route::post('', [App\Http\Controllers\AccountInfoController::class, 'store'])
         ->name('account-info.store');
     // Show
     Route::get('{accountInfo}', [App\Http\Controllers\AccountInfoController::class, 'show'])
@@ -127,7 +127,7 @@ Route::prefix('account-action')->group(function () {
     Route::get('', [App\Http\Controllers\AccountActionController::class, 'index'])
         ->name('account-action.index');
     // Store
-    Route::post('{accountType}', [App\Http\Controllers\AccountActionController::class, 'store'])
+    Route::post('', [App\Http\Controllers\AccountActionController::class, 'store'])
         ->name('account-action.store');
     // Show
     Route::get('{accountAction}', [App\Http\Controllers\AccountActionController::class, 'show'])
