@@ -55,4 +55,15 @@ class AccountAction extends Model
     {
         return $this->belongsTo(User::class, 'last_updated_editor_id');
     }
+
+    /**
+     * Relationship many-many with Models\Role
+     * Include roles need perform account action
+     * 
+     * @return void
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'role_must_performing_account_action');
+    }
 }

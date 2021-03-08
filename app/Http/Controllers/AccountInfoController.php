@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AccountInfo;
 use App\Models\AccountType;
 use App\Models\Rule;
+use App\Models\Role;
 use DB;
 use Str;
 use App\Http\Resources\AccountInfoResource;
@@ -58,6 +59,14 @@ class AccountInfoController extends Controller
             DB::beginTransaction();
             $accountInfoData['rule_id'] = Rule::tryStore($request->rule)->id; // Save rule in database
             $accountInfo = AccountInfo::create($accountInfoData); // Save account info to database
+
+            // Relationship many-many with Models\Role
+            $role = Role::all();
+            foreach ($request->roleIds as $roleId) {
+                if ($role->contains($roleId)) {
+                    $accountInfo->roles()->attach($roleId);
+                }
+            }
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -108,6 +117,16 @@ class AccountInfoController extends Controller
             DB::beginTransaction();
             $accountInfo->update($accountInfoData); // Save rule to database
             $accountInfo->rule->tryUpdate($request->rule);
+
+            // Relationship many-many with Models\Role
+            $role = Role::all();
+            $syncRoleIds = [];
+            foreach ($request->roleIds ?? [] as $roleId) {
+                if ($role->contains($roleId)) {
+                    $syncRoleIds[] = $roleId;
+                }
+            }
+            $accountInfo->roles()->sync($syncRoleIds);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();

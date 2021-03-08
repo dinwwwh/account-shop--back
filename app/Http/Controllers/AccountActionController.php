@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccountAction;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Http\Resources\AccountActionResource;
 use DB;
@@ -57,6 +58,16 @@ class AccountActionController extends Controller
         try {
             DB::beginTransaction();
             $accountAction = AccountAction::create($accountActionData); // Save account info to database
+
+            // Relationship many-many with Models\Role
+            $role = Role::all();
+            $syncRoleIds = [];
+            foreach ($request->roleIds ?? [] as $roleId) {
+                if ($role->contains($roleId)) {
+                    $syncRoleIds[] = $roleId;
+                }
+            }
+            $accountAction->roles()->sync($syncRoleIds);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -106,6 +117,16 @@ class AccountActionController extends Controller
         try {
             DB::beginTransaction();
             $accountAction->update($accountActionData); // Save account info to database
+
+            // Relationship many-many with Models\Role
+            $role = Role::all();
+            $syncRoleIds = [];
+            foreach ($request->roleIds ?? [] as $roleId) {
+                if ($role->contains($roleId)) {
+                    $syncRoleIds[] = $roleId;
+                }
+            }
+            $accountAction->roles()->sync($syncRoleIds);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -114,7 +135,7 @@ class AccountActionController extends Controller
             ], 500);
         }
 
-        return new AccountActionResource($accountAction->refresh());
+        return new AccountActionResource($accountAction);
     }
 
     /**
