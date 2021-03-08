@@ -16,7 +16,8 @@ class Game extends Model
         'name',
         'slug',
         'image_path',
-        'user_id',
+        'last_updated_editor_id',
+        'creator_id',
     ];
 
     protected $casts = [
@@ -25,7 +26,8 @@ class Game extends Model
         'name' => 'string',
         'slug' => 'string',
         'image_path' => 'string',
-        'user_id' => 'integer',
+        'last_updated_editor_id' => 'integer',
+        'creator_id' => 'integer',
     ];
 
     /**
@@ -48,5 +50,15 @@ class Game extends Model
     public function lastUpdatedEditor()
     {
         return $this->belongsTo(User::class, 'last_updated_editor_id');
+    }
+
+    /**
+     * Relationship one-one belong to Models\Publisher
+     *
+     * @return void
+     */
+    public function publisher()
+    {
+        return $this->belongsTo(Publisher::class);
     }
 }

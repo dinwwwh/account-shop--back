@@ -20,7 +20,8 @@ class CreateGamesTable extends Migration
             $table->string('name');
             $table->string('slug');
             $table->string('image_path');
-            $table->bigInteger('user_id');
+            $table->bigInteger('last_updated_editor_id');
+            $table->bigInteger('creator_id');
             $table->timestamps();
             $table->softDeletes();
         });

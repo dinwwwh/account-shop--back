@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Requests\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 \Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
-Route::get('test', function () {
-    return App\Models\Publisher::find(1)->roleCanUsedAccountTypes();
+Route::patch('test', function (Request $request) {
+    return dd($request->testFile);
 });
 
 /**
@@ -123,8 +124,8 @@ Route::prefix('account-info')->group(function () {
  */
 Route::prefix('account-action')->group(function () {
     // Index
-    Route::get('manage', [App\Http\Controllers\AccountActionController::class, 'manage'])
-        ->name('account-action.manage');
+    Route::get('', [App\Http\Controllers\AccountActionController::class, 'index'])
+        ->name('account-action.index');
     // Store
     Route::post('{accountType}', [App\Http\Controllers\AccountActionController::class, 'store'])
         ->name('account-action.store');
@@ -137,4 +138,28 @@ Route::prefix('account-action')->group(function () {
     // Destroy
     Route::delete('{accountAction}', [App\Http\Controllers\AccountActionController::class, 'destroy'])
         ->name('account-action.destroy');
+});
+
+/**
+ * --------------------------------
+ * FEATURE ACCOUNT ACTION
+ * --------------------------------
+ * Contain infos of account type.
+ */
+Route::prefix('game')->group(function () {
+    // Index
+    Route::get('', [App\Http\Controllers\GameController::class, 'index'])
+        ->name('game.index');
+    // Store
+    Route::post('', [App\Http\Controllers\GameController::class, 'store'])
+        ->name('game.store');
+    // Show
+    Route::get('{game}', [App\Http\Controllers\GameController::class, 'show'])
+        ->name('game.show');
+    // Update
+    Route::put('{game}', [App\Http\Controllers\GameController::class, 'update'])
+        ->name('game.update');
+    // Destroy
+    Route::delete('{game}', [App\Http\Controllers\GameController::class, 'destroy'])
+        ->name('game.destroy');
 });

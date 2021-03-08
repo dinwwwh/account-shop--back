@@ -61,7 +61,6 @@ class AccountTypeController extends Controller
             $accountType = AccountType::create($accountTypeData); // Save rule to database
             DB::commit();
         } catch (\Throwable $th) {
-            return $th;
             DB::rollback();
             return response()->json([
                 'message' => 'Thêm mới kiểu tài khoản thất bại, vui lòng thừ lại sau.',
