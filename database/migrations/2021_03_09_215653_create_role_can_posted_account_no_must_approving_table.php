@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRoleCanCreatedGameMustNotApprovingTable extends Migration
+class CreateRoleCanPostedAccountNoMustApprovingTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateRoleCanCreatedGameMustNotApprovingTable extends Migration
      */
     public function up()
     {
-        Schema::create('role_can_created_game_must_not_approving', function (Blueprint $table) {
+        Schema::create('role_can_posted_account_no_must_approving', function (Blueprint $table) {
             $table->integer('role_id');
-            $table->integer('game_id');
+            $table->integer('account_type_id');
         });
     }
 
@@ -26,6 +26,6 @@ class CreateRoleCanCreatedGameMustNotApprovingTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('role_can_created_game_must_not_approving');
+        Schema::dropIfExists('role_can_posted_account_no_must_approving');
     }
 }

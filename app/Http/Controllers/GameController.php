@@ -52,8 +52,8 @@ class GameController extends Controller
             $gameData['image_path'] = $imagePath;
             $game = Game::create($gameData); // Save rule to database
 
+            // Relationship many-many with Models\Role
             $role = Role::all();
-            // Relationship many-many with Models\Role 1
             $syncRoleIds = [];
             foreach ($request->roleIdsCanCreatedGame ?? [] as $roleId) {
                 if ($role->contains($roleId)) {
@@ -61,15 +61,6 @@ class GameController extends Controller
                 }
             }
             $game->rolesCanCreatedGame()->sync($syncRoleIds);
-
-            // Relationship many-many with Models\Role 2
-            $syncRoleIds = [];
-            foreach ($request->roleIdsCanCreatedGameMustNotApproving ?? [] as $roleId) {
-                if ($role->contains($roleId)) {
-                    $syncRoleIds[] = $roleId;
-                }
-            }
-            $game->rolesCanCreatedGameMustNotApproving()->sync($syncRoleIds);
             DB::commit();
         } catch (\Throwable $th) {
             return $th;
@@ -129,8 +120,8 @@ class GameController extends Controller
             // Save rule to database
             $game->update($gameData);
 
+            // Relationship many-many with Models\Role
             $role = Role::all();
-            // Relationship many-many with Models\Role 1
             $syncRoleIds = [];
             foreach ($request->roleIdsCanCreatedGame ?? [] as $roleId) {
                 if ($role->contains($roleId)) {
@@ -138,15 +129,6 @@ class GameController extends Controller
                 }
             }
             $game->rolesCanCreatedGame()->sync($syncRoleIds);
-
-            // Relationship many-many with Models\Role 2
-            $syncRoleIds = [];
-            foreach ($request->roleIdsCanCreatedGameMustNotApproving ?? [] as $roleId) {
-                if ($role->contains($roleId)) {
-                    $syncRoleIds[] = $roleId;
-                }
-            }
-            $game->rolesCanCreatedGameMustNotApproving()->sync($syncRoleIds);
             DB::commit();
             // handle when success
             Storage::delete($imagePathMustDeleteWhenSuccess ?? null);
@@ -177,7 +159,6 @@ class GameController extends Controller
 
             // Delete relationship with Models\Role
             $game->rolesCanCreatedGame()->sync([]);
-            $game->rolesCanCreatedGameMustNotApproving()->sync([]);
 
             $game->delete();
             DB::commit();

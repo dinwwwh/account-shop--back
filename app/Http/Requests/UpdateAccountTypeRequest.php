@@ -26,8 +26,10 @@ class UpdateAccountTypeRequest extends FormRequest
         return [
             'name' => 'nullable|string',
             'description' => 'nullable|string',
-            'roleIds' => 'nullable|array',
-            'roleIds.*' => 'integer',
+            'roleIdsCanUsedAccountType' => 'nullable|array',
+            'roleIdsCanUsedAccountType.*' => 'integer',
+            'roleIdsCanPostedAccountNoMustApproving' => 'nullable|array',
+            'roleIdsCanPostedAccountNoMustApproving.*' => 'integer',
         ];
     }
 }

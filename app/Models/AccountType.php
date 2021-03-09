@@ -92,4 +92,14 @@ class AccountType extends Model
     {
         return $this->belongsToMany(Role::class, 'role_can_used_account_type');
     }
+
+    /**
+     * Relationship many-many with Models\Role
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function rolesCanPostedAccountNoMustApproving()
+    {
+        return $this->belongsToMany(Role::class, 'role_can_posted_account_no_must_approving');
+    }
 }
