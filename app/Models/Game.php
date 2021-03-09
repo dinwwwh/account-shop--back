@@ -12,7 +12,7 @@ class Game extends Model
 
     protected $fillable = [
         'order', // nullable
-        'publisher_id',
+        'publisher_name',
         'name',
         'slug',
         'image_path',
@@ -22,7 +22,7 @@ class Game extends Model
 
     protected $casts = [
         'order' => 'integer',
-        'publisher_id' => 'integer',
+        'publisher_name' => 'string',
         'name' => 'string',
         'slug' => 'string',
         'image_path' => 'string',
@@ -53,16 +53,6 @@ class Game extends Model
     }
 
     /**
-     * Relationship one-one belong to Models\Publisher
-     *
-     * @return void
-     */
-    public function publisher()
-    {
-        return $this->belongsTo(Publisher::class);
-    }
-
-    /**
      * Relationship many-many with Models\Role
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
@@ -80,5 +70,35 @@ class Game extends Model
     public function rolesCanCreatedGameMustNotApproving()
     {
         return $this->belongsToMany(Role::class, 'role_can_created_game_must_not_approving');
+    }
+
+    /**
+     * Relationship one-many with AccountType.
+     * Include account types this model has.
+     *
+     * @return void
+     */
+    public function accountTypes()
+    {
+        return $this->hasMany(AccountType::class);
+    }
+
+    /**
+     * Include infos account types
+     * Relationship many-many with account type Models\Role
+     * 1. Contain account types user can use it for create account
+     * 2. ...
+     * If $result is empty then return all account type
+     * @return void
+     */
+    public function currentRoleCanUsedAccountTypes()
+    {
+        $result =  auth()->user()->role->belongsToMany(AccountType::class, 'role_can_used_account_type')
+            ->where('game_id', $this->id)
+            ->get();
+        if ($result->isEmpty()) {
+            $result = AccountType::where('game_id', $this->id)->get();
+        }
+        return $result;
     }
 }

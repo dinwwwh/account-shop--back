@@ -25,8 +25,8 @@ class UpdateGameRequest extends FormRequest
     {
         return [
             'order' => 'nullable|integer',
-            'publisherId' => 'nullable|integer',
             'name' => 'nullable|string',
+            'publisherName' => 'nullable|string',
             'image' => 'nullable|image',
             'roleIdsCanCreatedGame' => 'nullable|array',
             'roleIdsCanCreatedGame.*' => 'integer',

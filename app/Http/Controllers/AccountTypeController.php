@@ -7,7 +7,7 @@ use App\Models\Role;
 use App\Http\Requests\StoreAccountTypeRequest;
 use App\Http\Requests\UpdateAccountTypeRequest;
 use App\Http\Resources\AccountTypeResource;
-use App\Models\Publisher;
+use App\Models\Game;
 use Str;
 use Auth;
 use DB;
@@ -32,11 +32,11 @@ class AccountTypeController extends Controller
      */
     public function store(StoreAccountTypeRequest $request)
     {
-        // Get publisher
-        $publisher = Publisher::find($request->publisherId);
-        if (is_null($publisher)) {
+        // Get game
+        $game = Game::find($request->gameId);
+        if (is_null($game)) {
             return response()->json([
-                'message' => 'ID nhà phát hành không tồn tại.',
+                'message' => 'ID game không tồn tại.',
             ], 404);
         }
 
@@ -50,7 +50,7 @@ class AccountTypeController extends Controller
             }
         }
         $accountTypeData['slug'] = Str::slug($accountTypeData['name']);
-        $accountTypeData['publisher_id'] = $publisher->id;
+        $accountTypeData['game_id'] = $game->id;
         $accountTypeData['last_updated_editor_id'] = Auth::user()->id;
         $accountTypeData['creator_id'] = Auth::user()->id;
 
@@ -150,7 +150,7 @@ class AccountTypeController extends Controller
         try {
             DB::beginTransaction();
             $accountType->rolesCanUsedAccountType()->sync([]); // Delete relationship with Models\Role
-            $accountType->delete(); // Update publisher to database
+            $accountType->delete();
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();

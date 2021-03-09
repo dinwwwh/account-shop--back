@@ -16,7 +16,7 @@ class AccountType extends Model
         'name',
         'slug',
         'description',
-        'publisher_id',
+        'game_id',
         'last_updated_editor_id',
         'creator_id'
     ];
@@ -26,7 +26,7 @@ class AccountType extends Model
         'name' => 'string',
         'slug' => 'string',
         'description' => 'string',
-        'publisher_id' => 'integer',
+        'game_id' => 'integer',
         'last_updated_editor_id' => 'integer',
         'creator_id' => 'integer',
     ];

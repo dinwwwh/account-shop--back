@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
-use App\Models\Publisher;
 use App\Models\Role;
 use App\Http\Resources\GameResource;
 use Str;
@@ -33,25 +32,16 @@ class GameController extends Controller
      */
     public function store(StoreGameRequest $request)
     {
-        // Get Publisher
-        $publisher = Publisher::find($request->publisherId);
-        if (is_null($publisher)) {
-            return response()->json([
-                'message' => 'Không thể tìm thấy nhà phát hành.',
-            ], 404);
-        }
-
         // Initialize data
         $gameData = [];
         foreach ([
-            'order', 'publisherId', 'name'
+            'order', 'publisherName', 'name'
         ] as $key) {
             if ($request->filled($key)) {
                 $gameData[Str::snake($key)] = $request->$key;
             }
         }
         $gameData['slug'] = Str::slug($gameData['name']);
-        $gameData['publisher_id'] = $publisher->id;
         $gameData['last_updated_editor_id'] = auth()->user()->id;
         $gameData['creator_id'] = auth()->user()->id;
 
@@ -116,7 +106,7 @@ class GameController extends Controller
         // Initialize data
         $gameData = [];
         foreach ([
-            'order', 'publisherId', 'name'
+            'order', 'publisherName', 'name'
         ] as $key) {
             if ($request->filled($key)) {
                 $gameData[Str::snake($key)] = $request->$key;
@@ -189,7 +179,7 @@ class GameController extends Controller
             $game->rolesCanCreatedGame()->sync([]);
             $game->rolesCanCreatedGameMustNotApproving()->sync([]);
 
-            $game->delete(); // Update publisher to database
+            $game->delete();
             DB::commit();
             // When success
             Storage::delete($imagePath);

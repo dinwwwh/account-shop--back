@@ -19,7 +19,7 @@ class CreateAccountTypesTable extends Migration
             $table->string('name');
             $table->string('slug');
             $table->string('description')->nullable();
-            $table->string('publisher_id');
+            $table->string('game_id');
             $table->bigInteger('last_updated_editor_id');
             $table->bigInteger('creator_id');
             $table->timestamps();

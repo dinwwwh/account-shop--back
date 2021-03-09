@@ -16,9 +16,9 @@ class CreateGamesTable extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->id();
             $table->integer('order')->nullable();
-            $table->integer('publisher_id');
             $table->string('name');
             $table->string('slug');
+            $table->string('publisher_name');
             $table->string('image_path');
             $table->bigInteger('last_updated_editor_id');
             $table->bigInteger('creator_id');

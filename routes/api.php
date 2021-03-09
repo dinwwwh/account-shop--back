@@ -43,31 +43,6 @@ Route::prefix('rule')->group(function () {
         ->name('rule.destroy');
 });
 
-
-/**
- * --------------------------------
- * FEATURE PUBLISHER
- * --------------------------------
- * Contain infos of publisher.
- */
-Route::prefix('publisher')->group(function () {
-    // Index
-    Route::get('', [App\Http\Controllers\PublisherController::class, 'index'])
-        ->name('publisher.index');
-    // Store
-    Route::post('', [App\Http\Controllers\PublisherController::class, 'store'])
-        ->name('publisher.store');
-    // Show
-    Route::get('{publisher}', [App\Http\Controllers\PublisherController::class, 'show'])
-        ->name('publisher.show');
-    // Update
-    Route::put('{publisher}', [App\Http\Controllers\PublisherController::class, 'update'])
-        ->name('publisher.update');
-    // Destroy
-    Route::delete('{publisher}', [App\Http\Controllers\PublisherController::class, 'destroy'])
-        ->name('publisher.destroy');
-});
-
 /**
  * --------------------------------
  * FEATURE ACCOUNT TYPE

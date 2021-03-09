@@ -25,7 +25,7 @@ class StoreGameRequest extends FormRequest
     {
         return [
             'order' => 'nullable|integer',
-            'publisherId' => 'required|integer',
+            'publisherName' => 'required|string',
             'name' => 'required|string',
             'image' => 'required|image',
             'roleIdsCanCreatedGame' => 'nullable|array',
