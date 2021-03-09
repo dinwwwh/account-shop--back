@@ -85,11 +85,10 @@ class AccountType extends Model
 
     /**
      * Relationship many-many with Models\Role
-     * Include roles need filling account info
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
-    public function roles()
+    public function rolesCanUsedAccountType()
     {
         return $this->belongsToMany(Role::class, 'role_can_used_account_type');
     }

@@ -62,8 +62,8 @@ class AccountAction extends Model
      * 
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
-    public function roles()
+    public function rolesNeedPerformingAccountAction()
     {
-        return $this->belongsToMany(Role::class, 'role_must_performing_account_action');
+        return $this->belongsToMany(Role::class, 'role_need_performing_account_action');
     }
 }

@@ -66,7 +66,7 @@ class AccountTypeController extends Controller
                     $syncRoleIds[] = $roleId;
                 }
             }
-            $accountType->roles()->sync($syncRoleIds);
+            $accountType->rolesCanUsedAccountType()->sync($syncRoleIds);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -125,7 +125,7 @@ class AccountTypeController extends Controller
                     $syncRoleIds[] = $roleId;
                 }
             }
-            $accountType->roles()->sync($syncRoleIds);
+            $accountType->rolesCanUsedAccountType()->sync($syncRoleIds);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -148,7 +148,7 @@ class AccountTypeController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $accountType->roles()->sync([]); // Delete relationship with Models\Role
+            $accountType->rolesCanUsedAccountType()->sync([]); // Delete relationship with Models\Role
             $accountType->delete(); // Update publisher to database
             DB::commit();
         } catch (\Throwable $th) {

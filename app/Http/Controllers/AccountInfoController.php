@@ -64,7 +64,7 @@ class AccountInfoController extends Controller
             $role = Role::all();
             foreach ($request->roleIds ?? [] as $roleId) {
                 if ($role->contains($roleId)) {
-                    $accountInfo->roles()->attach($roleId);
+                    $accountInfo->rolesNeedFillingAccountInfo()->attach($roleId);
                 }
             }
             DB::commit();
@@ -126,7 +126,7 @@ class AccountInfoController extends Controller
                     $syncRoleIds[] = $roleId;
                 }
             }
-            $accountInfo->roles()->sync($syncRoleIds);
+            $accountInfo->rolesNeedFillingAccountInfo()->sync($syncRoleIds);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -149,7 +149,7 @@ class AccountInfoController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $accountInfo->roles()->sync([]); // Delete relationship with Models\Role
+            $accountInfo->rolesNeedFillingAccountInfo()->sync([]); // Delete relationship with Models\Role
             $accountInfo->delete(); // Update publisher to database
             DB::commit();
         } catch (\Throwable $th) {
