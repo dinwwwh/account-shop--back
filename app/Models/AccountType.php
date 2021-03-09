@@ -58,11 +58,11 @@ class AccountType extends Model
      * Relationship many-many with Models\Role
      *
      * @param  mixed $game
-     * @return void
+     * @return App\Models\AccountInfo
      */
     public function currentRoleNeedFillingAccountInfos()
     {
-        $result = auth()->user()->role->belongsToMany(AccountInfo::class, 'role_must_filling_account_info')
+        $result = auth()->user()->role->belongsToMany(AccountInfo::class, 'role_need_filling_account_info')
             ->where('account_type_id', $this->id)
             ->get();
         return $result;
@@ -73,11 +73,11 @@ class AccountType extends Model
      * Relationship many-many with Models\Role
      *
      * @param  mixed $game
-     * @return void
+     * @return App\Models\AccountAction
      */
     public function  currentRoleNeedPerformingAccountActions()
     {
-        $result = auth()->user()->role->belongsToMany(AccountAction::class, 'role_must_performing_account_action')
+        $result = auth()->user()->role->belongsToMany(AccountAction::class, 'role_need_performing_account_action')
             ->where('account_type_id', $this->id)
             ->get();
         return $result;

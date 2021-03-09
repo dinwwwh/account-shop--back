@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AccountType;
+use App\Models\Role;
 use App\Http\Requests\StoreAccountTypeRequest;
 use App\Http\Requests\UpdateAccountTypeRequest;
 use App\Http\Resources\AccountTypeResource;
