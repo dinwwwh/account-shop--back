@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Support\Facades\Storage;
+
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AccountResource extends JsonResource
@@ -15,15 +17,25 @@ class AccountResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'order' => $this->order,
-            'name' => $this->name,
-            'slug' => $this->slug,
+            'id' => $this->id,
+            'username' => $this->username,
+            'password' => $this->password,
+            'price' => $this->price,
+            'status' => $this->status,
             'description' => $this->description,
-            'rule' => new RuleResource($this->rule),
-            'lastUpdatedEditor' => new UserResource($this->order),
+            'representativeImagePath' => Storage::url($this->representative_image_path),
+
+            // Relationship
+            'images' => AccountImageResource::collection($this->images),
+            'game' => new GameResource($this->game),
+            'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
             'creator' => new UserResource($this->creator),
-            'updated_at' => $this->updated_at,
-            'created_at' => $this->created_at,
+            'censor' => new UserResource($this->censor),
+
+            // Time
+            'approvedAt' => $this->approved_at,
+            'updatedAt' => $this->updated_at,
+            'createdAt' => $this->created_at,
         ];
     }
 }

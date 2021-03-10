@@ -16,7 +16,7 @@ use App\Http\Requests\Request;
 
 \Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
 Route::patch('test', function (Request $request) {
-    return dd($request->testFile);
+    return 'this test';
 });
 
 /**
@@ -137,4 +137,28 @@ Route::prefix('game')->group(function () {
     // Destroy
     Route::delete('{game}', [App\Http\Controllers\GameController::class, 'destroy'])
         ->name('game.destroy');
+});
+
+/**
+ * --------------------------------
+ * FEATURE ACCOUNT
+ * --------------------------------
+ * Contain infos of account type.
+ */
+Route::prefix('account')->group(function () {
+    // Index
+    Route::get('', [App\Http\Controllers\AccountController::class, 'index'])
+        ->name('account.index');
+    // Store
+    Route::post('', [App\Http\Controllers\AccountController::class, 'store'])
+        ->name('account.store');
+    // Show
+    Route::get('{account}', [App\Http\Controllers\AccountController::class, 'show'])
+        ->name('account.show');
+    // Update
+    Route::put('{account}', [App\Http\Controllers\AccountController::class, 'update'])
+        ->name('account.update');
+    // Destroy
+    Route::delete('{account}', [App\Http\Controllers\AccountController::class, 'destroy'])
+        ->name('account.destroy');
 });
