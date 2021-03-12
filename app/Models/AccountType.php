@@ -32,6 +32,26 @@ class AccountType extends Model
     ];
 
     /**
+     * To set default
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Custom
+        static::creating(function ($query) {
+            $query->creator_id = auth()->id;
+            $query->last_updated_editor_id = auth()->id;
+        });
+
+        static::updating(function ($query) {
+            $query->last_updated_editor_id = auth()->id;
+        });
+    }
+
+    /**
      * Relationship one-one with User
      * Include infos of model creator
      *
