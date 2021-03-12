@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Requests\Request;
+use Illuminate\Support\Carbon;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +17,11 @@ use App\Http\Requests\Request;
 
 \Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
 Route::patch('test', function (Request $request) {
-    return 'this test';
+    // dd(App\Models\DeleteFile::create([
+    //     'path' => 'vai',
+    //     'delete_at' => Carbon::now()->add(5, 'day'),
+    //     // 'user_id' => 5,
+    // ]));
 });
 
 /**
