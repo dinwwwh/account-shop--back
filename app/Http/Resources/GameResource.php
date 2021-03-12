@@ -25,6 +25,8 @@ class GameResource extends JsonResource
             'currentRoleCanUsedAccountTypes' => AccountTypeResource::collection($this->currentRoleCanUsedAccountTypes()),
             'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
             'creator' => new UserResource($this->creator),
+            'updatedAt' => $this->updated_at,
+            'createdAt' => $this->created_at,
         ];
     }
 }

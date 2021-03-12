@@ -26,8 +26,8 @@ class AccountTypeResource extends JsonResource
             => AccountActionResource::collection($this->currentRoleNeedPerformingAccountActions()),
             'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
             'creator' => new UserResource($this->creator),
-            'updated_at' => $this->updated_at,
-            'created_at' => $this->created_at,
+            'updatedAt' => $this->updated_at,
+            'createdAt' => $this->created_at,
         ];
     }
 }

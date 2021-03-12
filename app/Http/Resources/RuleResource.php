@@ -25,8 +25,8 @@ class RuleResource extends JsonResource
             'max' => $this->max,
             'maxlength' => $this->maxlength,
             'values' => $this->values,
-            'updated_at' => $this->updated_at,
-            'created_at' => $this->created_at,
+            'updatedAt' => $this->updated_at,
+            'createdAt' => $this->created_at,
         ];
     }
 }

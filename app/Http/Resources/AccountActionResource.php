@@ -24,8 +24,8 @@ class AccountActionResource extends JsonResource
             'required' => $this->required,
             'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
             'Creator' => new UserResource($this->Creator),
-            'updated_at' => $this->updated_at,
-            'created_at' => $this->created_at,
+            'updatedAt' => $this->updated_at,
+            'createdAt' => $this->created_at,
         ];
     }
 }
