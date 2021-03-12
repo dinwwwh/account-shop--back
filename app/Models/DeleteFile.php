@@ -68,7 +68,7 @@ class DeleteFile extends Model
         $deleteFileData = [];
 
         $deleteFileData['path'] = $path;
-        $deleteFileData['delete_file_at'] = $timeDelete ?? Carbon::now();
+        $deleteFileData['delete_file_at'] = $timeDelete ?? Carbon::now()->add(1, 'day');
 
         if (!is_null($model)) {
             $deleteFileData['modelName'] = get_class($model);

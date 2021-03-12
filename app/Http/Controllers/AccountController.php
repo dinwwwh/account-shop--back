@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use App\Models\Game;
+use App\Models\DeleteFile;
 use App\Http\Requests\StoreAccountRequest;
 use App\Http\Requests\UpdateAccountRequest;
 use App\Http\Resources\AccountResource;
 use Str;
 use DB;
-use Illuminate\Support\Facades\Storage;
 
 class AccountController extends Controller
 {
@@ -187,6 +187,8 @@ class AccountController extends Controller
      */
     public function destroy(Account $account)
     {
+        return false; // don't allow destroy account 
+
         // DB transaction
         try {
             DB::beginTransaction();
