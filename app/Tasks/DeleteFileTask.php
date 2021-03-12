@@ -2,8 +2,8 @@
 
 namespace App\Tasks;
 
-use App\Model\DeleteFile;
-use Carbon;
+use App\Models\DeleteFile;
+use Illuminate\Support\Carbon;
 use Storage;
 use DB;
 
