@@ -44,12 +44,12 @@ class AccountInfo extends Model
 
         // Custom
         static::creating(function ($query) {
-            $query->creator_id = auth()->id;
-            $query->last_updated_editor_id = auth()->id;
+            $query->creator_id = auth()->user()->id;
+            $query->last_updated_editor_id = auth()->user()->id;
         });
 
         static::updating(function ($query) {
-            $query->last_updated_editor_id = auth()->id;
+            $query->last_updated_editor_id = auth()->user()->id;
         });
     }
 
