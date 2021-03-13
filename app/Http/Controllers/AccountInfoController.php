@@ -57,7 +57,7 @@ class AccountInfoController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $accountInfoData['rule_id'] = Rule::tryStore($request->rule)->id; // Save rule in database
+            $accountInfoData['rule_id'] = Rule::create($request->rule)->id; // Save rule in database
             $accountInfo = AccountInfo::create($accountInfoData); // Save account info to database
 
             // Relationship many-many with Models\Role
@@ -116,7 +116,7 @@ class AccountInfoController extends Controller
         try {
             DB::beginTransaction();
             $accountInfo->update($accountInfoData); // Save rule to database
-            $accountInfo->rule->tryUpdate($request->rule);
+            $accountInfo->rule->update($request->rule ?? []);
 
             // Relationship many-many with Models\Role
             $role = Role::all();

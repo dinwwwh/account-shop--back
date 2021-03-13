@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Str;
+use App\Models\Rule as RuleHelper;
 
 class Rule extends Model
 {
@@ -12,81 +12,90 @@ class Rule extends Model
 
     protected $fillable = [
         'placeholder',
-        'type',
         'datatype',
         'required',
         'multiple',
         'min',
-        'minlength',
         'max',
-        'maxlength',
         'values'
     ];
 
     protected $casts = [
         'placeholder' => 'string',
-        'type' => 'string',
         'datatype' => 'string',
         'required' => 'boolean',
         'multiple' => 'boolean',
         'min' => 'integer',
-        'minlength' => 'integer',
         'max' => 'integer',
-        'maxlength' => 'integer',
         'values' => 'array',
     ];
 
     /**
-     * Function uses to store rule to database
-     * Try to always store success regardless of initial value
+     * To set default
      *
-     * @param  mixed $data
-     * @return Models\Rule or null
+     * @return void
      */
-    static public function tryStore($data = [])
+    protected static function boot()
     {
-        if (!is_array($data)) {
-            $data = [];
-        }
+        parent::boot();
 
-        $rule = static::create([
-            'placeholder' => $data['placeholder'] ?? null,
-            'type' => $data['type'] ?? 'text',
-            'datatype' => $data['datatype'] ?? 'string',
-            'required' => $data['required'] ?? false,
-            'multiple' => $data['multiple'] ?? false,
-            'min' => $data['min'] ?? null,
-            'minlength' => $data['minlength'] ?? null,
-            'max' => $data['max'] ?? null,
-            'maxlength' => $data['maxlength'] ?? null,
-            'values' => $data['values'] ?? null,
-        ]); // Save rule to database
+        // Custom
+        static::creating(function ($query) {
+            $query->placeholder = $query->placeholder ?? null;
+            $query->datatype = $query->datatype ?? 'string';
+            $query->required = $query->required ?? false;
+            $query->multiple = $query->multiple ?? false;
+            $query->min = $query->min ?? null;
+            $query->max = $query->max ?? null;
+            $query->values = $query->values ?? null;
+        });
 
-        return $rule->refresh();
+        static::updating(function ($query) {
+            // 
+        });
     }
 
     /**
-     * Function uses to store rule to database
-     * Try to always store success regardless of initial value
+     * To make rule for validator
      *
-     * @param  mixed $data
-     * @return Models\Rule or null
+     * @return void
      */
-    public function tryUpdate($data = [])
+    public function make()
     {
-        if (!is_array($data)) {
-            $data = [];
+        $result = $this->datatype;
+
+        if (!empty($this->min)) {
+            $result .= '|min:' . $this->min;
         }
 
-        // Initial data
-        $ruleData = [];
-        foreach ($this->fillable as $key) {
-            if (!is_null($data[Str::camel($key)] ?? null)) {
-                $ruleData[$key] = $data[Str::camel($key)];
-            }
-        };
+        if (!empty($this->max)) {
+            $result .= '|max:' . $this->max;
+        }
 
-        $this->update($ruleData); // Save rule to database
-        return $this;
+        if (!empty($this->values)) {
+            $result .= '|' . RuleHelper::in($this->values);
+        }
+
+        if (!empty($this->multiple)) {
+            $parent = '';
+            if ($this->required) {
+                $parent .= 'required';
+            } else {
+                $parent .= 'nullable';
+            }
+
+            $result =  [
+                'parent' => $parent . '|array',
+                'children' => trim($result, '|'),
+            ];
+        } else {
+            if ($this->required) {
+                $result .= '|required';
+            } else {
+                $result .= '|nullable';
+            }
+        }
+
+        return $result;
     }
 }

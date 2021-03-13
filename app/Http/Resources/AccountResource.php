@@ -28,6 +28,7 @@ class AccountResource extends JsonResource
             // Relationship
             'images' => AccountImageResource::collection($this->images),
             'game' => new GameResource($this->game),
+            'game' => new AccountType($this->accountType),
             'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
             'creator' => new UserResource($this->creator),
             'censor' => new UserResource($this->censor),

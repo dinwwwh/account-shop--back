@@ -74,6 +74,16 @@ class AccountType extends Model
     }
 
     /**
+     * Relationship one-one with Models\AccountInfo
+     * 
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function accountInfos()
+    {
+        return $this->hasMany(AccountInfo::class);
+    }
+
+    /**
      * Include account infos model user must filling to create game
      * Relationship many-many with Models\Role
      *
@@ -86,6 +96,16 @@ class AccountType extends Model
             ->where('account_type_id', $this->id)
             ->get();
         return $result;
+    }
+
+    /**
+     * Relationship one-one with Models\AccountAction
+     * 
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function accountActions()
+    {
+        return $this->hasMany(AccountAction::class);
     }
 
     /**

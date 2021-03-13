@@ -3,11 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\AccountType;
 use App\Models\Game;
+use App\Models\Rule;
 use App\Models\DeleteFile;
 use App\Http\Requests\StoreAccountRequest;
 use App\Http\Requests\UpdateAccountRequest;
 use App\Http\Resources\AccountResource;
+use Validator;
+use App\Models\AccountInfo;
+use Illuminate\Validation\Rule as RuleHelper;
 use Str;
 use DB;
 
@@ -38,6 +43,19 @@ class AccountController extends Controller
             ], 404);
         }
 
+        $accountType = $game->currentRoleCanUsedAccountTypes()->find($request->accountTypeId);
+        if (is_null($accountType)) {
+            return response()->json([
+                'message' => 'ID kiểu tài khoản không hợp lệ.'
+            ], 404);
+        }
+
+        // Validate Account infos
+        $validate = Validator::make(
+            $request->accountInfos,
+            // $this->makeRuleAccountInfos($game->),
+        );
+
         // Initialize data
         $accountData = [];
         foreach ([
@@ -50,8 +68,7 @@ class AccountController extends Controller
 
         // Process other account info
         $accountData['game_id'] = $game->id;
-        $accountData['creator_id'] = auth()->user()->id;
-        $accountData['last_updated_editor_id'] = auth()->user()->id;
+        $accountData['account_type_id'] = $accountType->id;
 
         // Process advance account info
         $accountData['status'] = 0;
@@ -218,5 +235,34 @@ class AccountController extends Controller
         return response()->json([
             'message' => 'Xoá tài khoản thành công.',
         ], 200);
+    }
+
+    // -------------------------------------------------------
+    // -------------------------------------------------------
+    // -------------------------------------------------------
+    // -------------------------------------------------------
+
+    private function makeRuleAccountInfos($accountInfos)
+    {
+        $config = [
+            'key' => 'accountInfo',
+        ];
+
+        // Initial data
+        $rules = [];
+        foreach ($accountInfos as $accountInfo) {
+            // Get rule
+            $rule = $accountInfo->rule->make();
+
+            // Make rule for validate
+            if (is_array($rule)) { # If account info is a array
+                $rules[$config['key'] . '.' . $accountInfo->id] = $rule[0];
+                $rules[$config['key'] . '.' . $accountInfo->id . '.*'] = $rule[1];
+            } else {
+                $rules[$config['key'] . '.' . $accountInfo->id] = $rule;
+            }
+        }
+
+        return $rules;
     }
 }

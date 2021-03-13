@@ -19,6 +19,7 @@ class Account extends Model
         'description',
         'representative_image_path',
         'game_id',
+        'account_type_id',
         'censor_id',
         'last_updated_editor_id',
         'creator_id',
@@ -33,6 +34,7 @@ class Account extends Model
         'description' => 'string',
         'representative_image_path' => 'string',
         'game_id' => 'integer',
+        'account_type_id' => 'integer',
         'censor_id' => 'integer',
         'last_updated_editor_id' => 'integer',
         'creator_id' => 'integer',
@@ -70,13 +72,23 @@ class Account extends Model
     }
 
     /**
-     * Relationship one-many with Models\Game
+     * Relationship one-one with Models\Game
      * 
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function game()
     {
         return $this->belongsTo(Game::class);
+    }
+
+    /**
+     * Relationship one-one with Models\AccountType
+     *
+     * @return void
+     */
+    public function accountType()
+    {
+        return $this->belongsTo(AccountType::class);
     }
 
     /**

@@ -9,6 +9,5 @@ class Task
 {
     public function __construct()
     {
-        Rule::tryStore();
     }
 }

@@ -23,6 +23,7 @@ class GameResource extends JsonResource
             'publisherName' => $this->publisher_name,
             'imagePath' => Storage::url($this->image_path),
             'currentRoleCanUsedAccountTypes' => AccountTypeResource::collection($this->currentRoleCanUsedAccountTypes()),
+            'accountTypes' => AccountTypeResource::collection($this->accountTypes),
             'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
             'creator' => new UserResource($this->creator),
             'updatedAt' => $this->updated_at,

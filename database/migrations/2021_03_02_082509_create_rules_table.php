@@ -15,15 +15,12 @@ class CreateRulesTable extends Migration
     {
         Schema::create('rules', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
             $table->string('datatype');
             $table->string('placeholder')->nullable();
             $table->boolean('required')->default(0);
             $table->boolean('multiple')->default(0);
             $table->integer('min')->nullable();
-            $table->integer('minlength')->nullable();
             $table->integer('max')->nullable();
-            $table->integer('maxlength')->nullable();
             $table->json('values')->nullable();
             $table->timestamps();
         });

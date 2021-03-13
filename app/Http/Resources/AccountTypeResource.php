@@ -20,12 +20,18 @@ class AccountTypeResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
+
+            // Relationship
             'currentRoleNeedFillingAccountInfos'
             => AccountInfoResource::collection($this->currentRoleNeedFillingAccountInfos()),
+            'accountInfos' => AccountInfoResource::collection($this->accountInfos),
             'currentRoleNeedPerformingAccountActions'
             => AccountActionResource::collection($this->currentRoleNeedPerformingAccountActions()),
+            'accountActions' => AccountActionResource::collection($this->accountActions),
             'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
             'creator' => new UserResource($this->creator),
+
+            // Time
             'updatedAt' => $this->updated_at,
             'createdAt' => $this->created_at,
         ];
