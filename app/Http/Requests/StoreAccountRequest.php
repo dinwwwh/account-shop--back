@@ -33,6 +33,9 @@ class StoreAccountRequest extends FormRequest
             'images.*' => 'image',
             'gameId' => 'required|integer',
             'accountTypeId' => 'required|integer',
+
+            // Relationship
+            'accountInfos' => 'nullable|array',
         ];
     }
 }

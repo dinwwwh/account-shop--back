@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
-use App\Models\AccountType;
 use App\Models\Game;
 use App\Models\Rule;
 use App\Models\DeleteFile;
@@ -11,13 +10,18 @@ use App\Http\Requests\StoreAccountRequest;
 use App\Http\Requests\UpdateAccountRequest;
 use App\Http\Resources\AccountResource;
 use Validator;
-use App\Models\AccountInfo;
-use Illuminate\Validation\Rule as RuleHelper;
 use Str;
 use DB;
+use Storage;
+use App\Http\Requests\Request;
+use Illuminate\Validation\Rule as RuleHelper;
 
 class AccountController extends Controller
 {
+    private $config = [
+        'key' => 'id' #use prefix account actions and account infos
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -36,6 +40,7 @@ class AccountController extends Controller
      */
     public function store(StoreAccountRequest $request)
     {
+        // dd($request->accountInfos[4]);
         $game = Game::find($request->gameId);
         if (is_null($game)) {
             return response()->json([
@@ -52,9 +57,28 @@ class AccountController extends Controller
 
         // Validate Account infos
         $validate = Validator::make(
-            $request->accountInfos,
-            // $this->makeRuleAccountInfos($game->),
+            $request->accountInfos ?? [], # case accountInfo is null
+            $this->makeRuleAccountInfos($accountType->currentRoleNeedFillingAccountInfos()),
         );
+        if ($validate->fails()) {
+            return response()->json([
+                'message' => 'Thông tin tài khoản không hợp lệ.',
+                'errors' => ['accountInfos' => $validate->errors()],
+            ], 422);
+        }
+
+        // Validate Account actions
+        $validate = Validator::make(
+            $request->accountActions ?? [], # case accountInfo is null
+            $this->makeRuleAccountActions($accountType->currentRoleNeedPerformingAccountActions()),
+        );
+        if ($validate->fails()) {
+            return response()->json([
+                'message' => 'Một số hành động bắt buộc đối với tài khoản còn thiếu.',
+                'errors' => ['accountActions' => $validate->errors()],
+            ], 422);
+        }
+
 
         // Initialize data
         $accountData = [];
@@ -86,6 +110,29 @@ class AccountController extends Controller
 
             // Save account in database
             $account = Account::create($accountData);
+
+            // Pivot account infos
+            $syncInfos = [];
+            foreach ($request->accountInfos ?? [] as $key => $value) {
+                $id = (int)trim($key, $this->config['key']);
+
+                if ($accountType->currentRoleNeedFillingAccountInfos()->contains($id)) {
+                    $syncInfos[$id] =  ['value' => json_encode($value)];
+                }
+            }
+            $account->infos()->sync($syncInfos);
+
+
+            // Pivot account actions
+            $syncActions = [];
+            foreach ($request->accountActions ?? [] as $key => $value) {
+                $id = (int)trim($key, $this->config['key']);
+
+                if ($accountType->currentRoleNeedPerformingAccountActions()->contains($id)) {
+                    $syncActions[$id] = ['value' => json_encode($value)];
+                }
+            }
+            $account->actions()->sync($syncActions);
 
             // handle sub account images
             if ($request->hasFile('images')) {
@@ -244,10 +291,6 @@ class AccountController extends Controller
 
     private function makeRuleAccountInfos($accountInfos)
     {
-        $config = [
-            'key' => 'accountInfo',
-        ];
-
         // Initial data
         $rules = [];
         foreach ($accountInfos as $accountInfo) {
@@ -256,11 +299,27 @@ class AccountController extends Controller
 
             // Make rule for validate
             if (is_array($rule)) { # If account info is a array
-                $rules[$config['key'] . '.' . $accountInfo->id] = $rule[0];
-                $rules[$config['key'] . '.' . $accountInfo->id . '.*'] = $rule[1];
+                $rules[$this->config['key'] . $accountInfo->id] = $rule['parent'];
+                $rules[$this->config['key'] . $accountInfo->id . '.*'] = $rule['children'];
             } else {
-                $rules[$config['key'] . '.' . $accountInfo->id] = $rule;
+                $rules[$this->config['key'] . $accountInfo->id] = $rule;
             }
+        }
+
+        return $rules;
+    }
+
+    private function makeRuleAccountActions($accountActions)
+    {
+
+        // Initial data
+        $rules = [];
+        foreach ($accountActions as $accountAction) {
+            // Make rule
+            $rule = $accountAction->required
+                ? 'required|' . RuleHelper::in(true)
+                : 'nullable|boolean';
+            $rules[$this->config['key'] . $accountAction->id] = $rule;
         }
 
         return $rules;

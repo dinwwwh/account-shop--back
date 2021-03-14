@@ -39,6 +39,10 @@ class Account extends Model
         'last_updated_editor_id' => 'integer',
         'creator_id' => 'integer',
         'approved_at' => 'timestamp',
+
+        // Pivot can't work
+        // 'value' => 'array',
+        'account_actions.pivot.value' => 'array',
     ];
 
     /**
@@ -122,5 +126,17 @@ class Account extends Model
     public function censor()
     {
         return $this->belongsTo(User::class, 'censor_id');
+    }
+
+    public function infos()
+    {
+        return $this->belongsToMany(AccountInfo::class, 'account_account_info')
+            ->withPivot('value');
+    }
+
+    public function actions()
+    {
+        return $this->belongsToMany(AccountAction::class, 'account_account_action')
+            ->withPivot('value');
     }
 }
