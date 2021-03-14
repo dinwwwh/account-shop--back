@@ -17,7 +17,9 @@ use App\Http\Requests\Request;
 
 \Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
 Route::patch('test', function (Request $request) {
-    dd($request->all());
+    return response()->json([
+        2 => 1, 2, 3
+    ]);
 });
 
 /**

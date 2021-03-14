@@ -115,7 +115,6 @@ class AccountController extends Controller
             $syncInfos = [];
             foreach ($request->accountInfos ?? [] as $key => $value) {
                 $id = (int)trim($key, $this->config['key']);
-
                 if ($accountType->currentRoleNeedFillingAccountInfos()->contains($id)) {
                     $syncInfos[$id] =  ['value' => json_encode($value)];
                 }
@@ -127,7 +126,6 @@ class AccountController extends Controller
             $syncActions = [];
             foreach ($request->accountActions ?? [] as $key => $value) {
                 $id = (int)trim($key, $this->config['key']);
-
                 if ($accountType->currentRoleNeedPerformingAccountActions()->contains($id)) {
                     $syncActions[$id] = ['value' => json_encode($value)];
                 }

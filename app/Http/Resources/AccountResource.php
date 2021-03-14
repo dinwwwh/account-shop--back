@@ -33,6 +33,10 @@ class AccountResource extends JsonResource
             'creator' => new UserResource($this->creator),
             'censor' => new UserResource($this->censor),
 
+            // Relationship contain pivot
+            'infos' => AccountInfoResource::collection($this->infos->keyBy->id),
+            'actions' => AccountActionResource::collection($this->actions->keyBy->id),
+
             // Time
             'approvedAt' => $this->approved_at,
             'updatedAt' => $this->updated_at,

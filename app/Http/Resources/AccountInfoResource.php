@@ -7,6 +7,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class AccountInfoResource extends JsonResource
 {
     /**
+     * Indicates if the resource's collection keys should be preserved.
+     *
+     * @var bool
+     */
+    public $preserveKeys = true;
+
+    /**
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -25,6 +32,7 @@ class AccountInfoResource extends JsonResource
             'Creator' => new UserResource($this->Creator),
             'updatedAt' => $this->updated_at,
             'createdAt' => $this->created_at,
+            'pivot' => $this->pivot,
         ];
     }
 }
