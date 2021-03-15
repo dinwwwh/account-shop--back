@@ -42,13 +42,13 @@ class User extends Authenticatable
     ];
 
     /**
-     * Include info rule model
-     * Relationship one-many with rule model
+     * Include info roles model
+     * Relationship many-many with rule model
      * 
      * @return void
      */
-    public function role()
+    public function roles()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsToMany(Role::class, 'user_role');
     }
 }

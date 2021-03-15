@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 
 class AccountType extends Model
@@ -92,9 +93,18 @@ class AccountType extends Model
      */
     public function currentRoleNeedFillingAccountInfos()
     {
-        $result = auth()->user()->role->belongsToMany(AccountInfo::class, 'role_need_filling_account_info')
-            ->where('account_type_id', $this->id)
-            ->get();
+        $result = new Collection;
+        foreach (auth()->user()->roles as $role) {
+            $accountInfos = $role->belongsToMany(AccountInfo::class, 'role_need_filling_account_info')
+                ->where('account_type_id', $this->id)
+                ->get();
+
+            foreach ($accountInfos as $accountInfo) {
+                if (!$result->contains($accountInfo)) {
+                    $result->push($accountInfo);
+                }
+            }
+        }
         return $result;
     }
 
@@ -117,9 +127,18 @@ class AccountType extends Model
      */
     public function  currentRoleNeedPerformingAccountActions()
     {
-        $result = auth()->user()->role->belongsToMany(AccountAction::class, 'role_need_performing_account_action')
-            ->where('account_type_id', $this->id)
-            ->get();
+        $result = new Collection;
+        foreach (auth()->user()->roles as $role) {
+            $accountActions = $role->belongsToMany(AccountAction::class, 'role_need_performing_account_action')
+                ->where('account_type_id', $this->id)
+                ->get();
+
+            foreach ($accountActions as $accountAction) {
+                if (!$result->contains($accountAction)) {
+                    $result->push($accountAction);
+                }
+            }
+        }
         return $result;
     }
 

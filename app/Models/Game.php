@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 class Game extends Model
 {
@@ -103,11 +104,21 @@ class Game extends Model
      */
     public function currentRoleCanUsedAccountTypes()
     {
-        $result =  auth()->user()->role->belongsToMany(AccountType::class, 'role_can_used_account_type')
-            ->where('game_id', $this->id)
-            ->get();
-        if ($result->isEmpty()) {
-            $result = AccountType::where('game_id', $this->id)->get();
+        $result = new Collection;
+        foreach (auth()->user()->roles as $role) {
+            $accountTypes = $role->belongsToMany(AccountType::class, 'role_can_used_account_type')
+                ->where('game_id', $this->id)
+                ->get();
+            foreach ($accountTypes as $accountType) {
+                if (!$result->contains($accountType)) {
+                    $result->push($accountType);
+                }
+            }
+
+            # If It don't have any AccountType then treat all AccountType role can
+            if ($result->isEmpty()) {
+                return AccountType::where('game_id', $this->id)->get();
+            }
         }
         return $result;
     }

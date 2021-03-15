@@ -68,4 +68,15 @@ class Role extends Model
     {
         return $this->belongsTo(User::class, 'last_updated_editor_id');
     }
+
+    /**
+     * Relationship many-many with Models\Permission
+     * Include permissions user can do.
+     *
+     * @return void
+     */
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'role_permission');
+    }
 }
