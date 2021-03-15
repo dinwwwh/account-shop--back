@@ -88,7 +88,7 @@ class Account extends Model
     /**
      * Relationship one-one with Models\AccountType
      *
-     * @return void
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function accountType()
     {
@@ -99,7 +99,7 @@ class Account extends Model
      * Relationship one-one with User
      * Include infos of model creator
      *
-     * @return void
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function creator()
     {
@@ -110,7 +110,7 @@ class Account extends Model
      * Relationship one-one with User
      * Include infos of editor last updated model
      *
-     * @return void
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function lastUpdatedEditor()
     {
@@ -121,22 +121,42 @@ class Account extends Model
      * Relationship one-one with User
      * Include infos of censor model
      *
-     * @return void
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function censor()
     {
         return $this->belongsTo(User::class, 'censor_id');
     }
 
+    /**
+     * Relationship many-many with Models\AccountInfo
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
     public function infos()
     {
         return $this->belongsToMany(AccountInfo::class, 'account_account_info')
             ->withPivot('value');
     }
 
+    /**
+     * Relationship many-many with Models\AccountAction
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
     public function actions()
     {
         return $this->belongsToMany(AccountAction::class, 'account_account_action')
             ->withPivot('value');
+    }
+
+    /**
+     * Relationship one-one with Models\AccountType
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function type()
+    {
+        return $this->belongsTo(AccountType::class, 'account_type_id');
     }
 }

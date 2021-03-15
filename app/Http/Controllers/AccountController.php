@@ -192,6 +192,32 @@ class AccountController extends Controller
         // Process other account info
         $accountData['last_updated_editor_id'] = auth()->user()->id;
 
+        $accountType = $account->type;
+        // Validate Account infos
+        $validate = Validator::make(
+            $request->accountInfos ?? [], # case accountInfo is null
+            $this->makeRuleAccountInfos($accountType->currentRoleNeedFillingAccountInfos()),
+        );
+        if ($validate->fails()) {
+            return response()->json([
+                'message' => 'Thông tin tài khoản không hợp lệ.',
+                'errors' => ['accountInfos' => $validate->errors()],
+            ], 422);
+        }
+
+        // Validate Account actions
+        $validate = Validator::make(
+            $request->accountActions ?? [], # case accountInfo is null
+            $this->makeRuleAccountActions($accountType->currentRoleNeedPerformingAccountActions()),
+        );
+        if ($validate->fails()) {
+            return response()->json([
+                'message' => 'Một số hành động bắt buộc đối với tài khoản còn thiếu.',
+                'errors' => ['accountActions' => $validate->errors()],
+            ], 422);
+        }
+
+
         try {
             DB::beginTransaction();
             $imagePathsNeedDeleteWhenFail = [];
@@ -210,6 +236,27 @@ class AccountController extends Controller
 
             // Save account in database
             $account->update($accountData);
+
+            // Handle Pivot account infos
+            $syncInfos = [];
+            foreach ($request->accountInfos ?? [] as $key => $value) {
+                $id = (int)trim($key, $this->config['key']);
+                if ($accountType->currentRoleNeedFillingAccountInfos()->contains($id)) {
+                    $syncInfos[$id] =  ['value' => json_encode($value)];
+                }
+            }
+            $account->infos()->sync($syncInfos);
+
+
+            // Handle Pivot account actions
+            $syncActions = [];
+            foreach ($request->accountActions ?? [] as $key => $value) {
+                $id = (int)trim($key, $this->config['key']);
+                if ($accountType->currentRoleNeedPerformingAccountActions()->contains($id)) {
+                    $syncActions[$id] = ['value' => json_encode($value)];
+                }
+            }
+            $account->actions()->sync($syncActions);
 
             // handle sub account images
             if ($request->hasFile('images')) {
