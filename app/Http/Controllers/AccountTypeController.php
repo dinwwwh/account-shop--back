@@ -59,26 +59,20 @@ class AccountTypeController extends Controller
             DB::beginTransaction();
             $accountType = AccountType::create($accountTypeData); // Save rule to database
 
-            $role = Role::all();
+            $appRoles = Role::all();
             // Relationship many-many with Models\Role 1
-            $syncRoleIds = [];
-            foreach ($request->roleIdsCanUsedAccountType ?? [] as $roleId) {
-                if ($role->contains($roleId)) {
-                    $syncRoleIds[] = $roleId;
+            $syncRoles = [];
+            foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
+                if ($appRoles->contains($role['id'])) {
+                    $syncRoles[$role['id']] = ['status_code' => $role['statusCode']];
                 }
             }
-            $accountType->rolesCanUsedAccountType()->sync($syncRoleIds);
+            $accountType->rolesCanUsedAccountType()->sync($syncRoles);
 
-            // Relationship many-many with Models\Role 2
-            $syncRoleIds = [];
-            foreach ($request->roleIdsCanPostedAccountNoMustApproving ?? [] as $roleId) {
-                if ($role->contains($roleId)) {
-                    $syncRoleIds[] = $roleId;
-                }
-            }
-            $accountType->rolesCanPostedAccountNoMustApproving()->sync($syncRoleIds);
+            // When success
             DB::commit();
         } catch (\Throwable $th) {
+            return $th;
             DB::rollback();
             return response()->json([
                 'message' => 'Thêm mới kiểu tài khoản thất bại, vui lòng thừ lại sau.',
@@ -127,24 +121,17 @@ class AccountTypeController extends Controller
             DB::beginTransaction();
             $accountType->update($accountTypeData); // Save rule to database
 
-            $role = Role::all();
+            $roles = Role::all();
             // Relationship many-many with Models\Role 1
-            $syncRoleIds = [];
-            foreach ($request->roleIdsCanUsedAccountType ?? [] as $roleId) {
-                if ($role->contains($roleId)) {
-                    $syncRoleIds[] = $roleId;
+            $syncRoles = [];
+            foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
+                if ($roles->contains($role['id'])) {
+                    $syncRoles[$role['id']] = ['status_code' => $role['statusCode']];
                 }
             }
-            $accountType->rolesCanUsedAccountType()->sync($syncRoleIds);
+            $accountType->rolesCanUsedAccountType()->sync($syncRoles);
 
-            // Relationship many-many with Models\Role 2
-            $syncRoleIds = [];
-            foreach ($request->roleIdsCanPostedAccountNoMustApproving ?? [] as $roleId) {
-                if ($role->contains($roleId)) {
-                    $syncRoleIds[] = $roleId;
-                }
-            }
-            $accountType->rolesCanPostedAccountNoMustApproving()->sync($syncRoleIds);
+            // When success
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -168,7 +155,6 @@ class AccountTypeController extends Controller
         try {
             DB::beginTransaction();
             $accountType->rolesCanUsedAccountType()->sync([]); // Delete relationship with Models\Role
-            $accountType->rolesCanPostedAccountNoMustApproving()->sync([]); // Delete relationship with Models\Role
             $accountType->delete();
             DB::commit();
         } catch (\Throwable $th) {

@@ -91,4 +91,46 @@ class AccountPolicy
     {
         //
     }
+
+    /**
+     * Determine whether the 'account post user' can view sensitive information
+     *
+     * @param  mixed $code
+     * @return boolean
+     */
+    public function readSensitiveInfo($code)
+    {
+        // Declare initial data
+
+        switch ($code) {
+                // ---------------------------
+                // ACCOUNT WAITING APPROVE
+                // ---------------------------
+            case 0: # -
+                return false;
+                break;
+
+                // ---------------------------
+                // ACCOUNT SELLING
+                // ---------------------------
+            case 100: # status of account after approve
+                return false;
+                break;
+
+            case 110: # status of account not need approve
+                return true;
+                break;
+
+                // ---------------------------
+                // ACCOUNT BOUGHT
+                // ---------------------------
+            case 200:
+                return false;
+                break;
+
+            default:
+                return false;
+                break;
+        }
+    }
 }

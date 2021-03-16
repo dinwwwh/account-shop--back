@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\AccountType;
 use App\Models\Game;
 use App\Models\Rule;
 use App\Models\DeleteFile;
@@ -95,7 +96,7 @@ class AccountController extends Controller
         $accountData['account_type_id'] = $accountType->id;
 
         // Process advance account info
-        $accountData['status'] = 0;
+        $accountData['status_code'] = $this->getBestStatusCode($accountType);
 
         try {
             DB::beginTransaction();
@@ -368,5 +369,29 @@ class AccountController extends Controller
         }
 
         return $rules;
+    }
+
+    private function getBestStatusCode(AccountType $accountType)
+    {
+        // Get list role id
+        $userRoleIds = [];
+        foreach (auth()->user()->roles as $role) {
+            $userRoleIds[] = $role->id;
+        }
+
+        // Select all account's role mapping with user role
+        $accountRoles = $accountType
+            ->rolesCanUsedAccountType()
+            ->whereIn('id', $userRoleIds)
+            ->get();
+
+        // select best status code
+        $bestStatusCode = 0;
+        foreach ($accountRoles as $role) {
+            if ($role->pivot->status_code > $bestStatusCode) {
+                $bestStatusCode = $role->pivot->status_code;
+            }
+        }
+        return $bestStatusCode;
     }
 }

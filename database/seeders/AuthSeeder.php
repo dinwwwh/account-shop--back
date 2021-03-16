@@ -17,12 +17,12 @@ class AuthSeeder extends Seeder
      */
     public function run()
     {
-        User::firstOrCreate([
+        $admin = User::firstOrCreate([
             'email' => 'dinhdjj@gmail.com',
         ], [
             'name' => 'Lê Định',
             'password' => Hash::make('12345678'),
-            'role_id' => 1,
         ]);
+        $admin->roles()->sync(1); #connect relationship with role admin
     }
 }

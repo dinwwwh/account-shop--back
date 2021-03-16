@@ -18,7 +18,7 @@ class CreateAccountsTable extends Migration
             $table->string('username');
             $table->string('password');
             $table->integer('price');
-            $table->integer('status');
+            $table->integer('status_code');
             $table->string('description')->nullable();
             $table->string('representative_image_path')->nullable();
             $table->integer('game_id');

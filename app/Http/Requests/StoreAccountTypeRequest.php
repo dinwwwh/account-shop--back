@@ -27,10 +27,10 @@ class StoreAccountTypeRequest extends FormRequest
             'gameId' => 'required|integer',
             'name' => 'required|string',
             'description' => 'nullable|string',
-            'roleIdsCanUsedAccountType' => 'nullable|array',
-            'roleIdsCanUsedAccountType.*' => 'integer',
-            'roleIdsCanPostedAccountNoMustApproving' => 'nullable|array',
-            'roleIdsCanPostedAccountNoMustApproving.*' => 'integer',
+            'rolesCanUsedAccountType' => 'nullable|array',
+            'rolesCanUsedAccountType.*' => 'array',
+            'rolesCanUsedAccountType.*.id' => 'required|integer',
+            'rolesCanUsedAccountType.*.statusCode' => 'required|integer',
         ];
     }
 

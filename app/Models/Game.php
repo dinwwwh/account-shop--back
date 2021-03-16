@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
 class Game extends Model
 {
@@ -110,7 +110,7 @@ class Game extends Model
                 ->where('game_id', $this->id)
                 ->get();
             foreach ($accountTypes as $accountType) {
-                if (!$result->contains($accountType)) {
+                if (!$result->contains($accountType->id)) {
                     $result->push($accountType);
                 }
             }

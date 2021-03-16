@@ -5,8 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
-
+use Illuminate\Database\Eloquent\Collection;
 
 class AccountType extends Model
 {
@@ -100,7 +99,7 @@ class AccountType extends Model
                 ->get();
 
             foreach ($accountInfos as $accountInfo) {
-                if (!$result->contains($accountInfo)) {
+                if (!$result->contains($accountInfo->id)) {
                     $result->push($accountInfo);
                 }
             }
@@ -134,7 +133,7 @@ class AccountType extends Model
                 ->get();
 
             foreach ($accountActions as $accountAction) {
-                if (!$result->contains($accountAction)) {
+                if (!$result->contains($accountAction->id)) {
                     $result->push($accountAction);
                 }
             }
@@ -149,16 +148,7 @@ class AccountType extends Model
      */
     public function rolesCanUsedAccountType()
     {
-        return $this->belongsToMany(Role::class, 'role_can_used_account_type');
-    }
-
-    /**
-     * Relationship many-many with Models\Role
-     *
-     * @return Illuminate\Database\Eloquent\Factories\Relationship
-     */
-    public function rolesCanPostedAccountNoMustApproving()
-    {
-        return $this->belongsToMany(Role::class, 'role_can_posted_account_no_must_approving');
+        return $this->belongsToMany(Role::class, 'role_can_used_account_type')
+            ->withPivot('status_code');
     }
 }
