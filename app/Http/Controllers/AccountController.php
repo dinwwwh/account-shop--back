@@ -392,6 +392,7 @@ class AccountController extends Controller
                 $bestStatusCode = $role->pivot->status_code;
             }
         }
-        return $bestStatusCode;
+
+        return in_array($bestStatusCode, config('account.status_codes')) ? $bestStatusCode : 0;
     }
 }

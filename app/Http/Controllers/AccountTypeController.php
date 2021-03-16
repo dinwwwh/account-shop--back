@@ -40,6 +40,17 @@ class AccountTypeController extends Controller
             ], 404);
         }
 
+        // Validate status codes
+        foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
+            if (!in_array($role['statusCode'], config('account.status_codes'))) {
+                return response()->json([
+                    'message' => 'Status code of role[id: '
+                        . $role['id'] . ', statusCode: '
+                        . $role['statusCode'] . '] invalid.'
+                ], 422);
+            }
+        }
+
         // Initialize data
         $accountTypeData = [];
         foreach ([
@@ -64,7 +75,9 @@ class AccountTypeController extends Controller
             $syncRoles = [];
             foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
                 if ($appRoles->contains($role['id'])) {
-                    $syncRoles[$role['id']] = ['status_code' => $role['statusCode']];
+                    $syncRoles[$role['id']] = [
+                        'status_code' => $role['statusCode'],
+                    ];
                 }
             }
             $accountType->rolesCanUsedAccountType()->sync($syncRoles);
