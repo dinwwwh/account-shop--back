@@ -7,6 +7,7 @@ use App\Models\AccountType;
 use App\Models\Game;
 use App\Models\Rule;
 use App\Models\DeleteFile;
+use App\Models\User;
 use App\Http\Requests\StoreAccountRequest;
 use App\Http\Requests\UpdateAccountRequest;
 use App\Http\Resources\AccountResource;
@@ -22,6 +23,10 @@ use App\Hooks\UpdatingAccountHook;
 use App\Hooks\UpdatedAccountHook;
 use App\Hooks\ApprovingAccountHook;
 use App\Hooks\ApprovedAccountHook;
+use App\Hooks\BuyingAccountHook;
+use App\Hooks\BoughtAccountHook;
+use Carbon\Carbon;
+use Auth;
 
 class AccountController extends Controller
 {
@@ -176,7 +181,7 @@ class AccountController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Approve account to publish account to user buyable.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Account  $account
@@ -184,9 +189,31 @@ class AccountController extends Controller
      */
     public function approve(Request $request, Account $account)
     {
-        $account = ApprovingAccount::make($account);
-        $account = ApprovedAccount::make($account);
+        try {
+            ApprovingAccountHook::execute($account);
 
+            switch ($account->status_code) {
+                case 0:
+                    $account->status_code = 200;
+                    break;
+
+                default:
+                    return response()->json([
+                        'message' => 'Account don\'t allow approve.',
+                    ], 503);
+                    break;
+            }
+
+            // When success
+            $account->save();
+            ApprovedAccountHook::execute($account);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Lỗi nội bộ sever, vui lòng thử lại sau.',
+            ], 500);
+        }
+
+        // Done
         return new AccountResource($account);
     }
 
@@ -198,6 +225,72 @@ class AccountController extends Controller
      */
     public function show(Account $account)
     {
+        return new AccountResource($account);
+    }
+
+    /**
+     * User buy a account.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Account  $account
+     * @return \Illuminate\Http\Response
+     */
+    public function buy(Request $request, Account $account)
+    {
+        // Initial data
+        $bestPrice = $this->getBestPrice($request, $account);
+
+        // Check whether user can buy this account
+        if (Auth::user()->gold_coin <= $bestPrice) {
+            return response()->json([
+                'message' => 'Bạn không đủ số lượng đồng vàng để mua tài khoản này.',
+            ], 501);
+        }
+
+        try {
+            DB::beginTransaction();
+            BuyingAccountHook::execute($account);
+
+            // Do something before send account for user
+            switch ($account->status_code) {
+                case 200:
+                    # code...
+                    break;
+
+                case 210:
+                    // Change password
+                    break;
+
+                default:
+                    # code...
+                    break;
+            }
+
+            // Handle on user
+            {
+                Auth::user()->gold_coin -= $bestPrice;
+                Auth::user()->save();
+            }
+
+            // Handle on account
+            {
+                $account->buyer_id = auth()->user()->id;
+                $account->sold_at_price = $bestPrice;
+                $account->sold_at = Carbon::now();
+                $account->save();
+            }
+
+            // When Success
+            DB::commit();
+            BoughtAccountHook::execute($account);
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollback();
+            return response()->json([
+                'message' => 'Nỗi nội bộ sever, vui lòng thử lại sau',
+            ], 500);
+        }
+
         return new AccountResource($account);
     }
 
@@ -274,7 +367,7 @@ class AccountController extends Controller
             }
 
             // Save account in database
-            UpdatingAccountHook::execute($account); # Hook
+            UpdatingAccountHook::execute($account);
             $account->save();
 
             // Handle relationship
@@ -328,7 +421,7 @@ class AccountController extends Controller
             ], 500);
         }
 
-        UpdatedAccountHook::execute($account); # Hook
+        UpdatedAccountHook::execute($account);
         return new AccountResource($account);
     }
 
@@ -437,5 +530,10 @@ class AccountController extends Controller
         }
 
         return in_array($bestStatusCode, config('account.status_codes.list')) ? $bestStatusCode : config('account.status_codes.default');
+    }
+
+    private function getBestPrice(Request $request, Account $account)
+    {
+        return $account->price;
     }
 }

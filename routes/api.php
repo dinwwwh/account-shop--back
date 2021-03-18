@@ -152,9 +152,15 @@ Route::prefix('account')->group(function () {
     // Store
     Route::post('', [App\Http\Controllers\AccountController::class, 'store'])
         ->name('account.store');
+    // approve
+    Route::post('approve/{account}', [App\Http\Controllers\AccountController::class, 'approve'])
+        ->name('account.approve');
     // Show
     Route::get('{account}', [App\Http\Controllers\AccountController::class, 'show'])
         ->name('account.show');
+    // buy
+    Route::post('buy/{account}', [App\Http\Controllers\AccountController::class, 'buy'])
+        ->name('account.buy');
     // Update
     Route::put('{account}', [App\Http\Controllers\AccountController::class, 'update'])
         ->name('account.update');

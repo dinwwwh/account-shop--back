@@ -42,7 +42,7 @@ class AccountTypeController extends Controller
 
         // Validate status codes
         foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
-            if (!in_array($role['statusCode'], config('account.status_codes'))) {
+            if (!in_array($role['statusCode'], config('account.status_codes.list'))) {
                 return response()->json([
                     'message' => 'Status code of role[id: '
                         . $role['id'] . ', statusCode: '
