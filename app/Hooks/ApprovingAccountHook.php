@@ -4,9 +4,9 @@ namespace App\Hooks;
 
 use App\Models\Account;
 
-class BuyingAccount
+class ApprovingAccountHook
 {
-    static public function make(Account $account)
+    static public function  execute(Account $account)
     {
         // Handle exception status code
         if (!in_array($account->status_code, config('account.status_codes.list'))) {
@@ -22,7 +22,5 @@ class BuyingAccount
                 # code...
                 break;
         }
-
-        return $account;
     }
 }

@@ -16,12 +16,12 @@ use DB;
 use Storage;
 use App\Http\Requests\Request;
 use Illuminate\Validation\Rule as RuleHelper;
-use App\Hooks\StoringAccount;
-use App\Hooks\StoredAccount;
-use App\Hooks\UpdatingAccount;
-use App\Hooks\UpdatedAccount;
-use App\Hooks\ApprovingAccount;
-use App\Hooks\ApprovedAccount;
+use App\Hooks\StoringAccountHook;
+use App\Hooks\StoredAccountHook;
+use App\Hooks\UpdatingAccountHook;
+use App\Hooks\UpdatedAccountHook;
+use App\Hooks\ApprovingAccountHook;
+use App\Hooks\ApprovedAccountHook;
 
 class AccountController extends Controller
 {
@@ -122,7 +122,7 @@ class AccountController extends Controller
             }
 
             // Save account in database
-            $account = StoringAccount::make($account);
+            StoringAccountHook::execute($account); #Hook
             $account->save();
 
             // Handle relationship
@@ -171,7 +171,7 @@ class AccountController extends Controller
             ], 500);
         }
 
-        $account = StoredAccount::make($account);
+        StoredAccountHook::execute($account);
         return new AccountResource($account->refresh());
     }
 
@@ -214,6 +214,7 @@ class AccountController extends Controller
         // Validate account info and account action
         {
             $accountType = $account->type;
+
             // Validate Account infos
             $validate = Validator::make(
                 $request->accountInfos ?? [], # case accountInfo is null
@@ -273,7 +274,7 @@ class AccountController extends Controller
             }
 
             // Save account in database
-            $account = UpdatingAccount::make($account); # Hook
+            UpdatingAccountHook::execute($account); # Hook
             $account->save();
 
             // Handle relationship
@@ -309,8 +310,6 @@ class AccountController extends Controller
                 }
             }
 
-
-
             // When success
             foreach ($imagePathsNeedDeleteWhenSuccess as $imagePath) {
                 Storage::delete($imagePath);
@@ -329,7 +328,7 @@ class AccountController extends Controller
             ], 500);
         }
 
-        $account = UpdatedAccount::make($account); # Hook
+        UpdatedAccountHook::execute($account); # Hook
         return new AccountResource($account);
     }
 

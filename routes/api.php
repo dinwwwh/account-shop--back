@@ -17,7 +17,6 @@ use App\Http\Requests\Request;
 
 \Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
 Route::patch('test', function (Request $request) {
-    return new App\Http\Resources\AccountResource(null);
 });
 
 /**
