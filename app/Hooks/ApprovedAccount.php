@@ -1,13 +1,18 @@
 <?php
 
-namespace App\Actions;
+namespace App\Hooks;
 
 use App\Models\Account;
 
-class StoredAccount
+class ApprovedAccount
 {
     static public function  make(Account $account)
     {
+        // Handle exception status code
+        if (!in_array($account->status_code, config('account.status_codes.list'))) {
+            $account->status_code = config('account.status_codes.default');
+        }
+
         switch ($account->status_code) {
             case 'value':
                 # code...
@@ -17,5 +22,8 @@ class StoredAccount
                 # code...
                 break;
         }
+
+
+        return $account;
     }
 }
