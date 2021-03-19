@@ -110,7 +110,7 @@ class Game extends Model
                 ->where('game_id', $this->id)
                 ->get();
             foreach ($accountTypes as $accountType) {
-                if (!$result->contains($accountType->id)) {
+                if (!$result->contains($accountType)) {
                     $result->push($accountType);
                 }
             }

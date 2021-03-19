@@ -99,7 +99,7 @@ class AccountType extends Model
                 ->get();
 
             foreach ($accountInfos as $accountInfo) {
-                if (!$result->contains($accountInfo->id)) {
+                if (!$result->contains($accountInfo)) {
                     $result->push($accountInfo);
                 }
             }
@@ -133,7 +133,7 @@ class AccountType extends Model
                 ->get();
 
             foreach ($accountActions as $accountAction) {
-                if (!$result->contains($accountAction->id)) {
+                if (!$result->contains($accountAction)) {
                     $result->push($accountAction);
                 }
             }

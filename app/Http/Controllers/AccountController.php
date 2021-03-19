@@ -521,15 +521,33 @@ class AccountController extends Controller
             ->whereIn('id', $userRoleIds)
             ->get();
 
-        // select best status code
-        $bestStatusCode = 0;
-        foreach ($accountRoles as $role) {
-            if ($role->pivot->status_code > $bestStatusCode) {
-                $bestStatusCode = $role->pivot->status_code;
+        // Fill invalid status code
+        foreach ($accountRoles as $key => $role) {
+            if (!key_exists($role->pivot->status_code, config('account.status_codes'))) {
+                $accountRoles->forget($key);
             }
         }
 
-        return key_exists($bestStatusCode, config('account.status_codes')) ? $bestStatusCode : config('account.default_status_codes');
+        // select and set first status code
+        $firstStatusCode = $accountRoles->first()->pivot->status_code;
+        $bestStatusCode = [
+            'code' => $firstStatusCode,
+            'priority' => config('account.status_codes')[$firstStatusCode]['priority']
+        ];
+
+        // Find the best status code
+        foreach ($accountRoles as $role) {
+            $statusCode = [
+                'code' => $role->pivot->status_code,
+                'priority' => config('account.status_codes')[$role->pivot->status_code]['priority']
+            ];
+
+            if ($statusCode['priority'] > $bestStatusCode['priority']) {
+                $bestStatusCode = $statusCode;
+            }
+        }
+
+        return $bestStatusCode['code'];
     }
 
     private function getBestPrice(Request $request, Account $account)

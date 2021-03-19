@@ -20,7 +20,8 @@ return [
         0 => [
             'manager' => makePower(true),
             'buyer' => makePower(true),
-            'creator' => makePower(true)
+            'creator' => makePower(true),
+            'priority' => 100,
         ],
 
         /*
@@ -28,7 +29,14 @@ return [
         | Transitioning account from 'waiting approve' to 'buying'
         |--------------------------------------------------------------------------
         */
-        200 => [],
+        200 => [
+            [
+                'manager' => makePower(false),
+                'buyer' => makePower(false),
+                'creator' => makePower(false),
+                'priority' => -1,
+            ],
+        ],
 
 
         /*
@@ -41,7 +49,8 @@ return [
         440 => [
             'manager' => makePower(true),
             'buyer' => makePower(true),
-            'creator' => makePower(true)
+            'creator' => makePower(true),
+            'priority' => 200,
         ],
 
         // Account info are safe
@@ -49,7 +58,8 @@ return [
         480 => [
             'manager' => makePower(true),
             'buyer' => makePower(true),
-            'creator' => makePower(true)
+            'creator' => makePower(true),
+            'priority' => 300,
         ],
 
 
@@ -58,7 +68,12 @@ return [
         | Transitioning account from 'buying' to 'bought'
         |--------------------------------------------------------------------------
         */
-        600 => [],
+        600 => [
+            'manager' => makePower(false),
+            'buyer' => makePower(false),
+            'creator' => makePower(false),
+            'priority' => -1,
+        ],
 
 
         /*
@@ -69,7 +84,8 @@ return [
         880 => [
             'manager' => makePower(true),
             'buyer' => makePower(true),
-            'creator' => makePower(true)
+            'creator' => makePower(true),
+            'priority' => -1,
         ],
     ],
     'default_status_code' => 0,
