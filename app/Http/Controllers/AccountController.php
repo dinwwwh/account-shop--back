@@ -254,7 +254,7 @@ class AccountController extends Controller
             // Do something before send account for user
             switch ($account->status_code) {
                 case 200:
-                    # code...
+                    $account->status_code = 300;
                     break;
 
                 case 210:
@@ -529,7 +529,7 @@ class AccountController extends Controller
             }
         }
 
-        return in_array($bestStatusCode, config('account.status_codes.list')) ? $bestStatusCode : config('account.status_codes.default');
+        return key_exists($bestStatusCode, config('account.status_codes')) ? $bestStatusCode : config('account.default_status_codes');
     }
 
     private function getBestPrice(Request $request, Account $account)

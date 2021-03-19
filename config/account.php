@@ -1,38 +1,76 @@
 <?php
 
+function makePower(...$values)
+{
+    return [
+        'can_read_sensitive_info' => $values[0] ?? false,
+        'can_update_sensitive_info' => $values[0] ?? false,
+    ];
+}
+
 return [
     'status_codes' => [
-        'list' => [
-            /*
-            |--------------------------------------------------------------------------
-            | Account waiting approve
-            |--------------------------------------------------------------------------
-            |
-            | 
-            |
-            */
-            0, #
-
-            /*
-            |--------------------------------------------------------------------------
-            | Account buying
-            |--------------------------------------------------------------------------
-            |
-            | 
-            |
-            */
-            100, #
-
-            /*
-            |--------------------------------------------------------------------------
-            | Account bought
-            |--------------------------------------------------------------------------
-            |
-            | 
-            |
-            */
-            200, #
+        /*
+        |--------------------------------------------------------------------------
+        | Account waiting approve
+        |--------------------------------------------------------------------------
+        */
+        // Account info are dangerous
+        // Creator and manage can read sensitive info of account.
+        0 => [
+            'manager' => makePower(true),
+            'buyer' => makePower(true),
+            'creator' => makePower(true)
         ],
-        'default' => 0,
+
+        /*
+        |--------------------------------------------------------------------------
+        | Transitioning account from 'waiting approve' to 'buying'
+        |--------------------------------------------------------------------------
+        */
+        200 => [],
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Account buying
+        |--------------------------------------------------------------------------
+        */
+        // Account info are dangerous
+        // Creator and manager can read sensitive info of account.
+        440 => [
+            'manager' => makePower(true),
+            'buyer' => makePower(true),
+            'creator' => makePower(true)
+        ],
+
+        // Account info are safe
+        // Only manager can read info
+        480 => [
+            'manager' => makePower(true),
+            'buyer' => makePower(true),
+            'creator' => makePower(true)
+        ],
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Transitioning account from 'buying' to 'bought'
+        |--------------------------------------------------------------------------
+        */
+        600 => [],
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Account bought
+        |--------------------------------------------------------------------------
+        */
+        880 => [
+            'manager' => makePower(true),
+            'buyer' => makePower(true),
+            'creator' => makePower(true)
+        ],
     ],
+    'default_status_code' => 0,
 ];
