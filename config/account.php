@@ -30,12 +30,10 @@ return [
         |--------------------------------------------------------------------------
         */
         200 => [
-            [
-                'manager' => makePower(false),
-                'buyer' => makePower(false),
-                'creator' => makePower(false),
-                'priority' => -1,
-            ],
+            'manager' => makePower(false),
+            'buyer' => makePower(false),
+            'creator' => makePower(false),
+            'priority' => -1,
         ],
 
 
