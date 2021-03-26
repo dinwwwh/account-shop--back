@@ -1,12 +1,6 @@
 <?php
 
-function makePower(...$values)
-{
-    return [
-        'can_read_sensitive_info' => $values[0] ?? false,
-        'can_update_sensitive_info' => $values[0] ?? false,
-    ];
-}
+use App\Helpers\AccountConfigHelper;
 
 return [
     'status_codes' => [
@@ -18,9 +12,9 @@ return [
         // Account info are dangerous
         // Creator and manage can read sensitive info of account.
         0 => [
-            'manager' => makePower(true),
-            'buyer' => makePower(true),
-            'creator' => makePower(true),
+            'manager' => AccountConfigHelper::makePower(true),
+            'buyer' => AccountConfigHelper::makePower(true),
+            'creator' => AccountConfigHelper::makePower(true),
             'priority' => 100,
         ],
 
@@ -30,9 +24,9 @@ return [
         |--------------------------------------------------------------------------
         */
         200 => [
-            'manager' => makePower(false),
-            'buyer' => makePower(false),
-            'creator' => makePower(false),
+            'manager' => AccountConfigHelper::makePower(false),
+            'buyer' => AccountConfigHelper::makePower(false),
+            'creator' => AccountConfigHelper::makePower(false),
             'priority' => -1,
         ],
 
@@ -45,18 +39,18 @@ return [
         // Account info are dangerous
         // Creator and manager can read sensitive info of account.
         440 => [
-            'manager' => makePower(true),
-            'buyer' => makePower(true),
-            'creator' => makePower(true),
+            'manager' => AccountConfigHelper::makePower(true),
+            'buyer' => AccountConfigHelper::makePower(true),
+            'creator' => AccountConfigHelper::makePower(true),
             'priority' => 200,
         ],
 
         // Account info are safe
         // Only manager can read info
         480 => [
-            'manager' => makePower(true),
-            'buyer' => makePower(true),
-            'creator' => makePower(true),
+            'manager' => AccountConfigHelper::makePower(true),
+            'buyer' => AccountConfigHelper::makePower(true),
+            'creator' => AccountConfigHelper::makePower(true),
             'priority' => 300,
         ],
 
@@ -67,9 +61,9 @@ return [
         |--------------------------------------------------------------------------
         */
         600 => [
-            'manager' => makePower(false),
-            'buyer' => makePower(false),
-            'creator' => makePower(false),
+            'manager' => AccountConfigHelper::makePower(false),
+            'buyer' => AccountConfigHelper::makePower(false),
+            'creator' => AccountConfigHelper::makePower(false),
             'priority' => -1,
         ],
 
@@ -80,9 +74,9 @@ return [
         |--------------------------------------------------------------------------
         */
         880 => [
-            'manager' => makePower(true),
-            'buyer' => makePower(true),
-            'creator' => makePower(true),
+            'manager' => AccountConfigHelper::makePower(true),
+            'buyer' => AccountConfigHelper::makePower(true),
+            'creator' => AccountConfigHelper::makePower(true),
             'priority' => -1,
         ],
     ],

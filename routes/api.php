@@ -15,7 +15,7 @@ use App\Http\Requests\Request;
 |
 */
 
-\Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
+// \Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
 Route::post('test', function (Request $request) {
 });
 
