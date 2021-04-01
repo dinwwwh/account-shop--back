@@ -5,72 +5,68 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Http\UploadedFile;
-use Storage;
 use App\Models\Game;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class GameTest extends TestCase
 {
-    /**
-     * test route 'game.store'
-     *
-     * @return void
-     */
-    public function testStore()
+    public function testCreate()
     {
-        $file = UploadedFile::fake()->image('avatar.jpg');
-        $gameData = [
-            'name' => 'goi rong online',
-            'image' => $file,
-            'publisherName' => 'sohagame',
+        // case: error validate
+        $res = $this->json('post', route('game.store'));
+        $res->assertStatus(403);
+
+        // Case: success
+        $data = [
+            'publisherName' => Str::random(10),
+            'name' => Str::random(10),
+            'image' => UploadedFile::fake()->image('avatar.jpg'),
         ];
+        $res = $this->json('post', route('game.store'), $data);
 
-        $response = $this->json('POST', route('game.store'), $gameData);
-
-        $response->assertStatus(201);
-        $response->assertJson(
-            fn ($json) => $json->has(
-                'data',
-                fn ($json) => $json
-                    ->where('name', $gameData['name'])
-                    ->where('publisherName', $gameData['publisherName'])
-                    ->etc()
-            )
+        // Asserts
+        $res->assertStatus(201);
+        $res->assertJson(
+            fn ($json) => $json
+                ->where('publisherName', $data['publisherName'])
+                ->etc()
         );
-
-        $this->game = Game::find($response->getData()->data->id);
     }
 
-    /**
-     * test route 'game.index'
-     *
-     * @return void
-     */
-    public function testIndex()
-    {
-        $response = $this->json('GET', route('game.index'));
-
-        $response->assertStatus(200);
-        $response->assertJson(fn ($json) => $json->has('data'));
-    }
-
-    /**
-     * test route 'game.show'
-     *
-     * @return void
-     */
-    public function testShow()
+    public function testRead()
     {
         $game = Game::first();
+        $res = $this->json('get', route('game.show', ['game' => $game]));
+        $res->assertStatus(200);
+        $res->assertJson(
+            fn ($json) => $json
+                ->where('id', $game->id)
+                ->where('name', $game->name)
+                ->etc()
+        );
+    }
 
-        // Case success
-        $response = $this->json('GET', route('game.show', ['game' => $game]));
-        $response->assertStatus(200);
+    public function testUpdate()
+    {
+        $game = Game::first();
+        $data = [
+            'publisherName' => Str::random(10),
+            'name' => Str::random(10),
+            // 'image' => UploadedFile::fake()->image('image_one.jpg'),
+        ];
+        $res = $this->json('put', route('game.update', ['game' => $game]), $data);
+        $res->assertStatus(201);
+        $res->assertJson(
+            fn ($json) => $json
+                ->where('publisherName', $data['publisherName'])
+                ->etc()
+        );
+    }
 
-        // Case game id not found
-        $response = $this->json('GET', route('game.show', ['game' => -1]));
-        $response->assertStatus(404);
+    public function testDelete()
+    {
     }
 }

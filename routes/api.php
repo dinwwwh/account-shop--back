@@ -15,8 +15,11 @@ use App\Http\Requests\Request;
 |
 */
 
-// \Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
-Route::post('test', function (Request $request) {
+\Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
+Route::get('test', function (Request $request) {
+    $permission = \App\Models\Permission::first();
+
+    auth()->user()->permissions()->attach($permission);
 });
 
 /**
@@ -117,7 +120,7 @@ Route::prefix('account-action')->group(function () {
 
 /**
  * --------------------------------
- * FEATURE ACCOUNT ACTION
+ * FEATURE GAME
  * --------------------------------
  * Contain infos of account type.
  */
@@ -127,15 +130,18 @@ Route::prefix('game')->group(function () {
         ->name('game.index');
     // Store
     Route::post('', [App\Http\Controllers\GameController::class, 'store'])
+        ->middleware('can:create,App\Models\Game')
         ->name('game.store');
     // Show
     Route::get('{game}', [App\Http\Controllers\GameController::class, 'show'])
         ->name('game.show');
     // Update
     Route::put('{game}', [App\Http\Controllers\GameController::class, 'update'])
+        ->middleware('can:update,game')
         ->name('game.update');
     // Destroy
     Route::delete('{game}', [App\Http\Controllers\GameController::class, 'destroy'])
+        ->middleware('can:delete,game')
         ->name('game.destroy');
 });
 
