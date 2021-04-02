@@ -4,7 +4,6 @@ namespace App\ModelTraits;
 
 use App\Models\Permission;
 use App\Models\Role;
-use Illuminate\Database\Eloquent\Collection;
 
 trait ManagePermissionInUser
 {

@@ -12,6 +12,11 @@ class Role extends Model
 {
     use HasFactory, SoftDeletes, ManagePermissionInRole;
 
+
+    protected $primaryKey = 'key';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'name',
         'description',

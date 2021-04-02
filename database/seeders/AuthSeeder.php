@@ -23,6 +23,6 @@ class AuthSeeder extends Seeder
             'name' => 'Lê Định',
             'password' => Hash::make('12345678'),
         ]);
-        $admin->roles()->sync(1); #connect relationship with role admin
+        $admin->assignRole('administrator');
     }
 }
