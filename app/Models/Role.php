@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\ModelTraits\RoleModelTrait;
+use App\ModelTraits\ManagePermissionInRole;
 
 
 class Role extends Model
 {
-    use HasFactory, SoftDeletes, RoleModelTrait;
+    use HasFactory, SoftDeletes, ManagePermissionInRole;
 
     protected $fillable = [
         'name',
