@@ -17,9 +17,7 @@ use App\Http\Requests\Request;
 
 \Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
 Route::get('test', function (Request $request) {
-    $permission = \App\Models\Permission::first();
-
-    auth()->user()->permissions()->attach($permission);
+    dd(auth()->user()->hasAllPermissions(['create_account', 'create_account']));
 });
 
 /**
