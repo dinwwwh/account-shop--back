@@ -34,6 +34,17 @@ class GamePolicy
     }
 
     /**
+     * Determine whether the user can manage the model.
+     *
+     * @param  \App\Models\User  $user
+     * @return mixed
+     */
+    public function manage(User $user)
+    {
+        return $user->hasPermissionTo('manage_game');
+    }
+
+    /**
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
@@ -41,7 +52,7 @@ class GamePolicy
      */
     public function create(User $user)
     {
-        return true;
+        return $user->hasPermissionTo('create_game');
     }
 
     /**
@@ -53,7 +64,8 @@ class GamePolicy
      */
     public function update(User $user, Game $game)
     {
-        return true;
+        return $user->hasPermissionTo('update_game')
+            && ($this->manage($user) || $game->creator->is($user));
     }
 
     /**
@@ -65,7 +77,8 @@ class GamePolicy
      */
     public function delete(User $user, Game $game)
     {
-        return false;
+        return $user->hasPermissionTo('delete_game')
+            && ($this->manage($user) || $game->creator->is($user));
     }
 
     /**
