@@ -3,7 +3,8 @@
 namespace App\ModelTraits;
 
 use App\Models\Permission;
-use App\Models\Role;
+use App\Helpers\ParameterHelper;
+use App\Helpers\PermissionHelper;
 
 trait ManagePermissionInUser
 {
@@ -38,9 +39,7 @@ trait ManagePermissionInUser
      */
     public function hasAnyPermission(...$permissions)
     {
-        if (is_array($permissions[0])) {
-            $permissions = $permissions[0];
-        }
+        $permissions = ParameterHelper::firstOrAll($permissions);
 
         foreach ($permissions as $permission) {
             if ($this->hasPermissionTo($permission)) {
@@ -58,9 +57,7 @@ trait ManagePermissionInUser
      */
     public function hasAllPermissions(...$permissions)
     {
-        if (is_array($permissions[0])) {
-            $permissions = $permissions[0];
-        }
+        $permissions = ParameterHelper::firstOrAll($permissions);
 
         foreach ($permissions as $permission) {
             if (!$this->hasPermissionTo($permission)) {
@@ -78,9 +75,7 @@ trait ManagePermissionInUser
      */
     public function givePermissionTo(...$permissions)
     {
-        if (is_array($permissions[0])) {
-            $permissions = $permissions[0];
-        }
+        $permissions = ParameterHelper::firstOrAll($permissions);
 
         foreach ($permissions as $permission) {
             $this->_attachPermission($permission);
@@ -96,9 +91,7 @@ trait ManagePermissionInUser
      */
     public function revokePermissionTo(...$permissions)
     {
-        if (is_array($permissions[0])) {
-            $permissions = $permissions[0];
-        }
+        $permissions = ParameterHelper::firstOrAll($permissions);
 
         foreach ($permissions as $permission) {
             $this->_detachPermission($permission);
@@ -145,13 +138,7 @@ trait ManagePermissionInUser
      */
     public function _attachPermission($permission)
     {
-        if (!($permission instanceof Permission)) {
-            if (is_string($permission) || is_numeric($permission)) {
-                $permission = Permission::find($permission);
-            } else {
-                return false;
-            }
-        }
+        $permission = PermissionHelper::mustBePermission($permission);
 
         if (is_null($permission)) {
             return false;
@@ -172,13 +159,7 @@ trait ManagePermissionInUser
      */
     protected function _detachPermission($permission)
     {
-        if (!($permission instanceof Permission)) {
-            if (is_string($permission) || is_numeric($permission)) {
-                $permission = Permission::find($permission);
-            } else {
-                return false;
-            }
-        }
+        $permission = PermissionHelper::mustBePermission($permission);
 
         if (is_null($permission)) {
             return true;
@@ -199,25 +180,9 @@ trait ManagePermissionInUser
      */
     protected function _syncPermissions(...$permissions)
     {
-        if (is_array($permissions[0])) {
-            $permissions = $permissions[0];
-        }
+        $permissions = ParameterHelper::firstOrAll($permissions);
 
-        foreach ($permissions as $key => $per) {
-            if (!($per instanceof Permission)) {
-                if (is_string($per) || is_numeric($per)) {
-                    $per = Permission::find($per);
-                } else {
-                    break;
-                }
-            }
-
-            if (is_null($per)) {
-                break;
-            } else {
-                $permissions[$key] = $per;
-            }
-        }
+        $permissions = PermissionHelper::mustBeManyPermissions($permissions);
 
         return $this->permissions()->sync($permissions);
     }

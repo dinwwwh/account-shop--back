@@ -62,11 +62,8 @@ class RoleSeeder extends Seeder
 
     public function giveAllPermissionsForAdminRole()
     {
-        $permissions = [];
-        foreach (Permission::all() as $permission) {
-            $permissions[] = $permission;
-        }
+        $permissions = Permission::all();
         $adminRole = Role::find('administrator');
-        $adminRole->givePermissionTo($permissions);
+        $adminRole->syncPermissions($permissions);
     }
 }

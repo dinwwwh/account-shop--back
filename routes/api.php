@@ -15,9 +15,16 @@ use App\Http\Requests\Request;
 |
 */
 
-\Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
+use App\Models\Role;
+use App\Models\Permission;
+
+// \Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
 Route::get('test', function (Request $request) {
-    dd(\App\Models\Role::all()->getArrayableItems());
+    $permissions = Permission::all();
+    $adminRole = Role::find('administrator');
+
+    // dd($permissions, $adminRole);
+    dd($adminRole->syncPermissions($permissions));
 });
 
 /**

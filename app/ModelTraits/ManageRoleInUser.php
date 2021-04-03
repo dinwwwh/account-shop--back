@@ -4,6 +4,8 @@ namespace App\ModelTraits;
 
 use App\Models\Role;
 use App\Models\Permission;
+use App\Helpers\ParameterHelper;
+use App\Helpers\RoleHelper;
 
 trait ManageRoleInUser
 {
@@ -14,9 +16,7 @@ trait ManageRoleInUser
      */
     public function assignRole(...$roles)
     {
-        if (is_array($roles[0])) {
-            $roles = $roles[0];
-        }
+        $roles = ParameterHelper::firstOrAll($roles);
 
         foreach ($roles as $role) {
             $this->_attachRole($role);
@@ -32,9 +32,7 @@ trait ManageRoleInUser
      */
     public function removeRole(...$roles)
     {
-        if (is_array($roles[0])) {
-            $roles = $roles[0];
-        }
+        $roles = ParameterHelper::firstOrAll($roles);
 
         foreach ($roles as $role) {
             $this->_detachRole($role);
@@ -60,13 +58,7 @@ trait ManageRoleInUser
      */
     public function _attachRole($role)
     {
-        if (!($role instanceof Role)) {
-            if (is_string($role) || is_numeric($role)) {
-                $role = Permission::find($role);
-            } else {
-                return false;
-            }
-        }
+        $role = RoleHelper::mustBeRole($role);
 
         if (is_null($role)) {
             return false;
@@ -87,13 +79,7 @@ trait ManageRoleInUser
      */
     public function _detachRole($role)
     {
-        if (!($role instanceof Role)) {
-            if (is_string($role) || is_numeric($role)) {
-                $role = Permission::find($role);
-            } else {
-                return true;
-            }
-        }
+        $role = RoleHelper::mustBeRole($role);
 
         if (is_null($role)) {
             return true;
@@ -114,25 +100,9 @@ trait ManageRoleInUser
      */
     protected function _syncRoles(...$roles)
     {
-        if (is_array($roles[0])) {
-            $roles = $roles[0];
-        }
+        $roles = ParameterHelper::firstOrAll($roles);
 
-        foreach ($roles as $key => $role) {
-            if (!($role instanceof Role)) {
-                if (is_string($role) || is_numeric($role)) {
-                    $role = Role::find($role);
-                } else {
-                    break;
-                }
-            }
-
-            if (is_null($role)) {
-                break;
-            } else {
-                $roles[$key] = $role;
-            }
-        }
+        $roles = RoleHelper::mustBeManyRoles($roles);
 
         return $this->roles()->sync($roles);
     }
