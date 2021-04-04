@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Str;
 
 use Illuminate\Database\Seeder;
 
@@ -24,5 +24,12 @@ class AuthSeeder extends Seeder
             'password' => Hash::make('12345678'),
         ]);
         $admin->assignRole('administrator');
+
+        $tester = User::firstOrCreate([
+            'email' => 'dinhdjj.test@gmail.com',
+        ], [
+            'name' => 'Lê Định Tester',
+            'password' => Hash::make(Str::random(10)),
+        ]);
     }
 }
