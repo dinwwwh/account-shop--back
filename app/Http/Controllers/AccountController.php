@@ -62,7 +62,7 @@ class AccountController extends Controller
                 ], 404);
             }
 
-            $accountType = $game->currentRoleCanUsedAccountTypes()->find($request->accountTypeId);
+            $accountType = $game->getAccountTypesThatCurrentUserCanUse()->find($request->accountTypeId);
             if (is_null($accountType)) {
                 return response()->json([
                     'message' => 'ID kiểu tài khoản không hợp lệ.'
@@ -433,7 +433,7 @@ class AccountController extends Controller
      */
     public function destroy(Account $account)
     {
-        return false; // don't allow destroy account 
+        return false; // don't allow destroy account
 
         // DB transaction
         try {
@@ -510,15 +510,15 @@ class AccountController extends Controller
     private function getBestStatusCode(AccountType $accountType)
     {
         // Get list role id
-        $userRoleIds = [];
+        $userRoleKeys = [];
         foreach (auth()->user()->roles as $role) {
-            $userRoleIds[] = $role->id;
+            $userRoleKeys[] = $role->id;
         }
 
         // Select all account's role mapping with user role
         $accountRoles = $accountType
             ->rolesCanUsedAccountType()
-            ->whereIn('id', $userRoleIds)
+            ->whereIn('id', $userRoleKeys)
             ->get();
 
         // Fill invalid status code

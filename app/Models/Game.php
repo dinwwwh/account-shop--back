@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Collection;
+use App\ModelTraits\ManageAccountTypeInGame;
 
 class Game extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, ManageAccountTypeInGame;
 
     protected $fillable = [
         'order', // nullable
@@ -92,39 +92,5 @@ class Game extends Model
     public function accountTypes()
     {
         return $this->hasMany(AccountType::class);
-    }
-
-    /**
-     * Include infos account types
-     * Relationship many-many with account type Models\Role
-     * 1. Contain account types user can use it for create account
-     * 2. ...
-     * If $result is empty then return all account type
-     * @return void
-     */
-    public function currentRoleCanUsedAccountTypes()
-    {
-        $result = new Collection;
-
-        if (!auth()->check()) {
-            return $result;
-        }
-
-        foreach (auth()->user()->roles as $role) {
-            $accountTypes = $role->belongsToMany(AccountType::class, 'role_can_used_account_type')
-                ->where('game_id', $this->id)
-                ->get();
-            foreach ($accountTypes as $accountType) {
-                if (!$result->contains($accountType)) {
-                    $result->push($accountType);
-                }
-            }
-
-            # If It don't have any AccountType then treat all AccountType role can
-            if ($result->isEmpty()) {
-                return AccountType::where('game_id', $this->id)->get();
-            }
-        }
-        return $result;
     }
 }

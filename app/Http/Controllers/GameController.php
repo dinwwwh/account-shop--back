@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Game;
 use App\Models\Role;
 use App\Http\Resources\GameResource;
-use Str;
-use DB;
-use Storage;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Requests\UpdateGameRequest;
 
@@ -54,13 +54,13 @@ class GameController extends Controller
 
             // Relationship many-many with Models\Role
             $role = Role::all();
-            $syncRoleIds = [];
-            foreach ($request->roleIdsCanCreatedGame ?? [] as $roleId) {
-                if ($role->contains($roleId)) {
-                    $syncRoleIds[] = $roleId;
+            $syncRoleKeys = [];
+            foreach ($request->roleKeysCanCreatedGame ?? [] as $roleKey) {
+                if ($role->contains($roleKey)) {
+                    $syncRoleKeys[] = $roleKey;
                 }
             }
-            $game->rolesCanCreatedGame()->sync($syncRoleIds);
+            $game->rolesCanCreatedGame()->sync($syncRoleKeys);
             DB::commit();
         } catch (\Throwable $th) {
             return $th;
@@ -122,13 +122,13 @@ class GameController extends Controller
 
             // Relationship many-many with Models\Role
             $role = Role::all();
-            $syncRoleIds = [];
-            foreach ($request->roleIdsCanCreatedGame ?? [] as $roleId) {
-                if ($role->contains($roleId)) {
-                    $syncRoleIds[] = $roleId;
+            $syncRoleKeys = [];
+            foreach ($request->roleKeysCanCreatedGame ?? [] as $roleKey) {
+                if ($role->contains($roleKey)) {
+                    $syncRoleKeys[] = $roleKey;
                 }
             }
-            $game->rolesCanCreatedGame()->sync($syncRoleIds);
+            $game->rolesCanCreatedGame()->sync($syncRoleKeys);
             DB::commit();
             // handle when success
             Storage::delete($imagePathMustDeleteWhenSuccess ?? null);

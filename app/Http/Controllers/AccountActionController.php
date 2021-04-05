@@ -61,13 +61,13 @@ class AccountActionController extends Controller
 
             // Relationship many-many with Models\Role
             $role = Role::all();
-            $syncRoleIds = [];
-            foreach ($request->roleIds ?? [] as $roleId) {
-                if ($role->contains($roleId)) {
-                    $syncRoleIds[] = $roleId;
+            $syncRoleKeys = [];
+            foreach ($request->roleKeys ?? [] as $roleKey) {
+                if ($role->contains($roleKey)) {
+                    $syncRoleKeys[] = $roleKey;
                 }
             }
-            $accountAction->rolesNeedPerformingAccountAction()->sync($syncRoleIds);
+            $accountAction->rolesNeedPerformingAccountAction()->sync($syncRoleKeys);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -120,13 +120,13 @@ class AccountActionController extends Controller
 
             // Relationship many-many with Models\Role
             $role = Role::all();
-            $syncRoleIds = [];
-            foreach ($request->roleIds ?? [] as $roleId) {
-                if ($role->contains($roleId)) {
-                    $syncRoleIds[] = $roleId;
+            $syncRoleKeys = [];
+            foreach ($request->roleKeys ?? [] as $roleKey) {
+                if ($role->contains($roleKey)) {
+                    $syncRoleKeys[] = $roleKey;
                 }
             }
-            $accountAction->rolesNeedPerformingAccountAction()->sync($syncRoleIds);
+            $accountAction->rolesNeedPerformingAccountAction()->sync($syncRoleKeys);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();

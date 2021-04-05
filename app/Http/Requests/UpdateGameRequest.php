@@ -28,8 +28,8 @@ class UpdateGameRequest extends FormRequest
             'name' => 'nullable|string',
             'publisherName' => 'nullable|string',
             'image' => 'nullable|image',
-            'roleIdsCanCreatedGame' => 'nullable|array',
-            'roleIdsCanCreatedGame.*' => 'integer',
+            'roleKeysCanCreatedGame' => 'nullable|array',
+            'roleKeysCanCreatedGame.*' => 'integer',
         ];
     }
 }

@@ -62,9 +62,9 @@ class AccountInfoController extends Controller
 
             // Relationship many-many with Models\Role
             $role = Role::all();
-            foreach ($request->roleIds ?? [] as $roleId) {
-                if ($role->contains($roleId)) {
-                    $accountInfo->rolesNeedFillingAccountInfo()->attach($roleId);
+            foreach ($request->roleKeys ?? [] as $roleKey) {
+                if ($role->contains($roleKey)) {
+                    $accountInfo->rolesNeedFillingAccountInfo()->attach($roleKey);
                 }
             }
             DB::commit();
@@ -120,13 +120,13 @@ class AccountInfoController extends Controller
 
             // Relationship many-many with Models\Role
             $role = Role::all();
-            $syncRoleIds = [];
-            foreach ($request->roleIds ?? [] as $roleId) {
-                if ($role->contains($roleId)) {
-                    $syncRoleIds[] = $roleId;
+            $syncRoleKeys = [];
+            foreach ($request->roleKeys ?? [] as $roleKey) {
+                if ($role->contains($roleKey)) {
+                    $syncRoleKeys[] = $roleKey;
                 }
             }
-            $accountInfo->rolesNeedFillingAccountInfo()->sync($syncRoleIds);
+            $accountInfo->rolesNeedFillingAccountInfo()->sync($syncRoleKeys);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();

@@ -24,8 +24,8 @@ class UpdateAccountInfoRequest extends FormRequest
     public function rules()
     {
         return [
-            'roleIds' => 'nullable|array',
-            'roleIds.*' => 'integer',
+            'roleKeys' => 'nullable|array',
+            'roleKeys.*' => 'integer',
             'order' => 'nullable|integer',
             'name' => 'nullable|string',
             'description' => 'nullable|string',

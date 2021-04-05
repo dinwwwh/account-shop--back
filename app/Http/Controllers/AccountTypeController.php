@@ -8,9 +8,9 @@ use App\Http\Requests\StoreAccountTypeRequest;
 use App\Http\Requests\UpdateAccountTypeRequest;
 use App\Http\Resources\AccountTypeResource;
 use App\Models\Game;
-use Str;
-use Auth;
-use DB;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AccountTypeController extends Controller
 {

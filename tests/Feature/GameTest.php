@@ -91,7 +91,7 @@ class GameTest extends TestCase
                     ->where('slug', $game->slug)
                     ->where('publisherName', $game->publisher_name)
                     ->has('imagePath')
-                    ->has('currentRoleCanUsedAccountTypes')
+                    ->has('accountTypesThatCurrentUserCanUse')
                     ->has('accountTypes')
                     ->has('lastUpdatedEditor')
                     ->has('creator')
