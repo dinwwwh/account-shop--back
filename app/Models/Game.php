@@ -105,6 +105,11 @@ class Game extends Model
     public function currentRoleCanUsedAccountTypes()
     {
         $result = new Collection;
+
+        if (!auth()->check()) {
+            return $result;
+        }
+
         foreach (auth()->user()->roles as $role) {
             $accountTypes = $role->belongsToMany(AccountType::class, 'role_can_used_account_type')
                 ->where('game_id', $this->id)

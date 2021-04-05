@@ -63,16 +63,19 @@ Route::prefix('account-type')->group(function () {
         ->name('account-type.index');
     // Store
     Route::post('', [App\Http\Controllers\AccountTypeController::class, 'store'])
+        ->middleware(['auth', 'can:create,App\Models\AccountType'])
         ->name('account-type.store');
     // Show
     Route::get('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'show'])
         ->name('account-type.show');
     // Update
     Route::put('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'update'])
+        ->middleware(['auth', 'can:update,accountType'])
         ->name('account-type.update');
     // Destroy
-    Route::delete('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'destroy'])
-        ->name('account-type.destroy');
+    // Route::delete('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'destroy'])
+    //     ->middleware('can:delete,accountType')
+    //     ->name('account-type.destroy');
 });
 
 /**
@@ -135,19 +138,19 @@ Route::prefix('game')->group(function () {
         ->name('game.index');
     // Store
     Route::post('', [App\Http\Controllers\GameController::class, 'store'])
-        ->middleware('can:create,App\Models\Game')
+        ->middleware(['auth', 'can:create,App\Models\Game'])
         ->name('game.store');
     // Show
     Route::get('{game}', [App\Http\Controllers\GameController::class, 'show'])
         ->name('game.show');
     // Update
     Route::put('{game}', [App\Http\Controllers\GameController::class, 'update'])
-        ->middleware('can:update,game')
+        ->middleware(['auth', 'can:update,game'])
         ->name('game.update');
     // Destroy
-    Route::delete('{game}', [App\Http\Controllers\GameController::class, 'destroy'])
-        ->middleware('can:delete,game')
-        ->name('game.destroy');
+    // Route::delete('{game}', [App\Http\Controllers\GameController::class, 'destroy'])
+    //     ->middleware('can:delete,game')
+    //     ->name('game.destroy');
 });
 
 /**

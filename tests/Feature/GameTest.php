@@ -20,9 +20,15 @@ class GameTest extends TestCase
         $user = User::factory()->make();
         $user->save();
 
+        /**
+         * Don't have power to create a game - no logged
+         * ---------------------------------
+         */
+        $res = $this->json('post', route('game.store'));
+        $res->assertStatus(401);
 
         /**
-         * Don't have power to create a game
+         * Don't have power to create a game - logged
          * ---------------------------------
          */
 
@@ -85,7 +91,7 @@ class GameTest extends TestCase
                     ->where('slug', $game->slug)
                     ->where('publisherName', $game->publisher_name)
                     ->has('imagePath')
-                    // ->has('currentRoleCanUsedAccountTypes')
+                    ->has('currentRoleCanUsedAccountTypes')
                     ->has('accountTypes')
                     ->has('lastUpdatedEditor')
                     ->has('creator')
@@ -102,6 +108,13 @@ class GameTest extends TestCase
         $creator = $game->creator;
         $user = User::factory()->make();
         $user->save();
+
+        /**
+         * Don't have power to update - no logged
+         * ---------------------------------
+         */
+        $res = $this->json('put', route('game.update', ['game' => $game]));
+        $res->assertStatus(401);
 
         /**
          * Don't have power to update - user

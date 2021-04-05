@@ -75,7 +75,7 @@ class AccountType extends Model
 
     /**
      * Relationship one-one with Models\AccountInfo
-     * 
+     *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function accountInfos()
@@ -93,6 +93,11 @@ class AccountType extends Model
     public function currentRoleNeedFillingAccountInfos()
     {
         $result = new Collection;
+
+        if (!auth()->check()) {
+            return $result;
+        }
+
         foreach (auth()->user()->roles as $role) {
             $accountInfos = $role->belongsToMany(AccountInfo::class, 'role_need_filling_account_info')
                 ->where('account_type_id', $this->id)
@@ -109,7 +114,7 @@ class AccountType extends Model
 
     /**
      * Relationship one-one with Models\AccountAction
-     * 
+     *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function accountActions()
@@ -127,6 +132,11 @@ class AccountType extends Model
     public function  currentRoleNeedPerformingAccountActions()
     {
         $result = new Collection;
+
+        if (!auth()->check()) {
+            return $result;
+        }
+
         foreach (auth()->user()->roles as $role) {
             $accountActions = $role->belongsToMany(AccountAction::class, 'role_need_performing_account_action')
                 ->where('account_type_id', $this->id)
