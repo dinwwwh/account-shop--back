@@ -14,49 +14,126 @@ use Illuminate\Support\Facades\Storage;
 
 class GameTest extends TestCase
 {
+
+    public function testMiddleware()
+    {
+        $user = User::factory()->make();
+        $user->save();
+
+        /**
+         * Route game.store
+         * -------------------------------
+         * auth - create
+         */
+        $user->revokePermissionTo('create_game');
+        $user->refresh();
+
+        # Case: 0 0
+        $res = $this->json('post', route('game.store'));
+        $res->assertStatus(401);
+
+        # Case: 1 0
+        $res = $this->actingAs($user)
+            ->json('post', route('game.store'));
+        $res->assertStatus(403);
+
+        # Case: 1 1 (but validate error)
+        $user->givePermissionTo('create_game');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('post', route('game.store'));
+        $res->assertStatus(422);
+
+
+        /**
+         * Route game.update
+         * -------------------------------
+         * auth - update - mange
+         */
+        $game = Game::first();
+        $creator = $game->creator;
+        $creator->revokePermissionTo('update_game', 'manage_game');
+        $creator->refresh();
+        $user->revokePermissionTo('update_game', 'manage_game');
+        $user->refresh();
+
+        # Case: 0 0 0
+        $res = $this->json('put', route('game.update', ['game' => $game]));
+        $res->assertStatus(403);
+
+        # Case: 1 0 0 (as manager)
+        $res = $this->actingAs($user)
+            ->json('put', route('game.update', ['game' => $game]));
+        $res->assertStatus(403);
+
+        # Case: 1 0 0 (as creator)
+        $res = $this->actingAs($creator)
+            ->json('put', route('game.update', ['game' => $game]));
+        $res->assertStatus(403);
+
+        # Case: 1 1 0 (as manager)
+        $user->revokePermissionTo('mange_game');
+        $user->givePermissionTo('update_game');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('put', route('game.update', ['game' => $game]));
+        $res->assertStatus(403);
+
+        # Case: 1 1 0 (as creator)
+        $creator->revokePermissionTo('mange_game');
+        $creator->givePermissionTo('update_game');
+        $creator->refresh();
+        $res = $this->actingAs($creator)
+            ->json('put', route('game.update', ['game' => $game]));
+        $res->assertStatus(200);
+
+        # Case: 1 1 1 (as manager)
+        $user->revokePermissionTo();
+        $user->givePermissionTo('update_game', 'manage_game');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('put', route('game.update', ['game' => $game]));
+        $res->assertStatus(200);
+
+        # Case: 1 1 1 (as creator)
+        $creator->givePermissionTo('update_game', 'manage_game');
+        $creator->revokePermissionTo();
+        $creator->refresh();
+        $res = $this->actingAs($creator)
+            ->json('put', route('game.update', ['game' => $game]));
+        $res->assertStatus(200);
+
+        # Case: 1 0 1 (as manager)
+        $user->revokePermissionTo('update_game');
+        $user->givePermissionTo('manage_game');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('put', route('game.update', ['game' => $game]));
+        $res->assertStatus(403);
+
+        # Case: 1 0 1 (as creator)
+        $creator->revokePermissionTo('update_game');
+        $creator->givePermissionTo('manage_game');
+        $creator->refresh();
+        $res = $this->actingAs($creator)
+            ->json('put', route('game.update', ['game' => $game]));
+        $res->assertStatus(403);
+    }
+
+
     public function testCreate()
     {
         // Initial data
         $user = User::factory()->make();
         $user->save();
-
-        /**
-         * Don't have power to create a game - no logged
-         * ---------------------------------
-         */
-        $res = $this->json('post', route('game.store'));
-        $res->assertStatus(401);
-
-        /**
-         * Don't have power to create a game - logged
-         * ---------------------------------
-         */
-
-        # Case: don't have power to create a game
-        $res = $this->actingAs($user)
-            ->json('post', route('game.store'));
-        $res->assertStatus(403);
-
-
-
         $user->givePermissionTo('create_game');
         $user->refresh();
-        /**
-         * Had power to create a game
-         * ---------------------------------
-         */
-
-        # Case: error validate
-        $res = $this->actingAs($user)
-            ->json('post', route('game.store'));
-        $res->assertStatus(422);
-
-        # Case: success validate
         $data = [
             'publisherName' => Str::random(10),
             'name' => Str::random(10),
             'image' => UploadedFile::fake()->image('avatar.jpg'),
         ];
+
         $res = $this->actingAs($user)
             ->json('post', route('game.store'), $data);
         $res->assertStatus(201);
@@ -65,6 +142,8 @@ class GameTest extends TestCase
                 'data',
                 fn ($json) => $json
                     ->where('publisherName', $data['publisherName'])
+                    ->where('name', $data['name'])
+                    ->has('imagePath')
                     ->etc()
             )
 
