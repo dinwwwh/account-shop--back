@@ -28,6 +28,9 @@ class GameResource extends JsonResource
             'creator' => new UserResource($this->creator),
             'updatedAt' => $this->updated_at,
             'createdAt' => $this->created_at,
+
+            // Relationship
+            'rolesCanCreatedGame' => RoleResource::collection($this->rolesCanCreatedGame),
         ];
     }
 }

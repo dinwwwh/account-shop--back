@@ -14,7 +14,7 @@ class CreateRoleNeedPerformingAccountActionTable extends Migration
     public function up()
     {
         Schema::create('role_need_performing_account_action', function (Blueprint $table) {
-            $table->integer('role_id');
+            $table->string('role_key');
             $table->integer('account_action_id');
         });
     }

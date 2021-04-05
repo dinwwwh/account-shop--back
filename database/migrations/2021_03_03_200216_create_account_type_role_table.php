@@ -14,7 +14,7 @@ class CreateAccountTypeRoleTable extends Migration
     public function up()
     {
         Schema::create('account_type_role', function (Blueprint $table) {
-            $table->integer('role_id');
+            $table->string('role_key');
             $table->integer('account_type_id');
         });
     }

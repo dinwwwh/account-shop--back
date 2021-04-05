@@ -14,7 +14,7 @@ class CreateRoleNeedFillingAccountInfoTable extends Migration
     public function up()
     {
         Schema::create('role_need_filling_account_info', function (Blueprint $table) {
-            $table->integer('role_id');
+            $table->string('role_key');
             $table->integer('account_info_id');
         });
     }

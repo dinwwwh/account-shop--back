@@ -129,9 +129,11 @@ class GameTest extends TestCase
         $user->givePermissionTo('create_game');
         $user->refresh();
         $data = [
+            'order' => 1,
             'publisherName' => Str::random(10),
             'name' => Str::random(10),
             'image' => UploadedFile::fake()->image('avatar.jpg'),
+            'roleKeysCanCreatedGame' => ['administrator', 'guest', 'tester'],
         ];
 
         $res = $this->actingAs($user)
@@ -141,12 +143,19 @@ class GameTest extends TestCase
             fn ($json) => $json->has(
                 'data',
                 fn ($json) => $json
+                    ->has('id')
+                    ->where('order', $data['order'])
                     ->where('publisherName', $data['publisherName'])
                     ->where('name', $data['name'])
                     ->has('imagePath')
+                    ->has(
+                        'rolesCanCreatedGame',
+                        fn ($json) => $json
+                            ->has(2)
+                            ->etc()
+                    )
                     ->etc()
             )
-
         );
     }
 
@@ -176,6 +185,7 @@ class GameTest extends TestCase
                     ->has('creator')
                     ->has('updatedAt')
                     ->has('createdAt')
+                    ->has('rolesCanCreatedGame')
             )
         );
     }
@@ -185,65 +195,14 @@ class GameTest extends TestCase
         // Initial data
         $game = Game::first();
         $creator = $game->creator;
-        $user = User::factory()->make();
-        $user->save();
-
-        /**
-         * Don't have power to update - no logged
-         * ---------------------------------
-         */
-        $res = $this->json('put', route('game.update', ['game' => $game]));
-        $res->assertStatus(401);
-
-        /**
-         * Don't have power to update - user
-         * ---------------------------------
-         */
-
-        $res = $this->actingAs($user)
-            ->json('put', route('game.update', ['game' => $game]));
-        $res->assertStatus(403);
-
-        /**
-         * Don't have power to update - creator
-         * ---------------------------------
-         */
-        $creator->revokePermissionTo('update_game');
-        $creator->refresh();
-
-        $res = $this->actingAs($creator)
-            ->json('put', route('game.update', ['game' => $game]));
-        $res->assertStatus(403);
-
-        /**
-         * Have power to read sensitive info -- user
-         * ---------------------------------
-         */
-        $user->givePermissionTo('update_game');
-        $user->givePermissionTo('manage_game');
-        $user->refresh();
-
         $data = [
+            'order' => rand(1, 100),
             'publisherName' => Str::random(10),
             'name' => Str::random(10),
+            'image' => UploadedFile::fake()->image('avatar.jpg'),
+            'roleKeysCanCreatedGame' => ['administrator', 'guest'],
         ];
-        $res = $this->actingAs($user)
-            ->json('put', route('game.update', ['game' => $game]), $data);
-        $res->assertStatus(200);
-        $res->assertJson(
-            fn ($json) => $json->has(
-                'data',
-                fn ($json) => $json
-                    ->where('publisherName', $data['publisherName'])
-                    ->etc()
-            )
-        );
 
-        /**
-         * Have power to read sensitive info -- creator
-         * ---------------------------------
-         */
-        $creator->revokePermissionTo('update_game');
         $creator->givePermissionTo('update_game');
         $creator->refresh();
 
@@ -255,6 +214,15 @@ class GameTest extends TestCase
                 'data',
                 fn ($json) => $json
                     ->where('publisherName', $data['publisherName'])
+                    ->where('order', $data['order'])
+                    ->where('name', $data['name'])
+                    ->has('imagePath')
+                    ->has(
+                        'rolesCanCreatedGame',
+                        fn ($json) => $json
+                            ->has(1)
+                            ->etc()
+                    )
                     ->etc()
             )
         );

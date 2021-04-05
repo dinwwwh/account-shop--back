@@ -14,7 +14,7 @@ class CreateRoleCanCreatedGameTable extends Migration
     public function up()
     {
         Schema::create('role_can_created_game', function (Blueprint $table) {
-            $table->integer('role_id');
+            $table->string('role_key');
             $table->integer('game_id');
         });
     }
