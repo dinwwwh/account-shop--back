@@ -30,6 +30,7 @@ class AccountTypeResource extends JsonResource
             'accountActions' => AccountActionResource::collection($this->accountActions),
             'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
             'creator' => new UserResource($this->creator),
+            'rolesCanUsedAccountType' => RoleResource::collection($this->rolesCanUsedAccountType),
 
             // Time
             'updatedAt' => $this->updated_at,

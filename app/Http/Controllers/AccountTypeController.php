@@ -30,22 +30,14 @@ class AccountTypeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAccountTypeRequest $request)
+    public function store(StoreAccountTypeRequest $request, Game $game)
     {
-        // Get game
-        $game = Game::find($request->gameId);
-        if (is_null($game)) {
-            return response()->json([
-                'message' => 'ID game không tồn tại.',
-            ], 404);
-        }
-
         // Validate status codes
         foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
             if (!key_exists($role['statusCode'], config('account.status_codes'))) {
                 return response()->json([
-                    'message' => 'Status code of role[id: '
-                        . $role['id'] . ', statusCode: '
+                    'message' => 'Status code of role[key: '
+                        . $role['key'] . ', statusCode: '
                         . $role['statusCode'] . '] invalid.'
                 ], 422);
             }
@@ -62,8 +54,6 @@ class AccountTypeController extends Controller
         }
         $accountTypeData['slug'] = Str::slug($accountTypeData['name']);
         $accountTypeData['game_id'] = $game->id;
-        $accountTypeData['last_updated_editor_id'] = Auth::user()->id;
-        $accountTypeData['creator_id'] = Auth::user()->id;
 
         // DB transaction
         try {
@@ -74,8 +64,8 @@ class AccountTypeController extends Controller
             // Relationship many-many with Models\Role 1
             $syncRoles = [];
             foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
-                if ($appRoles->contains($role['id'])) {
-                    $syncRoles[$role['id']] = [
+                if ($appRoles->contains($role['key'])) {
+                    $syncRoles[$role['key']] = [
                         'status_code' => $role['statusCode'],
                     ];
                 }
@@ -115,6 +105,17 @@ class AccountTypeController extends Controller
      */
     public function update(UpdateAccountTypeRequest $request, AccountType $accountType)
     {
+        // Validate status codes
+        foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
+            if (!key_exists($role['statusCode'], config('account.status_codes'))) {
+                return response()->json([
+                    'message' => 'Status code of role[key: '
+                        . $role['key'] . ', statusCode: '
+                        . $role['statusCode'] . '] invalid.'
+                ], 422);
+            }
+        }
+
         // Initialize data
         $accountTypeData = [];
         foreach ([
@@ -138,8 +139,8 @@ class AccountTypeController extends Controller
             // Relationship many-many with Models\Role 1
             $syncRoles = [];
             foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
-                if ($roles->contains($role['id'])) {
-                    $syncRoles[$role['id']] = ['status_code' => $role['statusCode']];
+                if ($roles->contains($role['key'])) {
+                    $syncRoles[$role['key']] = ['status_code' => $role['statusCode']];
                 }
             }
             $accountType->rolesCanUsedAccountType()->sync($syncRoles);

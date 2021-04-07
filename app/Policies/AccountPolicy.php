@@ -34,6 +34,17 @@ class AccountPolicy
     }
 
     /**
+     * Determine whether the user can manage the model.
+     *
+     * @param  \App\Models\User  $user
+     * @return mixed
+     */
+    public function manage(User $user)
+    {
+        return $user->hasPermissionTo('manage_account_type');
+    }
+
+    /**
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
@@ -41,7 +52,7 @@ class AccountPolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->hasPermissionTo('create_account_type');
     }
 
     /**
@@ -53,7 +64,8 @@ class AccountPolicy
      */
     public function update(User $user, Account $account)
     {
-        //
+        return $user->hasPermissionTo('manage_account_type')
+            && ($this->manage($user) || $account->creator->is($user));
     }
 
     /**
@@ -90,47 +102,5 @@ class AccountPolicy
     public function forceDelete(User $user, Account $account)
     {
         //
-    }
-
-    /**
-     * Determine whether the 'account post user' can view sensitive information
-     *
-     * @param  mixed $code
-     * @return boolean
-     */
-    public function readSensitiveInfo($code)
-    {
-        // Declare initial data
-
-        switch ($code) {
-                // ---------------------------
-                // ACCOUNT WAITING APPROVE
-                // ---------------------------
-            case 0: # -
-                return false;
-                break;
-
-                // ---------------------------
-                // ACCOUNT SELLING
-                // ---------------------------
-            case 100: # status of account after approve
-                return false;
-                break;
-
-            case 110: # status of account not need approve
-                return true;
-                break;
-
-                // ---------------------------
-                // ACCOUNT BOUGHT
-                // ---------------------------
-            case 200:
-                return false;
-                break;
-
-            default:
-                return false;
-                break;
-        }
     }
 }

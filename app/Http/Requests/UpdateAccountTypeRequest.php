@@ -28,7 +28,7 @@ class UpdateAccountTypeRequest extends FormRequest
             'description' => 'nullable|string',
             'rolesCanUsedAccountType' => 'nullable|array',
             'rolesCanUsedAccountType.*' => 'array',
-            'rolesCanUsedAccountType.*.id' => 'required|integer',
+            'rolesCanUsedAccountType.*.key' => 'required|string',
             'rolesCanUsedAccountType.*.statusCode' => 'required|integer',
         ];
     }

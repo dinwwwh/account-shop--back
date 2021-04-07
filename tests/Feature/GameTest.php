@@ -133,7 +133,7 @@ class GameTest extends TestCase
             'publisherName' => Str::random(10),
             'name' => Str::random(10),
             'image' => UploadedFile::fake()->image('avatar.jpg'),
-            'roleKeysCanCreatedGame' => ['administrator', 'guest', 'tester'],
+            'roleKeysCanCreatedGame' => ['administrator', 'customer', 'tester'],
         ];
 
         $res = $this->actingAs($user)
@@ -151,8 +151,24 @@ class GameTest extends TestCase
                     ->has(
                         'rolesCanCreatedGame',
                         fn ($json) => $json
-                            ->has(2)
-                            ->etc()
+                            ->has(
+                                0,
+                                fn ($json) => $json
+                                    ->where('key', $data['roleKeysCanCreatedGame'][0])
+                                    ->etc()
+                            )
+                            ->has(
+                                1,
+                                fn ($json) => $json
+                                    ->where('key', $data['roleKeysCanCreatedGame'][1])
+                                    ->etc()
+                            )
+                            ->has(
+                                2,
+                                fn ($json) => $json
+                                    ->where('key', $data['roleKeysCanCreatedGame'][2])
+                                    ->etc()
+                            )
                     )
                     ->etc()
             )
@@ -200,7 +216,7 @@ class GameTest extends TestCase
             'publisherName' => Str::random(10),
             'name' => Str::random(10),
             'image' => UploadedFile::fake()->image('avatar.jpg'),
-            'roleKeysCanCreatedGame' => ['administrator', 'guest'],
+            'roleKeysCanCreatedGame' => ['administrator', 'customer'],
         ];
 
         $creator->givePermissionTo('update_game');
@@ -220,8 +236,18 @@ class GameTest extends TestCase
                     ->has(
                         'rolesCanCreatedGame',
                         fn ($json) => $json
-                            ->has(1)
-                            ->etc()
+                            ->has(
+                                0,
+                                fn ($json) => $json
+                                    ->where('key', $data['roleKeysCanCreatedGame'][0])
+                                    ->etc()
+                            )
+                            ->has(
+                                1,
+                                fn ($json) => $json
+                                    ->where('key', $data['roleKeysCanCreatedGame'][1])
+                                    ->etc()
+                            )
                     )
                     ->etc()
             )

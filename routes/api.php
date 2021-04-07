@@ -20,12 +20,14 @@ use App\Models\Permission;
 
 // \Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
 Route::get('test', function (Request $request) {
-    $permissions = Permission::all();
-    $adminRole = Role::find('administrator');
-
-    // dd($permissions, $adminRole);
-    dd($adminRole->syncPermissions($permissions));
+    dd(\App\Models\Permission::find('update_account_type'));
 });
+
+Route::get('login', function () {
+    return response()->json([
+        'message' => 'Bạn vui lòng đăng nhập để sử dụng chức năng này.'
+    ], 401);
+})->name('login');
 
 /**
  * --------------------------------
@@ -62,8 +64,8 @@ Route::prefix('account-type')->group(function () {
     Route::get('', [App\Http\Controllers\AccountTypeController::class, 'index'])
         ->name('account-type.index');
     // Store
-    Route::post('', [App\Http\Controllers\AccountTypeController::class, 'store'])
-        ->middleware(['auth', 'can:create,App\Models\AccountType'])
+    Route::post('{game}', [App\Http\Controllers\AccountTypeController::class, 'store'])
+        ->middleware(['auth', 'can:create,App\Models\AccountType, game'])
         ->name('account-type.store');
     // Show
     Route::get('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'show'])

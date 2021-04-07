@@ -12,49 +12,144 @@ use Illuminate\Support\Str;
 
 class AccountTypeTest extends TestCase
 {
-    public function testCreate()
+    public function testStoreRouteMiddleware()
+    {
+        /**
+         * Test route store
+         * ---------------
+         * auth - create
+         */
+        $user = User::factory()->make();
+        $route = route('account-type.store', ['game' => Game::first()]);
+        $user->save();
+
+        # Case: 0 0
+        $res = $this->json('post', $route);
+        $res->assertStatus(401);
+
+        # Case: 1 0
+        $res = $this->actingAs($user)
+            ->json('post', $route);
+        $res->assertStatus(403);
+
+        # Case: 1 1
+        $user->givePermissionTo('create_account_type');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('post', $route);
+        $res->assertStatus(422);
+    }
+
+    public function testUpdateRouteMiddleware()
+    {
+        // /**
+        //  * Test route update
+        //  * ----------------------
+        //  * auth - update - manage
+        //  */
+        $accountType = AccountType::first();
+        $creator = $accountType->creator;
+        $creator->revokePermissionTo('update_account_type', 'manage_account_type');
+        $creator->refresh();
+        $user = User::factory()->make();
+        $user->save();
+
+        # Case: 0 0 0
+        $res = $this->json('put', route('account-type.update', ['accountType' => $accountType]));
+        $res->assertStatus(401);
+
+        # Case: 1 0 0 (as user)
+        $res = $this->actingAs($user)
+            ->json('put', route('account-type.update', ['accountType' => $accountType]));
+        $res->assertStatus(403);
+
+        # Case: 1 0 0 (as creator)
+        $res = $this->actingAs($creator)
+            ->json('put', route('account-type.update', ['accountType' => $accountType]));
+        $res->assertStatus(403);
+
+        # Case: 1 1 0 (as user)
+        $user->givePermissionTo('update_account_type');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('put', route('account-type.update', ['accountType' => $accountType]));
+        $res->assertStatus(403);
+
+        # Case: 1 1 0 (as creator)
+        $creator->givePermissionTo('update_account_type');
+        $creator->refresh();
+        $res = $this->actingAs($creator)
+            ->json('put', route('account-type.update', ['accountType' => $accountType]));
+        $res->assertStatus(200);
+
+        # Case: 1 1 1 (as user)
+        $user->givePermissionTo('update_account_type', 'manage_account_type');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('put', route('account-type.update', ['accountType' => $accountType]));
+        $res->assertStatus(200);
+
+        # Case: 1 1 1 (as creator)
+        $creator->givePermissionTo('mange_account_type');
+        $creator->refresh();
+        $res = $this->actingAs($creator)
+            ->json('put', route('account-type.update', ['accountType' => $accountType]));
+        $res->assertStatus(200);
+
+        # Case: 1 0 1 (as user)
+        $user->revokePermissionTo('update_account_type');
+        $user->givePermissionTo('manage_account_type');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('put', route('account-type.update', ['accountType' => $accountType]));
+        $res->assertStatus(403);
+
+        # Case: 1 0 1 (as creator)
+        $creator->revokePermissionTo('update_account_type');
+        $creator->givePermissionTo('manage_account_type');
+        $creator->refresh();
+        $res = $this->actingAs($creator)
+            ->json('put', route('account-type.update', ['accountType' => $accountType]));
+        $res->assertStatus(403);
+    }
+
+    public function testStore()
     {
         // Initial data
         $user = User::factory()->make();
         $user->save();
-
-        /**
-         * Don't have power - no logged
-         * -----------------------------
-         */
-        $res = $this->json('post', route('account-type.store'));
-        $res->assertStatus(401);
-
-        /**
-         * Don't have power - logged
-         * -----------------------------
-         */
-        $res = $this->actingAs($user)
-            ->json('post', route('account-type.store'));
-        $res->assertStatus(403);
-
-        /**
-         * Have power
-         * -----------------------------
-         */
         $user->givePermissionTo('create_account_type');
         $user->refresh();
-
-        # Case: validate error
-        $res = $this->actingAs($user)
-            ->json('post', route('account-type.store'));
-        $res->assertStatus(422);
-
-        # Case: validate success
-        $game = Game::factory()->make();
-        $game->save();
+        $game = Game::first();
+        $route = route('account-type.store', ['game' => $game]);
         $data = [
             'gameId' => $game->id,
             'name' => Str::random(20),
             'description' => Str::random(20),
+            'rolesCanUsedAccountType' => [
+                [
+                    'key' => 'administrator',
+                    'statusCode' => 0,
+                ],
+                [
+                    'key' => 'customer',
+                    'statusCode' => 0,
+                ],
+                [
+                    'key' => 'tester',
+                    'statusCode' => 200,
+                ],
+            ],
         ];
+
+        # Case: validate error
         $res = $this->actingAs($user)
-            ->json('post', route('account-type.store'), $data);
+            ->json('post', $route);
+        $res->assertStatus(422);
+
+        # Case: validate success
+        $res = $this->actingAs($user)
+            ->json('post', $route, $data);
         $res->assertStatus(201);
         $res->assertJson(
             fn ($json) => $json
@@ -63,6 +158,31 @@ class AccountTypeTest extends TestCase
                     fn ($json) => $json
                         ->where('name', $data['name'])
                         ->where('description', $data['description'])
+                        ->has(
+                            'rolesCanUsedAccountType',
+                            fn ($json) => $json
+                                ->has(
+                                    0,
+                                    fn ($json) => $json
+                                        ->where('key', $data['rolesCanUsedAccountType'][0]['key'])
+                                        ->where('pivot.status_code', $data['rolesCanUsedAccountType'][0]['statusCode'])
+                                        ->etc()
+                                )
+                                ->has(
+                                    1,
+                                    fn ($json) => $json
+                                        ->where('key', $data['rolesCanUsedAccountType'][1]['key'])
+                                        ->where('pivot.status_code', $data['rolesCanUsedAccountType'][1]['statusCode'])
+                                        ->etc()
+                                )
+                                ->has(
+                                    2,
+                                    fn ($json) => $json
+                                        ->where('key', $data['rolesCanUsedAccountType'][2]['key'])
+                                        ->where('pivot.status_code', $data['rolesCanUsedAccountType'][2]['statusCode'])
+                                        ->etc()
+                                )
+                        )
                         ->etc()
                 )
         );
@@ -96,6 +216,7 @@ class AccountTypeTest extends TestCase
                         ->has('creator')
                         ->has('updatedAt')
                         ->has('createdAt')
+                        ->has('rolesCanUsedAccountType')
                 )
         );
     }
@@ -103,72 +224,20 @@ class AccountTypeTest extends TestCase
     public function testUpdate()
     {
         // Initial data
-        $user = User::factory()->make();
-        $user->save();
         $accountType = AccountType::first();
         $creator = $accountType->creator;
-
-        /**
-         * Don't have power - no logged
-         * -----------------------------
-         */
-        $res = $this->json('put', route('account-type.update', ['accountType' => $accountType]));
-        $res->assertStatus(401);
-
-        /**
-         * Don't have power - user
-         * -----------------------------
-         */
-        $res = $this->actingAs($user)
-            ->json('put', route('account-type.update', ['accountType' => $accountType]));
-        $res->assertStatus(403);
-
-        /**
-         * Don't have power - creator
-         * -----------------------------
-         */
-        $creator->revokePermissionTo('update_account_type');
-        $creator->refresh();
-
-        $res = $this->actingAs($creator)
-            ->json('put', route('account-type.update', ['accountType' => $accountType]));
-        $res->assertStatus(403);
-
-        /**
-         * Have power - user
-         * -----------------------------
-         */
-        $user->givePermissionTo('update_account_type', 'manage_account_type');
-        $user->refresh();
-
-        $data = [
-            'name' => Str::random(20),
-            'description' => Str::random(20),
-        ];
-        $res = $this->actingAs($user)
-            ->json('put', route('account-type.update', ['accountType' => $accountType]), $data);
-        $res->assertStatus(200);
-        $res->assertJson(
-            fn ($json) => $json
-                ->has(
-                    'data',
-                    fn ($json) => $json
-                        ->where('name', $data['name'])
-                        ->where('description', $data['description'])
-                        ->etc()
-                )
-        );
-
-        /**
-         * Have power - creator
-         * -----------------------------
-         */
         $creator->givePermissionTo('update_account_type');
         $creator->refresh();
 
         $data = [
             'name' => Str::random(20),
             'description' => Str::random(20),
+            'rolesCanUsedAccountType' => [
+                [
+                    'key' => 'administrator',
+                    'statusCode' => 200
+                ]
+            ],
         ];
         $res = $this->actingAs($creator)
             ->json('put', route('account-type.update', ['accountType' => $accountType]), $data);
@@ -180,6 +249,17 @@ class AccountTypeTest extends TestCase
                     fn ($json) => $json
                         ->where('name', $data['name'])
                         ->where('description', $data['description'])
+                        ->has(
+                            'rolesCanUsedAccountType',
+                            fn ($json) => $json
+                                ->has(
+                                    0,
+                                    fn ($json) => $json
+                                        ->where('key', $data['rolesCanUsedAccountType'][0]['key'])
+                                        ->where('pivot.status_code', $data['rolesCanUsedAccountType'][0]['statusCode'])
+                                        ->etc()
+                                )
+                        )
                         ->etc()
                 )
         );

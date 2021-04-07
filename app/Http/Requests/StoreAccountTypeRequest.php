@@ -24,12 +24,11 @@ class StoreAccountTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            'gameId' => 'required|integer',
             'name' => 'required|string',
             'description' => 'nullable|string',
             'rolesCanUsedAccountType' => 'nullable|array',
             'rolesCanUsedAccountType.*' => 'array',
-            'rolesCanUsedAccountType.*.id' => 'required|integer',
+            'rolesCanUsedAccountType.*.key' => 'required|string',
             'rolesCanUsedAccountType.*.statusCode' => 'required|integer',
         ];
     }

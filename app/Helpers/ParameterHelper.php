@@ -16,7 +16,7 @@ class ParameterHelper
     public static function firstOrAll($parameters)
     {
         if (!isset($parameters[0])) {
-            return [];
+            return $parameters;
         }
 
         if (is_array($parameters[0]) || ($parameters[0] instanceof \Illuminate\Database\Eloquent\Collection)) {
