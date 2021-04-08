@@ -25,7 +25,7 @@ class UpdateAccountInfoRequest extends FormRequest
     {
         return [
             'roleKeys' => 'nullable|array',
-            'roleKeys.*' => 'integer',
+            'roleKeys.*' => 'string',
             'order' => 'nullable|integer',
             'name' => 'nullable|string',
             'description' => 'nullable|string',

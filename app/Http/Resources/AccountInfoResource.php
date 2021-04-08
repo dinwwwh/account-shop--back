@@ -29,7 +29,7 @@ class AccountInfoResource extends JsonResource
             'description' => $this->description,
             'rule' => new RuleResource($this->rule),
             'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
-            'Creator' => new UserResource($this->Creator),
+            'creator' => new UserResource($this->Creator),
             'updatedAt' => $this->updated_at,
             'createdAt' => $this->created_at,
             'pivot' => $this->pivot,

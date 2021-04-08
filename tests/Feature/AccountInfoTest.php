@@ -173,7 +173,82 @@ class AccountInfoTest extends TestCase
         );
     }
 
+    public function testShow()
+    {
+        $accountInfo = AccountInfo::inRandomOrder()->first();
+        $route = route('account-info.show', ['accountInfo' => $accountInfo]);
+        $res = $this->json('get', $route);
+        $res->assertStatus(200);
+        $res->assertJson(
+            fn ($json) => $json
+                ->has(
+                    'data',
+                    fn ($json) => $json
+                        ->where('id', $accountInfo->id)
+                        ->where('order', $accountInfo->order)
+                        ->where('name', $accountInfo->name)
+                        ->where('slug', $accountInfo->slug)
+                        ->where('description', $accountInfo->description)
+                        ->has('rule')
+                        ->has('lastUpdatedEditor')
+                        ->has('creator')
+                        ->has('updatedAt')
+                        ->has('createdAt')
+                        ->has('pivot')
+                        ->has('rolesNeedFilling')
+                )
+        );
+    }
+
     public function testUpdate()
     {
+        $accountInfo = AccountInfo::inRandomOrder()->first();
+        $creator = $accountInfo->creator;
+        $creator->givePermissionTo('update_account_info');
+        $creator->refresh();
+        $route = route('account-info.update', ['accountInfo' => $accountInfo]);
+        $data = [
+            'order' => rand(1, 100),
+            'name' => Str::random(10),
+            'description' => Str::random(30),
+            'roleKeys' => ['administrator', 'customer', 'tester'],
+        ];
+
+        $this->actingAs($creator);
+        $res = $this->json('put', $route, $data);
+        $res->assertStatus(200);
+        $res->assertJson(
+            fn ($json) => $json
+                ->has(
+                    'data',
+                    fn ($json) => $json
+                        ->where('order', $data['order'])
+                        ->where('name', $data['name'])
+                        ->where('description', $data['description'])
+                        ->has(
+                            'rolesNeedFilling',
+                            fn ($json) => $json
+                                ->has(
+                                    0,
+                                    fn ($json) => $json
+                                        ->where('key', $data['roleKeys'][0])
+                                        ->etc()
+                                )
+                                ->has(
+                                    1,
+                                    fn ($json) => $json
+                                        ->where('key', $data['roleKeys'][1])
+                                        ->etc()
+                                )
+                                ->has(
+                                    2,
+                                    fn ($json) => $json
+                                        ->where('key', $data['roleKeys'][2])
+                                        ->etc()
+                                )
+                        )
+                        ->etc()
+                )
+        );
     }
 }

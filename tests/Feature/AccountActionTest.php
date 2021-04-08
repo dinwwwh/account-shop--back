@@ -8,7 +8,19 @@ use Tests\TestCase;
 
 class AccountActionTest extends TestCase
 {
+    public function testStore()
+    {
+    }
+    public function testRead()
+    {
+    }
+    public function testUpdate()
+    {
+    }
     public function testCreateRouteMiddleware()
+    {
+    }
+    public function testUpdateRouteMiddleware()
     {
     }
 }
