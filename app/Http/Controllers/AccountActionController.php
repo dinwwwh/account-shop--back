@@ -6,7 +6,7 @@ use App\Models\AccountAction;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use App\Http\Resources\AccountActionResource;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Http\Requests\StoreAccountActionRequest;
 use App\Http\Requests\UpdateAccountActionRequest;
@@ -30,16 +30,8 @@ class AccountActionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAccountActionRequest $request)
+    public function store(StoreAccountActionRequest $request, AccountType $accountType)
     {
-        // get account type
-        $accountType = AccountType::find($request->accountTypeId);
-        if (is_null($accountType)) {
-            return response()->json([
-                'message' => 'ID kiểu tài khoản không tồn tại trong hệ thống.',
-            ], 404);
-        }
-
         // Initialize data
         $accountActionData = [];
         foreach ([

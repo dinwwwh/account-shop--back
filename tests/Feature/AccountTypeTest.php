@@ -20,7 +20,7 @@ class AccountTypeTest extends TestCase
          * auth - create
          */
         $user = User::factory()->make();
-        $route = route('account-type.store', ['game' => Game::first()]);
+        $route = route('account-type.store', ['game' => Game::inRandomOrder()->first()]);
         $user->save();
 
         # Case: 0 0
@@ -47,7 +47,7 @@ class AccountTypeTest extends TestCase
         //  * ----------------------
         //  * auth - update - manage
         //  */
-        $accountType = AccountType::first();
+        $accountType = AccountType::inRandomOrder()->first();
         $creator = $accountType->creator;
         $creator->revokePermissionTo('update_account_type', 'manage_account_type');
         $creator->refresh();
@@ -120,7 +120,7 @@ class AccountTypeTest extends TestCase
         $user->save();
         $user->givePermissionTo('create_account_type');
         $user->refresh();
-        $game = Game::first();
+        $game = Game::inRandomOrder()->first();
         $route = route('account-type.store', ['game' => $game]);
         $data = [
             'gameId' => $game->id,
@@ -191,7 +191,7 @@ class AccountTypeTest extends TestCase
     public function testRead()
     {
         // Initial data
-        $accountType = AccountType::first();
+        $accountType = AccountType::inRandomOrder()->first();
 
         /**
          * Have power
@@ -224,7 +224,7 @@ class AccountTypeTest extends TestCase
     public function testUpdate()
     {
         // Initial data
-        $accountType = AccountType::first();
+        $accountType = AccountType::inRandomOrder()->first();
         $creator = $accountType->creator;
         $creator->givePermissionTo('update_account_type');
         $creator->refresh();

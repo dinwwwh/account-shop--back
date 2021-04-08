@@ -65,7 +65,7 @@ Route::prefix('account-type')->group(function () {
         ->name('account-type.index');
     // Store
     Route::post('{game}', [App\Http\Controllers\AccountTypeController::class, 'store'])
-        ->middleware(['auth', 'can:create,App\Models\AccountType, game'])
+        ->middleware(['auth', 'can:create,App\Models\AccountType,game'])
         ->name('account-type.store');
     // Show
     Route::get('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'show'])
@@ -91,13 +91,15 @@ Route::prefix('account-info')->group(function () {
     Route::get('', [App\Http\Controllers\AccountInfoController::class, 'index'])
         ->name('account-info.index');
     // Store
-    Route::post('', [App\Http\Controllers\AccountInfoController::class, 'store'])
+    Route::post('{accountType}', [App\Http\Controllers\AccountInfoController::class, 'store'])
+        ->middleware(['auth', 'can:create,App\Models\AccountInfo,accountType'])
         ->name('account-info.store');
     // Show
     Route::get('{accountInfo}', [App\Http\Controllers\AccountInfoController::class, 'show'])
         ->name('account-info.show');
     // Update
     Route::put('{accountInfo}', [App\Http\Controllers\AccountInfoController::class, 'update'])
+        ->middleware(['auth', 'can:update,accountInfo'])
         ->name('account-info.update');
     // Destroy
     Route::delete('{accountInfo}', [App\Http\Controllers\AccountInfoController::class, 'destroy'])
@@ -115,13 +117,15 @@ Route::prefix('account-action')->group(function () {
     Route::get('', [App\Http\Controllers\AccountActionController::class, 'index'])
         ->name('account-action.index');
     // Store
-    Route::post('', [App\Http\Controllers\AccountActionController::class, 'store'])
+    Route::post('{accountType}', [App\Http\Controllers\AccountActionController::class, 'store'])
+        ->middleware(['auth', 'can:create,App\Models\AccountAction,accountType'])
         ->name('account-action.store');
     // Show
     Route::get('{accountAction}', [App\Http\Controllers\AccountActionController::class, 'show'])
         ->name('account-action.show');
     // Update
     Route::put('{accountAction}', [App\Http\Controllers\AccountActionController::class, 'update'])
+        ->middleware(['auth', 'can:update,accountAction'])
         ->name('account-action.update');
     // Destroy
     Route::delete('{accountAction}', [App\Http\Controllers\AccountActionController::class, 'destroy'])

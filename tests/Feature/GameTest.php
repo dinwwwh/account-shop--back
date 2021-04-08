@@ -50,7 +50,7 @@ class GameTest extends TestCase
          * -------------------------------
          * auth - update - mange
          */
-        $game = Game::first();
+        $game = Game::inRandomOrder()->inRandomOrder()->inRandomOrder()->first();
         $creator = $game->creator;
         $creator->revokePermissionTo('update_game', 'manage_game');
         $creator->refresh();
@@ -181,7 +181,7 @@ class GameTest extends TestCase
          * Had power to read sensitive info
          * ---------------------------------
          */
-        $game = Game::first();
+        $game = Game::inRandomOrder()->inRandomOrder()->inRandomOrder()->first();
         $res = $this->json('get', route('game.show', ['game' => $game]));
         $res->assertStatus(200);
         $res->assertJson(
@@ -209,7 +209,7 @@ class GameTest extends TestCase
     public function testUpdate()
     {
         // Initial data
-        $game = Game::first();
+        $game = Game::inRandomOrder()->inRandomOrder()->inRandomOrder()->first();
         $creator = $game->creator;
         $data = [
             'order' => rand(1, 100),

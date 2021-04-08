@@ -6,8 +6,8 @@ use App\Models\AccountInfo;
 use App\Models\AccountType;
 use App\Models\Rule;
 use App\Models\Role;
-use DB;
-use Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use App\Http\Resources\AccountInfoResource;
 use App\Http\Requests\StoreAccountInfoRequest;
 use App\Http\Requests\UpdateAccountInfoRequest;
@@ -30,16 +30,8 @@ class AccountInfoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAccountInfoRequest $request)
+    public function store(StoreAccountInfoRequest $request, AccountType $accountType)
     {
-        // Get accountType
-        $accountType = AccountType::find($request->accountTypeId);
-        if (is_null($accountType)) {
-            return response()->json([
-                'message' => 'ID kiểu tài khoản không tồn tại trong hệ thống.',
-            ], 404);
-        }
-
         // Initialize data
         $accountInfoData = [];
         foreach ([
@@ -64,7 +56,7 @@ class AccountInfoController extends Controller
             $role = Role::all();
             foreach ($request->roleKeys ?? [] as $roleKey) {
                 if ($role->contains($roleKey)) {
-                    $accountInfo->rolesNeedFillingAccountInfo()->attach($roleKey);
+                    $accountInfo->rolesNeedFilling()->attach($roleKey);
                 }
             }
             DB::commit();
@@ -126,7 +118,7 @@ class AccountInfoController extends Controller
                     $syncRoleKeys[] = $roleKey;
                 }
             }
-            $accountInfo->rolesNeedFillingAccountInfo()->sync($syncRoleKeys);
+            $accountInfo->rolesNeedFilling()->sync($syncRoleKeys);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -149,7 +141,7 @@ class AccountInfoController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $accountInfo->rolesNeedFillingAccountInfo()->sync([]); // Delete relationship with Models\Role
+            $accountInfo->rolesNeedFilling()->sync([]); // Delete relationship with Models\Role
             $accountInfo->delete();
         } catch (\Throwable $th) {
             DB::rollback();

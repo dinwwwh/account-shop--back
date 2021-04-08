@@ -24,13 +24,12 @@ class StoreAccountInfoRequest extends FormRequest
     public function rules()
     {
         return [
-            'accountTypeId' => 'required|integer',
             'order' => 'nullable|integer',
             'name' => 'required|string',
             'description' => 'nullable|string',
             'rule' => 'nullable',
             'roleKeys' => 'nullable|array',
-            'roleKeys.*' => 'integer',
+            'roleKeys.*' => 'string',
         ];
     }
 }

@@ -2,12 +2,12 @@
 
 namespace App\Policies;
 
-use App\Models\AccountType;
+use App\Models\AccountAction;
 use App\Models\User;
-use App\Models\Game;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use App\Models\AccountType;
 
-class AccountTypePolicy
+class AccountActionPolicy
 {
     use HandlesAuthorization;
 
@@ -19,30 +19,30 @@ class AccountTypePolicy
      */
     public function viewAny(User $user)
     {
-        return true;
+        //
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\AccountType  $accountType
+     * @param  \App\Models\AccountAction  $accountAction
      * @return mixed
      */
-    public function view(User $user, AccountType $accountType)
+    public function view(User $user, AccountAction $accountAction)
     {
-        return true;
+        //
     }
 
     /**
-     * Determine whether the user can manage models.
+     * Determine whether the user can manage the model.
      *
      * @param  \App\Models\User  $user
      * @return mixed
      */
     public function manage(User $user)
     {
-        return $user->hasPermissionTo('manage_account_type');
+        return $user->hasPermissionTo('manage_account_action');
     }
 
     /**
@@ -51,45 +51,44 @@ class AccountTypePolicy
      * @param  \App\Models\User  $user
      * @return mixed
      */
-    public function create(User $user, Game $game)
+    public function create(User $user, AccountType $accountType)
     {
-        return $user->hasPermissionTo('create_account_type');
+        return $user->hasPermissionTo('create_account_action');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\AccountType  $accountType
+     * @param  \App\Models\AccountAction  $accountAction
      * @return mixed
      */
-    public function update(User $user, AccountType $accountType)
+    public function update(User $user, AccountAction $accountAction)
     {
-        return $user->hasPermissionTo('update_account_type')
-            && ($accountType->creator->is($user) || $this->manage($user));
+        return $user->hasPermissionTo('update_account_action')
+            && ($this->manage($user) || $accountAction->creator->is($user));
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\AccountType  $accountType
+     * @param  \App\Models\AccountAction  $accountAction
      * @return mixed
      */
-    public function delete(User $user, AccountType $accountType)
+    public function delete(User $user, AccountAction $accountAction)
     {
-        return  $user->hasPermissionTo('delete_account_type')
-            && ($accountType->creator->is($user) || $this->manage($user));
+        //
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\AccountType  $accountType
+     * @param  \App\Models\AccountAction  $accountAction
      * @return mixed
      */
-    public function restore(User $user, AccountType $accountType)
+    public function restore(User $user, AccountAction $accountAction)
     {
         //
     }
@@ -98,10 +97,10 @@ class AccountTypePolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\AccountType  $accountType
+     * @param  \App\Models\AccountAction  $accountAction
      * @return mixed
      */
-    public function forceDelete(User $user, AccountType $accountType)
+    public function forceDelete(User $user, AccountAction $accountAction)
     {
         //
     }
