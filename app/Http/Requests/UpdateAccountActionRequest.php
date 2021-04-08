@@ -30,7 +30,7 @@ class UpdateAccountActionRequest extends FormRequest
             'videoPath' => 'nullable|string',
             'required' => 'nullable|boolean',
             'roleKeys' => 'nullable|array',
-            'roleKeys.*' => 'integer',
+            'roleKeys.*' => 'string',
         ];
     }
 }

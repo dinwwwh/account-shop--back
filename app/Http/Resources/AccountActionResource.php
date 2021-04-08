@@ -30,10 +30,14 @@ class AccountActionResource extends JsonResource
             'videoPath' => $this->video_path,
             'required' => $this->required,
             'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
-            'Creator' => new UserResource($this->Creator),
+            'creator' => new UserResource($this->creator),
             'updatedAt' => $this->updated_at,
             'createdAt' => $this->created_at,
             'pivot' => $this->pivot,
+
+            // Relationship
+            'rolesThatNeedPerformingAccountAction'
+            => RoleResource::collection($this->rolesThatNeedPerformingAccountAction),
         ];
     }
 }

@@ -38,13 +38,11 @@ class AccountActionController extends Controller
             'order', 'name', 'description', 'videoPath', 'required'
         ] as $key) {
             if ($request->filled($key)) {
-                $accountActionData[$key] = $request->$key;
+                $accountActionData[Str::snake($key)] = $request->$key;
             }
         }
         $accountActionData['slug'] = Str::slug($accountActionData['name']);
         $accountActionData['account_type_id'] = $accountType->id;
-        $accountActionData['last_updated_editor_id'] = auth()->user()->id;
-        $accountActionData['creator_id'] = auth()->user()->id;
 
         // DB transaction
         try {
@@ -59,7 +57,7 @@ class AccountActionController extends Controller
                     $syncRoleKeys[] = $roleKey;
                 }
             }
-            $accountAction->rolesNeedPerformingAccountAction()->sync($syncRoleKeys);
+            $accountAction->rolesThatNeedPerformingAccountAction()->sync($syncRoleKeys);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -118,7 +116,7 @@ class AccountActionController extends Controller
                     $syncRoleKeys[] = $roleKey;
                 }
             }
-            $accountAction->rolesNeedPerformingAccountAction()->sync($syncRoleKeys);
+            $accountAction->rolesThatNeedPerformingAccountAction()->sync($syncRoleKeys);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -141,7 +139,7 @@ class AccountActionController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $accountAction->rolesNeedPerformingAccountAction()->sync([]); // Delete relationship with Models\Role
+            $accountAction->rolesThatNeedPerformingAccountAction()->sync([]); // Delete relationship with Models\Role
             $accountAction->delete();
             DB::commit();
         } catch (\Throwable $th) {

@@ -50,7 +50,7 @@ class AccountAction extends Model
         });
 
         static::updating(function ($query) {
-            $query->last_updated_editor_id = auth()->id;
+            $query->last_updated_editor_id = auth()->user()->id;
         });
     }
 
@@ -79,10 +79,10 @@ class AccountAction extends Model
     /**
      * Relationship many-many with Models\Role
      * Include roles need perform account action
-     * 
+     *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
-    public function rolesNeedPerformingAccountAction()
+    public function rolesThatNeedPerformingAccountAction()
     {
         return $this->belongsToMany(Role::class, 'role_need_performing_account_action');
     }
