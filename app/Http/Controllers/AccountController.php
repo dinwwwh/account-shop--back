@@ -11,10 +11,10 @@ use App\Models\User;
 use App\Http\Requests\StoreAccountRequest;
 use App\Http\Requests\UpdateAccountRequest;
 use App\Http\Resources\AccountResource;
-use Validator;
-use Str;
-use DB;
-use Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Request;
 use Illuminate\Validation\Rule as RuleHelper;
 use App\Hooks\StoringAccountHook;
@@ -26,12 +26,11 @@ use App\Hooks\ApprovedAccountHook;
 use App\Hooks\BuyingAccountHook;
 use App\Hooks\BoughtAccountHook;
 use Carbon\Carbon;
-use Auth;
 
 class AccountController extends Controller
 {
     private $config = [
-        'key' => 'id' #use prefix account actions and account infos
+        'key' => 'id' # Use as prefix account actions and account infos
     ];
 
     /**
@@ -50,25 +49,10 @@ class AccountController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAccountRequest $request)
+    public function store(StoreAccountRequest $request, Game $game, AccountType $accountType)
     {
         // Validate
         {
-            // dd($request->accountInfos[4]);
-            $game = Game::find($request->gameId);
-            if (is_null($game)) {
-                return response()->json([
-                    'message' => 'ID game không hợp lệ.'
-                ], 404);
-            }
-
-            $accountType = $game->getAccountTypesThatCurrentUserCanUse()->find($request->accountTypeId);
-            if (is_null($accountType)) {
-                return response()->json([
-                    'message' => 'ID kiểu tài khoản không hợp lệ.'
-                ], 404);
-            }
-
             // Validate Account infos
             $validate = Validator::make(
                 $request->accountInfos ?? [], # case accountInfo is null
@@ -241,7 +225,7 @@ class AccountController extends Controller
         $bestPrice = $this->getBestPrice($request, $account);
 
         // Check whether user can buy this account
-        if (Auth::user()->gold_coin <= $bestPrice) {
+        if (auth()->user()->gold_coin <= $bestPrice) {
             return response()->json([
                 'message' => 'Bạn không đủ số lượng đồng vàng để mua tài khoản này.',
             ], 501);
@@ -268,8 +252,8 @@ class AccountController extends Controller
 
             // Handle on user
             {
-                Auth::user()->gold_coin -= $bestPrice;
-                Auth::user()->save();
+                auth()->user()->gold_coin -= $bestPrice;
+                auth()->user()->save();
             }
 
             // Handle on account

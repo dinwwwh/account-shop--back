@@ -3,6 +3,8 @@
 namespace App\Policies;
 
 use App\Models\Account;
+use App\Models\Game;
+use App\Models\AccountType;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -41,7 +43,7 @@ class AccountPolicy
      */
     public function manage(User $user)
     {
-        return $user->hasPermissionTo('manage_account_type');
+        return $user->hasPermissionTo('manage_account');
     }
 
     /**
@@ -50,9 +52,13 @@ class AccountPolicy
      * @param  \App\Models\User  $user
      * @return mixed
      */
-    public function create(User $user)
+    public function create(User $user, Game $game, AccountType $accountType)
     {
-        return $user->hasPermissionTo('create_account_type');
+        if (!$game->getAccountTypesThatCurrentUserCanUse()->contains($accountType)) {
+            return false;
+        }
+
+        return $user->hasPermissionTo('create_account');
     }
 
     /**
@@ -64,7 +70,7 @@ class AccountPolicy
      */
     public function update(User $user, Account $account)
     {
-        return $user->hasPermissionTo('manage_account_type')
+        return $user->hasPermissionTo('manage_account')
             && ($this->manage($user) || $account->creator->is($user));
     }
 

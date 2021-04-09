@@ -31,7 +31,6 @@ class StoreAccountRequest extends FormRequest
             'representativeImage' => 'nullable|image',
             'images' => 'nullable|array',
             'images.*' => 'image',
-            'gameId' => 'required|integer',
             'accountTypeId' => 'required|integer',
 
             // Relationship
