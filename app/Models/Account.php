@@ -26,7 +26,7 @@ class Account extends Model
         'sold_at',
         'last_updated_editor_id',
         'creator_id',
-        'last_role_key_creator_used',
+        'last_role_key_editor_used',
         'approved_at',
     ];
 
@@ -45,7 +45,7 @@ class Account extends Model
         'sold_at' => 'timestamp',
         'last_updated_editor_id' => 'integer',
         'creator_id' => 'integer',
-        'last_role_key_creator_used' => 'string',
+        'last_role_key_editor_used' => 'string',
         'approved_at' => 'timestamp',
 
         // Pivot can't work

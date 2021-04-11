@@ -107,7 +107,7 @@ class AccountController extends Controller
             // Process other account info
             $account->game_id = $game->getKey();
             $account->account_type_id = $accountType->getKey();
-            $account->last_role_key_creator_used = $roleThatUsing->getKey();
+            $account->last_role_key_editor_used = $roleThatUsing->getKey();
 
             // Process advance account info
             $account->status_code = $this->getStatusCode($accountType, $roleThatUsing);
@@ -304,7 +304,7 @@ class AccountController extends Controller
         $accountType = $account->type;
 
         // Get role use to update
-        $roleThatUsing = auth()->user()->roles->find($request->roleKey ?? $account->last_role_key_creator_used);
+        $roleThatUsing = auth()->user()->roles->find($request->roleKey ?? $account->last_role_key_editor_used);
         if (is_null($roleThatUsing)) {
             return response()->json([
                 'errors' => [
@@ -330,7 +330,7 @@ class AccountController extends Controller
             // Validate Account actions
             $validate = Validator::make(
                 $request->accountActions ?? [], # case accountInfo is null
-                $this->makeRuleAccountActions($accountType->accountInfosThatRoleNeedPerforming()),
+                $this->makeRuleAccountActions($accountType->accountInfosThatRoleNeedPerforming($roleThatUsing)),
             );
             if ($validate->fails()) {
                 return response()->json([
@@ -353,7 +353,7 @@ class AccountController extends Controller
             }
 
             // Process other account info
-            $account->last_role_key_creator_used = $roleThatUsing->keyKey();
+            $account->last_role_key_editor_used = $roleThatUsing->keyKey();
         }
 
 
@@ -394,7 +394,7 @@ class AccountController extends Controller
                 $syncActions = [];
                 foreach ($request->accountActions ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->accountInfosThatRoleNeedPerforming()->contains($id)) {
+                    if ($accountType->accountInfosThatRoleNeedPerforming($roleThatUsing)->contains($id)) {
                         $syncActions[$id] = ['value' => json_encode($value)];
                     }
                 }

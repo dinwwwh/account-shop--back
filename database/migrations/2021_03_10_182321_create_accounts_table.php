@@ -29,6 +29,7 @@ class CreateAccountsTable extends Migration
             $table->timestamp('sold_at')->nullable();
             $table->bigInteger('last_updated_editor_id');
             $table->bigInteger('creator_id');
+            $table->string('last_role_key_editor_used');
             $table->timestamp('approved_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
