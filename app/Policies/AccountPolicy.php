@@ -52,12 +52,8 @@ class AccountPolicy
      * @param  \App\Models\User  $user
      * @return mixed
      */
-    public function create(User $user, Game $game, AccountType $accountType)
+    public function create(User $user, AccountType $accountType)
     {
-        if (!$game->getAccountTypesThatCurrentUserCanUse()->contains($accountType)) {
-            return false;
-        }
-
         return $user->hasPermissionTo('create_account');
     }
 

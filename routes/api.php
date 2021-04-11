@@ -170,8 +170,8 @@ Route::prefix('account')->group(function () {
     Route::get('', [App\Http\Controllers\AccountController::class, 'index'])
         ->name('account.index');
     // Store
-    Route::post('{game}/{accountType}', [App\Http\Controllers\AccountController::class, 'store'])
-        ->middleware(['auth', 'can:create,App\Models\Account,game,accountType'])
+    Route::post('{accountType}', [App\Http\Controllers\AccountController::class, 'store'])
+        ->middleware(['auth', 'can:create,App\Models\Account,accountType'])
         ->name('account.store');
     // approve
     Route::post('approve/{account}', [App\Http\Controllers\AccountController::class, 'approve'])

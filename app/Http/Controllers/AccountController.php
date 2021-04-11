@@ -49,8 +49,10 @@ class AccountController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAccountRequest $request, Game $game, AccountType $accountType)
+    public function store(StoreAccountRequest $request, AccountType $accountType)
     {
+        $game = $accountType->game;
+
         // Validate
         {
             // Validate Account infos
