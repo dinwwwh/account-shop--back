@@ -36,8 +36,8 @@ class AccountResource extends JsonResource
             'type' => new AccountTypeResource($this->type),
 
             // Relationship contain pivot
-            'infos' => AccountInfoResource::collection($this->infos->keyBy->id),
-            'actions' => AccountActionResource::collection($this->actions->keyBy->id),
+            'infos' => AccountInfoResource::collection($this->infos),
+            'actions' => AccountActionResource::collection($this->actions),
 
             // Time
             'approvedAt' => $this->approved_at,

@@ -119,28 +119,7 @@ class AccountActionTest extends TestCase
                         ->where('description', $data['description'])
                         ->where('videoPath', $data['videoPath'])
                         ->where('required', $data['required'])
-                        ->has(
-                            'rolesThatNeedPerformingAccountAction',
-                            fn ($json) => $json
-                                ->has(
-                                    0,
-                                    fn ($json) => $json
-                                        ->where('key', $data['roleKeys'][0])
-                                        ->etc()
-                                )
-                                ->has(
-                                    1,
-                                    fn ($json) => $json
-                                        ->where('key', $data['roleKeys'][1])
-                                        ->etc()
-                                )
-                                ->has(
-                                    2,
-                                    fn ($json) => $json
-                                        ->where('key', $data['roleKeys'][2])
-                                        ->etc()
-                                )
-                        )
+                        ->has('rolesThatNeedPerformingAccountAction.2.key')
                         ->etc()
                 )
         );

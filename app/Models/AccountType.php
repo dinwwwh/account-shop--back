@@ -15,8 +15,9 @@ class AccountType extends Model
 {
     use ManageRoleInAccountType,
         ManageAccountInfoInAccountType,
-        ManageAccountActionInAccountType;
-    use HasFactory, SoftDeletes;
+        ManageAccountActionInAccountType,
+        HasFactory,
+        SoftDeletes;
 
     protected $fillable = [
         'order',
@@ -109,5 +110,10 @@ class AccountType extends Model
     {
         return $this->belongsToMany(Role::class, 'role_can_used_account_type')
             ->withPivot('status_code');
+    }
+
+    public function game()
+    {
+        return $this->belongsTo(Game::class);
     }
 }

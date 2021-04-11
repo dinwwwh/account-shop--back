@@ -18,7 +18,10 @@ use App\Http\Requests\Request;
 use App\Models\Role;
 use App\Models\Permission;
 
-// \Auth::attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
+// auth()->attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
+// auth()->user()->assignRole('tester');
+// auth()->user()->refresh();
+
 Route::get('test', function (Request $request) {
     dd(\App\Models\Permission::find('update_account_type'));
 });

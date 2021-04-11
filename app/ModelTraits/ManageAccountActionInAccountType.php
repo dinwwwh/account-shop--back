@@ -14,7 +14,7 @@ trait ManageAccountActionInAccountType
      * @param  App\Models\Role as $role
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function accountActionsThatRoleNeedFilling(Role $role)
+    public function accountActionsThatRoleNeedPerforming(Role $role)
     {
         return $role->belongsToMany(AccountAction::class, 'role_need_performing_account_action')
             ->where('account_type_id', $this->getKey())

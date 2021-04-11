@@ -32,10 +32,8 @@ class StoreAccountRequest extends FormRequest
             'representativeImage' => 'nullable|image',
             'images' => 'nullable|array',
             'images.*' => 'image',
-            'accountTypeId' => 'required|integer',
-
-            // Relationship
             'accountInfos' => 'nullable|array',
+            'accountActions' => 'nullable|array',
         ];
     }
 }

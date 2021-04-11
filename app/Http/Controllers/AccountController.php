@@ -81,7 +81,7 @@ class AccountController extends Controller
             // Validate Account actions
             $validate = Validator::make(
                 $request->accountActions ?? [], # case accountInfo is null
-                $this->makeRuleAccountActions($accountType->accountInfosThatRoleNeedPerforming($roleThatUsing)),
+                $this->makeRuleAccountActions($accountType->accountActionsThatRoleNeedPerforming($roleThatUsing)),
             );
             if ($validate->fails()) {
                 return response()->json([
@@ -144,7 +144,7 @@ class AccountController extends Controller
                 $syncActions = [];
                 foreach ($request->accountActions ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->accountInfosThatRoleNeedPerforming($roleThatUsing)->contains($id)) {
+                    if ($accountType->accountActionsThatRoleNeedPerforming($roleThatUsing)->contains($id)) {
                         $syncActions[$id] = ['value' => json_encode($value)];
                     }
                 }
@@ -318,7 +318,7 @@ class AccountController extends Controller
             // Validate Account infos
             $validate = Validator::make(
                 $request->accountInfos ?? [], # case accountInfo is null
-                $this->makeRuleAccountInfos($accountType->accountInfosThatRoleNeedFilling()),
+                $this->makeRuleAccountInfos($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)),
             );
             if ($validate->fails()) {
                 return response()->json([
@@ -330,7 +330,7 @@ class AccountController extends Controller
             // Validate Account actions
             $validate = Validator::make(
                 $request->accountActions ?? [], # case accountInfo is null
-                $this->makeRuleAccountActions($accountType->accountInfosThatRoleNeedPerforming($roleThatUsing)),
+                $this->makeRuleAccountActions($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)),
             );
             if ($validate->fails()) {
                 return response()->json([
@@ -383,7 +383,7 @@ class AccountController extends Controller
                 $syncInfos = [];
                 foreach ($request->accountInfos ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->accountInfosThatRoleNeedFilling()->contains($id)) {
+                    if ($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)->contains($id)) {
                         $syncInfos[$id] =  ['value' => json_encode($value)];
                     }
                 }
@@ -394,7 +394,7 @@ class AccountController extends Controller
                 $syncActions = [];
                 foreach ($request->accountActions ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->accountInfosThatRoleNeedPerforming($roleThatUsing)->contains($id)) {
+                    if ($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)->contains($id)) {
                         $syncActions[$id] = ['value' => json_encode($value)];
                     }
                 }

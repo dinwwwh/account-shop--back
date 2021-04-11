@@ -225,28 +225,7 @@ class AccountInfoTest extends TestCase
                         ->where('order', $data['order'])
                         ->where('name', $data['name'])
                         ->where('description', $data['description'])
-                        ->has(
-                            'rolesNeedFilling',
-                            fn ($json) => $json
-                                ->has(
-                                    0,
-                                    fn ($json) => $json
-                                        ->where('key', $data['roleKeys'][0])
-                                        ->etc()
-                                )
-                                ->has(
-                                    1,
-                                    fn ($json) => $json
-                                        ->where('key', $data['roleKeys'][1])
-                                        ->etc()
-                                )
-                                ->has(
-                                    2,
-                                    fn ($json) => $json
-                                        ->where('key', $data['roleKeys'][2])
-                                        ->etc()
-                                )
-                        )
+                        ->has('rolesNeedFilling.2.key')
                         ->etc()
                 )
         );

@@ -14,7 +14,7 @@ trait ManageAccountInfoInAccountType
      * @param  App\Models\Role as $role
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function accountInfosThatRoleNeedPerforming(Role $role)
+    public function accountInfosThatRoleNeedFilling(Role $role)
     {
         return $role->belongsToMany(AccountInfo::class, 'role_need_filling_account_info')
             ->where('account_type_id', $this->getKey())
