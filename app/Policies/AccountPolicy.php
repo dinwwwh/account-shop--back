@@ -54,7 +54,8 @@ class AccountPolicy
      */
     public function create(User $user, AccountType $accountType)
     {
-        return $user->hasPermissionTo('create_account');
+        return $user->hasPermissionTo('create_account')
+            && $accountType->checkUserCanUse($user);
     }
 
     /**

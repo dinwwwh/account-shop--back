@@ -19,4 +19,19 @@ trait ManageRoleInAccountType
 
         return $this->rolesCanUsedAccountType()->attach($role, $pivots);
     }
+
+    /**
+     * Determine whether $user can use this account type
+     *
+     * @return boolean
+     */
+    public function checkUserCanUse($user)
+    {
+        foreach ($user->roles as $userRole) {
+            if ($this->rolesCanUsedAccountType->contains($userRole))
+                return true;
+        }
+
+        return false;
+    }
 }
