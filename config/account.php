@@ -15,7 +15,6 @@ return [
             'manager' => AccountConfigHelper::makePower(true),
             'buyer' => AccountConfigHelper::makePower(true),
             'creator' => AccountConfigHelper::makePower(true),
-            'priority' => 100,
         ],
 
         /*
@@ -27,7 +26,6 @@ return [
             'manager' => AccountConfigHelper::makePower(false),
             'buyer' => AccountConfigHelper::makePower(false),
             'creator' => AccountConfigHelper::makePower(false),
-            'priority' => -1,
         ],
 
 
@@ -42,7 +40,6 @@ return [
             'manager' => AccountConfigHelper::makePower(true),
             'buyer' => AccountConfigHelper::makePower(true),
             'creator' => AccountConfigHelper::makePower(true),
-            'priority' => 200,
         ],
 
         // Account info are safe
@@ -51,7 +48,6 @@ return [
             'manager' => AccountConfigHelper::makePower(true),
             'buyer' => AccountConfigHelper::makePower(true),
             'creator' => AccountConfigHelper::makePower(true),
-            'priority' => 300,
         ],
 
 
@@ -64,7 +60,6 @@ return [
             'manager' => AccountConfigHelper::makePower(false),
             'buyer' => AccountConfigHelper::makePower(false),
             'creator' => AccountConfigHelper::makePower(false),
-            'priority' => -1,
         ],
 
 
@@ -77,7 +72,6 @@ return [
             'manager' => AccountConfigHelper::makePower(true),
             'buyer' => AccountConfigHelper::makePower(true),
             'creator' => AccountConfigHelper::makePower(true),
-            'priority' => -1,
         ],
     ],
     'default_status_code' => 0,

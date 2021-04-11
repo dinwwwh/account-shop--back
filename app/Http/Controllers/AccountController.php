@@ -8,6 +8,7 @@ use App\Models\Game;
 use App\Models\Rule;
 use App\Models\DeleteFile;
 use App\Models\User;
+use App\Models\Role;
 use App\Http\Requests\StoreAccountRequest;
 use App\Http\Requests\UpdateAccountRequest;
 use App\Http\Resources\AccountResource;
@@ -109,7 +110,7 @@ class AccountController extends Controller
             $account->last_role_key_creator_used = $roleThatUsing->getKey();
 
             // Process advance account info
-            $account->status_code = $this->getBestStatusCode($accountType);
+            $account->status_code = $this->getStatusCode($accountType, $roleThatUsing);
         }
 
         try {
@@ -513,47 +514,11 @@ class AccountController extends Controller
         return $rules;
     }
 
-    private function getBestStatusCode(AccountType $accountType)
+    private function getStatusCode(AccountType $accountType, Role $role)
     {
-        // Get list role id
-        $userRoleKeys = [];
-        foreach (auth()->user()->roles as $role) {
-            $userRoleKeys[] = $role->id;
-        }
-
-        // Select all account's role mapping with user role
-        $accountRoles = $accountType
-            ->rolesCanUsedAccountType()
-            ->whereIn('id', $userRoleKeys)
-            ->get();
-
-        // Fill invalid status code
-        foreach ($accountRoles as $key => $role) {
-            if (!key_exists($role->pivot->status_code, config('account.status_codes'))) {
-                $accountRoles->forget($key);
-            }
-        }
-
-        // select and set first status code
-        $firstStatusCode = $accountRoles->first()->pivot->status_code;
-        $bestStatusCode = [
-            'code' => $firstStatusCode,
-            'priority' => config('account.status_codes')[$firstStatusCode]['priority']
-        ];
-
-        // Find the best status code
-        foreach ($accountRoles as $role) {
-            $statusCode = [
-                'code' => $role->pivot->status_code,
-                'priority' => config('account.status_codes')[$role->pivot->status_code]['priority']
-            ];
-
-            if ($statusCode['priority'] > $bestStatusCode['priority']) {
-                $bestStatusCode = $statusCode;
-            }
-        }
-
-        return $bestStatusCode['code'];
+        return $accountType->rolesCanUsedAccountType
+            ->find($role->getKey())
+            ->pivot->status_code;
     }
 
     private function getBestPrice(Request $request, Account $account)
