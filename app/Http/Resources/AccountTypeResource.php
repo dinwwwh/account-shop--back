@@ -22,11 +22,11 @@ class AccountTypeResource extends JsonResource
             'description' => $this->description,
 
             // Relationship
-            'currentRoleNeedFillingAccountInfos'
-            => AccountInfoResource::collection($this->currentRoleNeedFillingAccountInfos()),
+            'accountInfosThatRoleNeedFilling'
+            => AccountInfoResource::collection($this->accountInfosThatRoleNeedFilling()),
             'accountInfos' => AccountInfoResource::collection($this->accountInfos),
-            'currentRoleNeedPerformingAccountActions'
-            => AccountActionResource::collection($this->currentRoleNeedPerformingAccountActions()),
+            'accountInfosThatRoleNeedPerforming'
+            => AccountActionResource::collection($this->accountInfosThatRoleNeedPerforming()),
             'accountActions' => AccountActionResource::collection($this->accountActions),
             'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
             'creator' => new UserResource($this->creator),

@@ -24,6 +24,7 @@ class StoreAccountRequest extends FormRequest
     public function rules()
     {
         return [
+            'roleKey' => 'required|string',
             'username' => 'required|string',
             'password' => 'required|string',
             'price' => 'required|integer',

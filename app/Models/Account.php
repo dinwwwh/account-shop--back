@@ -26,6 +26,7 @@ class Account extends Model
         'sold_at',
         'last_updated_editor_id',
         'creator_id',
+        'last_role_key_creator_used',
         'approved_at',
     ];
 
@@ -44,6 +45,7 @@ class Account extends Model
         'sold_at' => 'timestamp',
         'last_updated_editor_id' => 'integer',
         'creator_id' => 'integer',
+        'last_role_key_creator_used' => 'string',
         'approved_at' => 'timestamp',
 
         // Pivot can't work
@@ -73,7 +75,7 @@ class Account extends Model
 
     /**
      * Relationship one-many with Models\AccountImage
-     * 
+     *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function images()
@@ -83,7 +85,7 @@ class Account extends Model
 
     /**
      * Relationship one-one with Models\Game
-     * 
+     *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function game()

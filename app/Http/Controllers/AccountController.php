@@ -53,12 +53,22 @@ class AccountController extends Controller
     {
         $game = $accountType->game;
 
+        // Get role use to create account
+        $roleThatUsing = auth()->user()->roles->find($request->roleKey);
+        if (is_null($roleThatUsing)) {
+            return response()->json([
+                'errors' => [
+                    'roleKey' => 'Vai trò không hợp lệ.'
+                ]
+            ], 422);
+        }
+
         // Validate
         {
             // Validate Account infos
             $validate = Validator::make(
                 $request->accountInfos ?? [], # case accountInfo is null
-                $this->makeRuleAccountInfos($accountType->currentRoleNeedFillingAccountInfos()),
+                $this->makeRuleAccountInfos($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)),
             );
             if ($validate->fails()) {
                 return response()->json([
@@ -70,7 +80,7 @@ class AccountController extends Controller
             // Validate Account actions
             $validate = Validator::make(
                 $request->accountActions ?? [], # case accountInfo is null
-                $this->makeRuleAccountActions($accountType->currentRoleNeedPerformingAccountActions()),
+                $this->makeRuleAccountActions($accountType->accountInfosThatRoleNeedPerforming($roleThatUsing)),
             );
             if ($validate->fails()) {
                 return response()->json([
@@ -94,8 +104,9 @@ class AccountController extends Controller
             }
 
             // Process other account info
-            $account->game_id = $game->id;
-            $account->account_type_id = $accountType->id;
+            $account->game_id = $game->getKey();
+            $account->account_type_id = $accountType->getKey();
+            $account->last_role_key_creator_used = $roleThatUsing->getKey();
 
             // Process advance account info
             $account->status_code = $this->getBestStatusCode($accountType);
@@ -122,7 +133,7 @@ class AccountController extends Controller
                 $syncInfos = [];
                 foreach ($request->accountInfos ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->currentRoleNeedFillingAccountInfos()->contains($id)) {
+                    if ($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)->contains($id)) {
                         $syncInfos[$id] =  ['value' => json_encode($value)];
                     }
                 }
@@ -132,7 +143,7 @@ class AccountController extends Controller
                 $syncActions = [];
                 foreach ($request->accountActions ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->currentRoleNeedPerformingAccountActions()->contains($id)) {
+                    if ($accountType->accountInfosThatRoleNeedPerforming($roleThatUsing)->contains($id)) {
                         $syncActions[$id] = ['value' => json_encode($value)];
                     }
                 }
@@ -289,15 +300,24 @@ class AccountController extends Controller
      */
     public function update(UpdateAccountRequest $request, Account $account)
     {
+        $accountType = $account->type;
+
+        // Get role use to update
+        $roleThatUsing = auth()->user()->roles->find($request->roleKey ?? $account->last_role_key_creator_used);
+        if (is_null($roleThatUsing)) {
+            return response()->json([
+                'errors' => [
+                    'roleKey' => 'Vai trò không hợp lệ.'
+                ]
+            ], 422);
+        }
 
         // Validate account info and account action
         {
-            $accountType = $account->type;
-
             // Validate Account infos
             $validate = Validator::make(
                 $request->accountInfos ?? [], # case accountInfo is null
-                $this->makeRuleAccountInfos($accountType->currentRoleNeedFillingAccountInfos()),
+                $this->makeRuleAccountInfos($accountType->accountInfosThatRoleNeedFilling()),
             );
             if ($validate->fails()) {
                 return response()->json([
@@ -309,7 +329,7 @@ class AccountController extends Controller
             // Validate Account actions
             $validate = Validator::make(
                 $request->accountActions ?? [], # case accountInfo is null
-                $this->makeRuleAccountActions($accountType->currentRoleNeedPerformingAccountActions()),
+                $this->makeRuleAccountActions($accountType->accountInfosThatRoleNeedPerforming()),
             );
             if ($validate->fails()) {
                 return response()->json([
@@ -332,7 +352,7 @@ class AccountController extends Controller
             }
 
             // Process other account info
-            $account->last_updated_editor_id = auth()->user()->id;
+            $account->last_role_key_creator_used = $roleThatUsing->keyKey();
         }
 
 
@@ -362,7 +382,7 @@ class AccountController extends Controller
                 $syncInfos = [];
                 foreach ($request->accountInfos ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->currentRoleNeedFillingAccountInfos()->contains($id)) {
+                    if ($accountType->accountInfosThatRoleNeedFilling()->contains($id)) {
                         $syncInfos[$id] =  ['value' => json_encode($value)];
                     }
                 }
@@ -373,7 +393,7 @@ class AccountController extends Controller
                 $syncActions = [];
                 foreach ($request->accountActions ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->currentRoleNeedPerformingAccountActions()->contains($id)) {
+                    if ($accountType->accountInfosThatRoleNeedPerforming()->contains($id)) {
                         $syncActions[$id] = ['value' => json_encode($value)];
                     }
                 }

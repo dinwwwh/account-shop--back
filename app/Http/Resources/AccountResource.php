@@ -24,6 +24,7 @@ class AccountResource extends JsonResource
             'statusCode' => $this->status_code,
             'description' => $this->description,
             'representativeImagePath' => Storage::url($this->representative_image_path),
+            'lastRoleKeyCreatorUsed' => $this->last_role_key_creator_used,
 
             // Relationship
             'images' => AccountImageResource::collection($this->images),

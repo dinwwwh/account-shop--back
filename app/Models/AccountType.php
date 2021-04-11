@@ -7,10 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Collection;
 use App\ModelTraits\ManageRoleInAccountType;
+use App\ModelTraits\ManageAccountInfoInAccountType;
+use App\ModelTraits\ManageAccountActionInAccountType;
+
 
 class AccountType extends Model
 {
-    use HasFactory, SoftDeletes, ManageRoleInAccountType;
+    use ManageRoleInAccountType,
+        ManageAccountInfoInAccountType,
+        ManageAccountActionInAccountType;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'order',
@@ -85,35 +91,6 @@ class AccountType extends Model
     }
 
     /**
-     * Include account infos model user must filling to create game
-     * Relationship many-many with Models\Role
-     *
-     * @param  mixed $game
-     * @return App\Models\AccountInfo
-     */
-    public function currentRoleNeedFillingAccountInfos()
-    {
-        $result = new Collection;
-
-        if (!auth()->check()) {
-            return $result;
-        }
-
-        foreach (auth()->user()->roles as $role) {
-            $accountInfos = $role->belongsToMany(AccountInfo::class, 'role_need_filling_account_info')
-                ->where('account_type_id', $this->id)
-                ->get();
-
-            foreach ($accountInfos as $accountInfo) {
-                if (!$result->contains($accountInfo)) {
-                    $result->push($accountInfo);
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
      * Relationship one-one with Models\AccountAction
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
@@ -121,35 +98,6 @@ class AccountType extends Model
     public function accountActions()
     {
         return $this->hasMany(AccountAction::class);
-    }
-
-    /**
-     * Include account Actions model, user need performing to create game
-     * Relationship many-many with Models\Role
-     *
-     * @param  mixed $game
-     * @return App\Models\AccountAction
-     */
-    public function  currentRoleNeedPerformingAccountActions()
-    {
-        $result = new Collection;
-
-        if (!auth()->check()) {
-            return $result;
-        }
-
-        foreach (auth()->user()->roles as $role) {
-            $accountActions = $role->belongsToMany(AccountAction::class, 'role_need_performing_account_action')
-                ->where('account_type_id', $this->id)
-                ->get();
-
-            foreach ($accountActions as $accountAction) {
-                if (!$result->contains($accountAction)) {
-                    $result->push($accountAction);
-                }
-            }
-        }
-        return $result;
     }
 
     /**
