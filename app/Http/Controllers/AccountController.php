@@ -192,7 +192,7 @@ class AccountController extends Controller
 
             switch ($account->status_code) {
                 case 0:
-                    $account->status_code = 200;
+                    $account->status_code = 480;
                     break;
 
                 default:
@@ -203,6 +203,7 @@ class AccountController extends Controller
             }
 
             // When success
+            $account->approved_at = Carbon::now();
             $account->save();
             ApprovedAccountHook::execute($account);
         } catch (\Throwable $th) {
@@ -235,6 +236,12 @@ class AccountController extends Controller
      */
     public function buy(Request $request, Account $account)
     {
+        if (!is_null($account->buyer_id)) {
+            return response()->json([
+                'message' => 'Tai khoản đã được mua bởi người khác.'
+            ], 501);
+        }
+
         // Initial data
         $bestPrice = $this->getBestPrice($request, $account);
 
@@ -251,12 +258,12 @@ class AccountController extends Controller
 
             // Do something before send account for user
             switch ($account->status_code) {
-                case 200:
-                    $account->status_code = 300;
+                case 480:
+                    $account->status_code = 880;
                     break;
 
-                case 210:
-                    // Change password
+                case 440:
+                    $account->status_code = 840;
                     break;
 
                 default:
@@ -329,8 +336,8 @@ class AccountController extends Controller
 
             // Validate Account actions
             $validate = Validator::make(
-                $request->accountActions ?? [], # case accountInfo is null
-                $this->makeRuleAccountActions($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)),
+                $request->accountActions ?? [], # case accountAction is null
+                $this->makeRuleAccountActions($accountType->accountActionsThatRoleNeedPerforming($roleThatUsing)),
             );
             if ($validate->fails()) {
                 return response()->json([
@@ -353,7 +360,7 @@ class AccountController extends Controller
             }
 
             // Process other account info
-            $account->last_role_key_editor_used = $roleThatUsing->keyKey();
+            $account->last_role_key_editor_used = $roleThatUsing->getKey();
         }
 
 
@@ -394,7 +401,7 @@ class AccountController extends Controller
                 $syncActions = [];
                 foreach ($request->accountActions ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)->contains($id)) {
+                    if ($accountType->accountActionsThatRoleNeedPerforming($roleThatUsing)->contains($id)) {
                         $syncActions[$id] = ['value' => json_encode($value)];
                     }
                 }

@@ -32,7 +32,7 @@ class AccountTypeController extends Controller
      */
     public function store(StoreAccountTypeRequest $request, Game $game)
     {
-        // Validate status codes
+        // Validate status codes - unimportant
         foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
             if (!key_exists($role['statusCode'], config('account.status_codes'))) {
                 return response()->json([

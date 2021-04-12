@@ -133,11 +133,11 @@ class AccountTypeTest extends TestCase
                 ],
                 [
                     'key' => 'customer',
-                    'statusCode' => 0,
+                    'statusCode' => 440,
                 ],
                 [
                     'key' => 'tester',
-                    'statusCode' => 200,
+                    'statusCode' => 440,
                 ],
             ],
         ];

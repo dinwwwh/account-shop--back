@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreAccountTypeRequest extends FormRequest
@@ -29,7 +30,7 @@ class StoreAccountTypeRequest extends FormRequest
             'rolesCanUsedAccountType' => 'nullable|array',
             'rolesCanUsedAccountType.*' => 'array',
             'rolesCanUsedAccountType.*.key' => 'required|string',
-            'rolesCanUsedAccountType.*.statusCode' => 'required|integer',
+            'rolesCanUsedAccountType.*.statusCode' => 'required|integer|' .  Rule::in([0, 440]),
         ];
     }
 

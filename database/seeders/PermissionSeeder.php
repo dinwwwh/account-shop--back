@@ -16,6 +16,7 @@ class PermissionSeeder extends Seeder
     {
         $this->makeBasePermissions();
         $this->makeGamePermissions();
+        $this->makeAccountPermissions();
     }
 
 
@@ -114,5 +115,24 @@ class PermissionSeeder extends Seeder
      */
     public function makeGamePermissions()
     {
+    }
+
+    /**
+     * Create internal account permission
+     *
+     * @return void
+     */
+    public function makeAccountPermissions()
+    {
+        Permission::firstOrCreate(
+            [
+                'key' => 'approve_account',
+            ],
+            [
+                'name' => 'phê duyệt tài khoản',
+                'description' => 'Xác định liệu người dùng có thể phê duyệt những tài khoản đang chờ duyệt.',
+                'parent_key' => 'module_account',
+            ],
+        );
     }
 }

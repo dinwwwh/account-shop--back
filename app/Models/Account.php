@@ -137,6 +137,17 @@ class Account extends Model
     }
 
     /**
+     * Relationship one-one with User
+     * Include infos of buyer model
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function buyer()
+    {
+        return $this->belongsTo(User::class, 'buyer_id');
+    }
+
+    /**
      * Relationship many-many with Models\AccountInfo
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship

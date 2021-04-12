@@ -14,9 +14,12 @@ trait ManageRoleInAccountType
      */
     public function allowRole($role, $statusCode = null)
     {
+        if (!key_exists($statusCode, config('account.status_codes'))) {
+            return null;
+        }
+
         $role = RoleHelper::mustBeRole($role);
         $pivots = !is_null($statusCode) ? ['status_code' => $statusCode] : null;
-
         return $this->rolesCanUsedAccountType()->attach($role, $pivots);
     }
 

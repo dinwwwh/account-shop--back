@@ -50,12 +50,41 @@ class AccountPolicy
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
+     * @param  \App\Models\AccountType  $accountType
      * @return mixed
      */
     public function create(User $user, AccountType $accountType)
     {
         return $user->hasPermissionTo('create_account')
             && $accountType->checkUserCanUse($user);
+    }
+
+    /**
+     * Determine whether the user can approve models.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Account  $account
+     * @return mixed
+     */
+    public function approve(User $user, Account $account)
+    {
+        return $user->hasPermissionTo('approve_account')
+            && $account->status_code >= 0
+            && $account->status_code <= 99;
+    }
+
+    /**
+     * Determine whether the user can buy models.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Account  $account
+     * @return mixed
+     */
+    public function buy(User $user, Account $account)
+    {
+        return !$account->creator->is($user)
+            && $account->status_code >= 400
+            && $account->status_code <= 499;
     }
 
     /**
@@ -67,7 +96,7 @@ class AccountPolicy
      */
     public function update(User $user, Account $account)
     {
-        return $user->hasPermissionTo('manage_account')
+        return $user->hasPermissionTo('update_account')
             && ($this->manage($user) || $account->creator->is($user));
     }
 

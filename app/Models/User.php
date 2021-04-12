@@ -22,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'gold_coin',
+        'silver_coin',
     ];
 
     /**
@@ -41,6 +43,9 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'gold_coin' => 'integer',
+        'silver_coin' => 'integer',
+
     ];
 
     /**

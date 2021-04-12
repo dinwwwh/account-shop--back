@@ -34,6 +34,19 @@ Route::get('login', function () {
 
 /**
  * --------------------------------
+ * FEATURE PROFILE
+ * --------------------------------
+ * Info of current user
+ */
+Route::prefix('profile')->group(function () {
+    // Show
+    Route::get('', [App\Http\Controllers\ProfileController::class, 'show'])
+        ->middleware('auth')
+        ->name('profile.show');
+});
+
+/**
+ * --------------------------------
  * FEATURE RULE
  * --------------------------------
  * Include infos to make rules to validate in font-end and back-end.
@@ -178,18 +191,20 @@ Route::prefix('account')->group(function () {
         ->name('account.store');
     // approve
     Route::post('approve/{account}', [App\Http\Controllers\AccountController::class, 'approve'])
+        ->middleware(['auth', 'can:approve,account'])
         ->name('account.approve');
     // Show
     Route::get('{account}', [App\Http\Controllers\AccountController::class, 'show'])
         ->name('account.show');
     // buy
     Route::post('buy/{account}', [App\Http\Controllers\AccountController::class, 'buy'])
+        ->middleware(['auth', 'can:buy,account'])
         ->name('account.buy');
     // Update
     Route::put('{account}', [App\Http\Controllers\AccountController::class, 'update'])
         ->middleware(['auth', 'can:update,account'])
         ->name('account.update');
     // Destroy
-    Route::delete('{account}', [App\Http\Controllers\AccountController::class, 'destroy'])
-        ->name('account.destroy');
+    // Route::delete('{account}', [App\Http\Controllers\AccountController::class, 'destroy'])
+    //     ->name('account.destroy');
 });
