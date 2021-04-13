@@ -23,7 +23,10 @@ use App\Models\Permission;
 // auth()->user()->refresh();
 
 Route::get('test', function (Request $request) {
-    dd(\App\Models\Permission::find('update_account_type'));
+    $arr = [1, 2, 3];
+    $arr2 = $arr;
+    $arr2[0] = 'dfdsfs';
+    dd($arr);
 });
 
 Route::get('login', function () {

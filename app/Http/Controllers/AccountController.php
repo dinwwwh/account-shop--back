@@ -236,12 +236,6 @@ class AccountController extends Controller
      */
     public function buy(Request $request, Account $account)
     {
-        if (!is_null($account->buyer_id)) {
-            return response()->json([
-                'message' => 'Tai khoản đã được mua bởi người khác.'
-            ], 501);
-        }
-
         // Initial data
         $bestPrice = $this->getBestPrice($request, $account);
 

@@ -99,14 +99,14 @@ class AccountTest extends TestCase
 
     public function testStore()
     {
-        for ($aBc = 0; $aBc < 5; $aBc++) {
-            $user = User::factory()->make();
-            $user->save();
-            $user->givePermissionTo('create_account');
-            $user->assignRole('tester');
-            $user->refresh();
+        $user = User::factory()->make();
+        $user->save();
+        $user->givePermissionTo('create_account');
+        $user->assignRole('tester');
+        $user->refresh();
+        $game = $this->makeIdealGame();
 
-            $game = $this->makeIdealGame();
+        for ($aBc = 0; $aBc < 5; $aBc++) {
             $accountType = $game->accountTypes->random();
             $route = route('account.store', ['accountType' => $accountType]);
             $dataOfAccountActions = $this->makeDataForAccountActions($accountType);
@@ -119,7 +119,8 @@ class AccountTest extends TestCase
                 'description' => Str::random(100),
                 'representativeImage' => UploadedFile::fake()->image('avatar.jpg'),
                 'images' => [
-                    UploadedFile::fake()->image('avatar343243.jpg'), UploadedFile::fake()->image('avatar4324.jpg')
+                    UploadedFile::fake()->image('avatar343243.jpg'),
+                    UploadedFile::fake()->image('avatar4324.jpg'),
                 ],
                 'accountInfos' => $dataOfAccountInfos,
                 'accountActions' => $dataOfAccountActions,
@@ -145,6 +146,63 @@ class AccountTest extends TestCase
                     )
             );
         }
+
+        $accountType = $game->accountTypes->random();
+        $route = route('account.store', ['accountType' => $accountType]);
+        $dataOfAccountActions = $this->makeDataForAccountActions($accountType);
+        $dataOfAccountInfos = $this->makeDataForAccountInfos($accountType);
+        $data = [
+            'roleKey' => 'tester',
+            'username' => Str::random(60),
+            'password' => Str::random(60),
+            'price' => rand(20000, 50000),
+            'description' => Str::random(100),
+            'representativeImage' => UploadedFile::fake()->image('avatar.jpg'),
+            'images' => [
+                UploadedFile::fake()->image('avatar343243.jpg'),
+                UploadedFile::fake()->image('avatar4324.jpg'),
+            ],
+            'accountInfos' => $dataOfAccountInfos,
+            'accountActions' => $dataOfAccountActions,
+        ];
+        $intactData = $data;
+
+        # Case: lack accountInfo
+        $firstKeyAccountInfo = array_key_first($data['accountInfos']);
+        unset($data['accountInfos'][$firstKeyAccountInfo]);
+        $res = $this->actingAs($user)
+            ->json('post', $route, $data);
+        $res->assertStatus(422);
+        $res->assertJson(
+            fn ($j) => $j
+                ->has('errors.accountInfos.' . $firstKeyAccountInfo)
+                ->etc()
+        );
+
+        # Case: lack accountAction
+        $data = $intactData;
+        $firstKeyAccountAction = array_key_first($data['accountActions']);
+        unset($data['accountActions'][$firstKeyAccountAction]);
+        $res = $this->actingAs($user)
+            ->json('post', $route, $data);
+        $res->assertStatus(422);
+        $res->assertJson(
+            fn ($j) => $j
+                ->has('errors.accountActions.' . $firstKeyAccountAction)
+                ->etc()
+        );
+
+        # Case: invalid roleKey
+        $data = $intactData;
+        $data['roleKey'] = Str::random(10);
+        $res = $this->actingAs($user)
+            ->json('post', $route, $data);
+        $res->assertStatus(422);
+        $res->assertJson(
+            fn ($json) => $json
+                ->has('errors.roleKey')
+                ->etc()
+        );
     }
 
     public function testUpdate()
@@ -189,28 +247,68 @@ class AccountTest extends TestCase
                         ->etc()
                 )
         );
+        $intactData = $data;
+
+        # Case: lack accountInfo
+        $firstKeyAccountInfo = array_key_first($data['accountInfos']);
+        unset($data['accountInfos'][$firstKeyAccountInfo]);
+        $res = $this->actingAs($creator)
+            ->json('put', $route, $data);
+        $res->assertStatus(422);
+        $res->assertJson(
+            fn ($j) => $j
+                ->has('errors.accountInfos.' . $firstKeyAccountInfo)
+                ->etc()
+        );
+
+        # Case: lack accountAction
+        $data = $intactData;
+        $firstKeyAccountAction = array_key_first($data['accountActions']);
+        unset($data['accountActions'][$firstKeyAccountAction]);
+        $res = $this->actingAs($creator)
+            ->json('put', $route, $data);
+        $res->assertStatus(422);
+        $res->assertJson(
+            fn ($j) => $j
+                ->has('errors.accountActions.' . $firstKeyAccountAction)
+                ->etc()
+        );
+
+        # Case: invalid roleKey
+        $data = $intactData;
+        $data['roleKey'] = Str::random(10);
+        $res = $this->actingAs($creator)
+            ->json('put', $route, $data);
+        $res->assertStatus(422);
+        $res->assertJson(
+            fn ($json) => $json
+                ->has('errors.roleKey')
+                ->etc()
+        );
     }
 
     public function testApprove()
     {
-        $account = Account::inRandomOrder()
-            ->where('status_code', '>=', 0)
-            ->where('status_code', '<=', 99)
-            ->first();
-        $route = route('account.approve', ['account' => $account]);
-        $user = User::factory()->make();
-        $user->save();
-        $user->givePermissionTo('approve_account');
-        $user->refresh();
+        foreach ([1, 2] as $nNnO) {
+            $account = Account::inRandomOrder()
+                ->where('status_code', '>=', 0)
+                ->where('status_code', '<=', 99)
+                ->first();
+            $route = route('account.approve', ['account' => $account]);
+            $user = User::factory()->make();
+            $user->save();
+            $user->givePermissionTo('approve_account');
+            $user->refresh();
 
-        $res = $this->actingAs($user)
-            ->json('post', $route);
+            $res = $this->actingAs($user)
+                ->json('post', $route);
 
-        $res->assertStatus(200);
-        $res->assertJson(
-            fn ($j) => $j
-                ->where('data.statusCode', 480)
-        );
+            $res->assertStatus(200);
+            $res->assertJson(
+                fn ($j) => $j
+                    ->where('data.statusCode', 480)
+            );
+        }
     }
 
     public function testShow()
@@ -262,10 +360,11 @@ class AccountTest extends TestCase
 
         $route = route('account.buy', ['account' => $account]);
         $user = User::factory()->make();
-        $goldCoin = rand(100000, 200000);
+        $goldCoin = rand($account->price, $account->price + 200000);
         $user->gold_coin = $goldCoin;
         $user->save();
 
+        # Case: enough gold coin to buy account
         $res = $this->actingAs($user)
             ->json('post', $route);
         $res->assertStatus(200);
@@ -281,5 +380,177 @@ class AccountTest extends TestCase
             fn ($j) => $j
                 ->where('data.goldCoin',  $goldCoin - $account->price)
         );
+
+        $account = Account::inRandomOrder()
+            ->where('status_code', '>=', 400)
+            ->where('status_code', '<=', 499)
+            ->first();
+        $route = route('account.buy', ['account' => $account]);
+        # Case: don't enough gold coin to buy account
+        $user->gold_coin = rand(1, $account->price - 1);
+        $user->save();
+        $res = $this->actingAs($user)
+            ->json('post', $route);
+        $res->assertStatus(501);
+    }
+
+    public function testStoreRouteMiddleware()
+    {
+        $game = $this->makeIdealGame();
+        $accountType = $game->accountTypes->random();
+        $route = route('account.store', ['accountType' => $accountType]);
+
+        /**
+         * Not auth
+         * -------------------
+         */
+        $res = $this->json('post', $route);
+        $res->assertStatus(403);
+
+        /**
+         * Is auth
+         * ---------------------
+         * create - can use account type
+         */
+        $user = User::factory()->make();
+        $user->save();
+
+        # 0 - 0
+        $res = $this->actingAs($user)
+            ->json('post', $route);
+        $res->assertStatus(403);
+
+        # 0 - 1
+        $user->assignRole('tester');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('post', $route);
+        $res->assertStatus(403);
+
+        # 1 - 0
+        $user->givePermissionTo('create_account');
+        $user->removeRole('tester');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('post', $route);
+        $res->assertStatus(403);
+
+        # 1 - 1
+        $user->assignRole('tester');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('post', $route);
+        $res->assertStatus(422);
+    }
+
+    public function testApproveRouteMiddleware()
+    {
+        $account = Account::inRandomOrder()
+            ->where('status_code', '>=', 0)
+            ->where('status_code', '<=', 99)
+            ->first();
+        $invalidAccount = Account::inRandomOrder()
+            ->where('status_code', '>=', 100)
+            ->first();
+        $route = route('account.approve', ['account' => $account]);
+        $invalidRoute = route('account.approve', ['account' => $invalidAccount]);
+
+        /**
+         * Not auth
+         * -------------------
+         */
+        $res = $this->json('post', $route);
+        $res->assertStatus(401);
+
+        /**
+         * Is auth
+         * ---------------------
+         * approve - account is valid
+         */
+        $user = User::factory()->make();
+        $user->save();
+
+        # 0 - 0
+        $res = $this->actingAs($user)
+            ->json('post', $invalidRoute);
+        $res->assertStatus(403);
+
+        # 0 - 1
+        $res = $this->actingAs($user)
+            ->json('post', $route);
+        $res->assertStatus(403);
+
+        # 1 - 0
+        $user->givePermissionTo('approve_account');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('post', $invalidRoute);
+        $res->assertStatus(403);
+
+        # 1 - 1
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('post', $route);
+        $res->assertStatus(200);
+    }
+
+    public function testBuyRouteMiddleware()
+    {
+        $validAccount = Account::where('status_code', '>=', 400)
+            ->where('status_code', '<=', 499)
+            ->first();
+        $boughtAccount = Account::where('status_code', '>=', 800)
+            ->first();
+        $invalidAccount = Account::where('status_code', '<', 400)
+            ->orWhere('status_code', '>', 499)
+            ->first();
+
+        /**
+         * Not auth
+         * ------------
+         */
+
+        /**
+         * Auth as creator
+         * -------------
+         */
+
+        # valid account
+        $this->actingAs($validAccount->creator)
+            ->json('post', route('account.buy', ['account' => $validAccount]))
+            ->assertStatus(403);
+
+        # invalid account
+        $this->actingAs($invalidAccount->creator)
+            ->json('post', route('account.buy', ['account' => $invalidAccount]))
+            ->assertStatus(403);
+
+        # bought account
+        $this->actingAs($boughtAccount->creator)
+            ->json('post', route('account.buy', ['account' => $boughtAccount]))
+            ->assertStatus(403);
+
+
+        /**
+         * Auth as regular user
+         * -------------
+         */
+        $user = User::factory()->make();
+        $user->save();
+
+        # valid account
+        $this->actingAs($user)
+            ->json('post', route('account.buy', ['account' => $validAccount]))
+            ->assertStatus(501);
+
+        # invalid account
+        $this->actingAs($user)
+            ->json('post', route('account.buy', ['account' => $invalidAccount]))
+            ->assertStatus(403);
+
+        # bought account
+        $this->actingAs($user)
+            ->json('post', route('account.buy', ['account' => $boughtAccount]))
+            ->assertStatus(403);
     }
 }

@@ -84,7 +84,8 @@ class AccountPolicy
     {
         return !$account->creator->is($user)
             && $account->status_code >= 400
-            && $account->status_code <= 499;
+            && $account->status_code <= 499
+            && is_null($account->buyer_id);
     }
 
     /**
