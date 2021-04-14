@@ -553,4 +553,159 @@ class AccountTest extends TestCase
             ->json('post', route('account.buy', ['account' => $boughtAccount]))
             ->assertStatus(403);
     }
+
+    public function testUpdateRouteMiddle()
+    {
+        $validAccount = Account::inRandomOrder()
+            ->whereIn('status_code', [0, 440])
+            ->first();
+        $validRoute = route('account.update', ['account' => $validAccount]);
+
+        $validProAccount = Account::inRandomOrder()
+            ->whereIn('status_code', [480])
+            ->first();
+        $validProRoute = route('account.update', ['account' => $validProAccount]);
+
+        $invalidAccount = Account::inRandomOrder()
+            ->whereIn('status_code', [200, 600, 840, 880])
+            ->first();
+        $invalidRoute = route('account.update', ['account' => $invalidAccount]);
+
+        /**
+         * Not Auth
+         * ---------------------------
+         */
+
+        # Valid route
+        $this->json('put', $validRoute)
+            ->assertStatus(401);
+
+        # Valid pro route
+        $this->json('put', $validProRoute)
+            ->assertStatus(401);
+
+        # Invalid route
+        $this->json('put', $invalidRoute)
+            ->assertStatus(401);
+
+        /**
+         * Regular user can't update
+         * ---------------------------
+         */
+        $user = User::factory()->make();
+        $user->save();
+
+        # Valid route
+        $this->actingAs($user)
+            ->json('put', $validRoute)
+            ->assertStatus(403);
+
+        # Valid pro route
+        $this->actingAs($user)
+            ->json('put', $validProRoute)
+            ->assertStatus(403);
+
+        # Invalid route
+        $this->actingAs($user)
+            ->json('put', $invalidRoute)
+            ->assertStatus(403);
+
+        /**
+         * User can update
+         * ---------------------------
+         */
+        $user->givePermissionTo('update_account');
+
+        # Valid route
+        $this->actingAs($user)
+            ->json('put', $validRoute)
+            ->assertStatus(403);
+
+        # Valid pro route
+        $this->actingAs($user)
+            ->json('put', $validProRoute)
+            ->assertStatus(403);
+
+        # Invalid route
+        $this->actingAs($user)
+            ->json('put', $invalidRoute)
+            ->assertStatus(403);
+
+        /**
+         * Creator can't update
+         * ---------------------------
+         */
+
+        # Valid route
+        $validAccount->creator->revokePermissionTo('update_account');
+        $validAccount->creator->refresh();
+        $this->actingAs($validAccount->creator)
+            ->json('put', $validRoute)
+            ->assertStatus(403);
+
+        # Valid pro route
+        $validProAccount->creator->revokePermissionTo('update_account');
+        $validProAccount->creator->refresh();
+        $this->actingAs($validProAccount->creator)
+            ->json('put', $validProRoute)
+            ->assertStatus(403);
+
+        # Invalid route
+        $invalidAccount->creator->revokePermissionTo('update_account');
+        $invalidAccount->creator->refresh();
+        $this->actingAs($invalidAccount->creator)
+            ->json('put', $invalidRoute)
+            ->assertStatus(403);
+
+        /**
+         * Creator can update
+         * ---------------------------
+         */
+
+        # Valid route
+        $validAccount->creator->givePermissionTo('update_account');
+        $validAccount->creator->refresh();
+        $this->actingAs($validAccount->creator)
+            ->json('put', $validRoute)
+            ->assertStatus(422);
+
+        # Valid pro route
+        $validProAccount->creator->givePermissionTo('update_account');
+        $validProAccount->creator->refresh();
+        $this->actingAs($validProAccount->creator)
+            ->json('put', $validProRoute)
+            ->assertStatus(403);
+
+        # Invalid route
+        $invalidAccount->creator->givePermissionTo('update_account');
+        $invalidAccount->creator->refresh();
+        $this->actingAs($invalidAccount->creator)
+            ->json('put', $invalidRoute)
+            ->assertStatus(403);
+
+        /**
+         * Manager can update and mange
+         * ---------------------------
+         */
+        $manager = User::factory()->make();
+        $manager->save();
+        $manager->givePermissionTo('update_account');
+        $manager->givePermissionTo('manage_account');
+        $manager->refresh();
+
+        # Valid route
+        $this->actingAs($manager)
+            ->json('put', $validRoute)
+            ->assertStatus(422);
+
+        # Valid pro route
+        $this->actingAs($manager)
+            ->json('put', $validProRoute)
+            ->assertStatus(422);
+
+        # Invalid route
+        $this->actingAs($manager)
+            ->json('put', $invalidRoute)
+            ->assertStatus(403);
+    }
 }

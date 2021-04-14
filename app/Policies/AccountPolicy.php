@@ -97,8 +97,25 @@ class AccountPolicy
      */
     public function update(User $user, Account $account)
     {
-        return $user->hasPermissionTo('update_account')
-            && ($this->manage($user) || $account->creator->is($user));
+        if (!$user->hasPermissionTo('update_account')) {
+            return false;
+        }
+
+        # Case: $user is creator
+        if (
+            $account->creator->is($user)
+            && in_array($account->status_code, [0, 440])
+        ) {
+            return true;
+        }
+
+        # Case: $user is manager
+        if (
+            $this->manage($user)
+            && in_array($account->status_code, [0, 440, 480])
+        ) {
+            return true;
+        }
     }
 
     /**
