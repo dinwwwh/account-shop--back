@@ -106,7 +106,7 @@ class AccountTest extends TestCase
         $user->refresh();
         $game = $this->makeIdealGame();
 
-        for ($aBc = 0; $aBc < 5; $aBc++) {
+        for ($aBc = 0; $aBc < 7; $aBc++) {
             $accountType = $game->accountTypes->random();
             $route = route('account.store', ['accountType' => $accountType]);
             $dataOfAccountActions = $this->makeDataForAccountActions($accountType);
@@ -115,7 +115,7 @@ class AccountTest extends TestCase
                 'roleKey' => 'tester',
                 'username' => Str::random(60),
                 'password' => Str::random(60),
-                'price' => rand(20000, 50000),
+                'cost' => rand(20000, 50000),
                 'description' => Str::random(100),
                 'representativeImage' => UploadedFile::fake()->image('avatar.jpg'),
                 'images' => [
@@ -136,7 +136,7 @@ class AccountTest extends TestCase
                         fn ($j) => $j
                             ->where('username', $data['username'])
                             ->where('password', $data['password'])
-                            ->where('price', $data['price'])
+                            ->where('cost', $data['cost'])
                             ->where('description', $data['description'])
                             ->has('representativeImagePath')
                             ->has('images.' . array_key_last($data['images']))
@@ -155,7 +155,7 @@ class AccountTest extends TestCase
             'roleKey' => 'tester',
             'username' => Str::random(60),
             'password' => Str::random(60),
-            'price' => rand(20000, 50000),
+            'cost' => rand(20000, 50000),
             'description' => Str::random(100),
             'representativeImage' => UploadedFile::fake()->image('avatar.jpg'),
             'images' => [
@@ -221,7 +221,7 @@ class AccountTest extends TestCase
             'roleKey' => 'tester',
             'username' => Str::random(60),
             'password' => Str::random(60),
-            'price' => rand(20000, 50000),
+            'cost' => rand(20000, 50000),
             'description' => Str::random(100),
             'representativeImage' => UploadedFile::fake()->image('avatar.jpg'),
             'images' => [
@@ -240,7 +240,7 @@ class AccountTest extends TestCase
                     fn ($j) => $j
                         ->where('username', $data['username'])
                         ->where('password', $data['password'])
-                        ->where('price', $data['price'])
+                        ->where('cost', $data['cost'])
                         ->where('description', $data['description'])
                         ->has('representativeImagePath')
                         ->has('images.' . array_key_last($data['images']))
@@ -331,7 +331,7 @@ class AccountTest extends TestCase
                         ->where('id', $account->id)
                         ->where('username', $account->username)
                         ->where('password', $account->password)
-                        ->where('price', $account->price)
+                        ->where('cost', $account->cost)
                         ->where('statusCode', $account->status_code)
                         ->where('description', $account->description)
                         ->has('representativeImagePath')
@@ -362,7 +362,7 @@ class AccountTest extends TestCase
 
         $route = route('account.buy', ['account' => $account]);
         $user = User::factory()->make();
-        $goldCoin = rand($account->price, $account->price + 200000);
+        $goldCoin = rand($account->cost, $account->cost + 200000);
         $user->gold_coin = $goldCoin;
         $user->save();
 
@@ -380,7 +380,7 @@ class AccountTest extends TestCase
             ->json('get', route('profile.show'));
         $res->assertJson(
             fn ($j) => $j
-                ->where('data.goldCoin',  $goldCoin - $account->price)
+                ->where('data.goldCoin',  $goldCoin - $account->cost)
         );
 
         $account = Account::inRandomOrder()
@@ -389,7 +389,7 @@ class AccountTest extends TestCase
             ->first();
         $route = route('account.buy', ['account' => $account]);
         # Case: don't enough gold coin to buy account
-        $user->gold_coin = rand(1, $account->price - 1);
+        $user->gold_coin = rand(1, $account->cost - 1);
         $user->save();
         $res = $this->actingAs($user)
             ->json('post', $route);

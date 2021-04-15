@@ -27,7 +27,7 @@ class StoreAccountRequest extends FormRequest
             'roleKey' => 'required|string',
             'username' => 'required|string',
             'password' => 'required|string',
-            'price' => 'required|integer',
+            'cost' => 'required|integer',
             'description' => 'nullable|string',
             'representativeImage' => 'nullable|image',
             'images' => 'nullable|array',

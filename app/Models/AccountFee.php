@@ -10,20 +10,20 @@ class AccountFee extends Model
     use HasFactory;
 
     protected $fillable = [
-        'maximum_price',
-        'minimum_price',
+        'maximum_cost',
+        'minimum_cost',
         'maximum_fee',
         'minimum_fee',
-        'percentage_price',
+        'percentage_cost',
         'account_type_id',
     ];
 
     protected $casts = [
-        'maximum_price' => 'integer',
-        'minimum_price' => 'integer',
+        'maximum_cost' => 'integer',
+        'minimum_cost' => 'integer',
         'maximum_fee' => 'integer',
         'minimum_fee' => 'integer',
-        'percentage_price' => 'integer',
+        'percentage_cost' => 'integer',
         'account_type_id' => 'integer',
     ];
 

@@ -15,11 +15,11 @@ class CreateAccountFeesTable extends Migration
     {
         Schema::create('account_fees', function (Blueprint $table) {
             $table->id();
-            $table->integer('maximum_price')->nullable();
-            $table->integer('minimum_price')->nullable();
+            $table->integer('maximum_cost')->nullable();
+            $table->integer('minimum_cost')->nullable();
             $table->integer('maximum_fee')->nullable();
             $table->integer('minimum_fee')->nullable();
-            $table->integer('percentage_price');
+            $table->integer('percentage_cost');
             $table->integer('account_type_id');
             $table->bigInteger('last_updated_editor_id');
             $table->bigInteger('creator_id');

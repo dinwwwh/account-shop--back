@@ -27,7 +27,7 @@ class UpdateAccountRequest extends FormRequest
             'roleKey' => 'nullable|string',
             'username' => 'nullable|string',
             'password' => 'nullable|string',
-            'price' => 'nullable|integer',
+            'cost' => 'nullable|integer',
             'description' => 'nullable|string',
             'representativeImage' => 'nullable|image',
             'images' => 'nullable|array',

@@ -24,11 +24,11 @@ class StoreAccountFeeRequest extends FormRequest
     public function rules()
     {
         return [
-            'maximumPrice' => 'nullable|integer',
-            'minimumPrice' => 'nullable|integer',
+            'maximumCost' => 'nullable|integer',
+            'minimumCost' => 'nullable|integer',
             'maximumFee' => 'nullable|integer',
             'minimumFee' => 'nullable|integer',
-            'percentagePrice' => 'required|integer',
+            'percentageCost' => 'required|integer',
         ];
     }
 }

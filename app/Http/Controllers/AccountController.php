@@ -96,7 +96,7 @@ class AccountController extends Controller
             // Initialize data
             $account = new Account;
             foreach ([
-                'username', 'password', 'price', 'description'
+                'username', 'password', 'cost', 'description'
             ] as $key) {
                 if ($request->filled($key)) {
                     $snackKey = Str::snake($key);
@@ -345,7 +345,7 @@ class AccountController extends Controller
         {
             // Initialize data
             foreach ([
-                'username', 'password', 'price', 'description'
+                'username', 'password', 'cost', 'description'
             ] as $key) {
                 if ($request->filled($key)) {
                     $snackKey = Str::snake($key);
@@ -524,6 +524,6 @@ class AccountController extends Controller
 
     private function getBestPrice(Request $request, Account $account)
     {
-        return $account->price;
+        return $account->cost;
     }
 }

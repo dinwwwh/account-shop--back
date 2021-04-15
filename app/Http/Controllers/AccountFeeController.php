@@ -23,8 +23,8 @@ class AccountFeeController extends Controller
         // Initialize data
         $accountFeeData = [];
         foreach ([
-            'maximumPrice',
-            'minimumPrice',
+            'maximumCost',
+            'minimumCost',
             'maximumFee',
             'minimumFee',
         ] as $key) {
@@ -34,7 +34,7 @@ class AccountFeeController extends Controller
             }
         }
 
-        $accountFeeData['percentage_price'] = $request->percentagePrice;
+        $accountFeeData['percentage_cost'] = $request->percentageCost;
         $accountFeeData['account_type_id'] = $accountType->getKey();
 
         try {
@@ -66,11 +66,11 @@ class AccountFeeController extends Controller
         // Initialize data
         $accountFeeData = [];
         foreach ([
-            'maximumPrice',
-            'minimumPrice',
+            'maximumCost',
+            'minimumCost',
             'maximumFee',
             'minimumFee',
-            'percentagePrice'
+            'percentageCost'
         ] as $key) {
             if ($request->filled($key)) {
                 $snackKey = Str::snake($key);

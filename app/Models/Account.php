@@ -14,7 +14,7 @@ class Account extends Model
     protected $fillable = [
         'username',
         'password',
-        'price',
+        'cost',
         'status_code',
         'description',
         'representative_image_path',
@@ -33,7 +33,7 @@ class Account extends Model
     protected $casts = [
         'username' => 'string',
         'password' => 'string',
-        'price' => 'integer',
+        'cost' => 'integer',
         'status_code' => 'integer',
         'description' => 'string',
         'representative_image_path' => 'string',

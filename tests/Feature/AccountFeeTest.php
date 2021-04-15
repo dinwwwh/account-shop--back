@@ -13,31 +13,33 @@ class AccountFeeTest extends TestCase
 {
     public function testStore()
     {
-        $accountType = AccountType::inRandomOrder()->first();
-        $route = route('account-fee.store', ['accountType' => $accountType]);
-        $creator = $accountType->creator;
-        $creator->givePermissionTo('update_account_type');
-        $creator->refresh();
+        foreach ([1, 2, 3] as $nAnNnN) {
+            $accountType = AccountType::inRandomOrder()->first();
+            $route = route('account-fee.store', ['accountType' => $accountType]);
+            $creator = $accountType->creator;
+            $creator->givePermissionTo('update_account_type');
+            $creator->refresh();
 
-        $data = [
-            'maximumPrice' => rand(1, 10000),
-            'minimumPrice' => rand(1, 10000),
-            'maximumFee' => rand(1, 10000),
-            'minimumFee' => rand(1, 10000),
-            'percentagePrice' => rand(1, 100),
-        ];
+            $data = [
+                'maximumCost' => rand(1, 10000),
+                'minimumCost' => rand(1, 10000),
+                'maximumFee' => rand(1, 10000),
+                'minimumFee' => rand(1, 10000),
+                'percentageCost' => rand(1, 100),
+            ];
 
-        $res = $this->actingAs($creator)
-            ->json('post', $route, $data);
-        $res->assertStatus(201);
-        $res->assertJson(
-            fn ($json) => $json
-                ->where('data.maximumPrice', $data['maximumPrice'])
-                ->where('data.minimumPrice', $data['minimumPrice'])
-                ->where('data.maximumFee', $data['maximumFee'])
-                ->where('data.minimumFee', $data['minimumFee'])
-                ->where('data.percentagePrice', $data['percentagePrice'])
-        );
+            $res = $this->actingAs($creator)
+                ->json('post', $route, $data);
+            $res->assertStatus(201);
+            $res->assertJson(
+                fn ($json) => $json
+                    ->where('data.maximumCost', $data['maximumCost'])
+                    ->where('data.minimumCost', $data['minimumCost'])
+                    ->where('data.maximumFee', $data['maximumFee'])
+                    ->where('data.minimumFee', $data['minimumFee'])
+                    ->where('data.percentageCost', $data['percentageCost'])
+            );
+        }
     }
 
     public function testUpdate()
@@ -47,11 +49,11 @@ class AccountFeeTest extends TestCase
         $creator = $accountFee->creator;
 
         $data = [
-            'maximumPrice' => rand(1, 10000),
-            'minimumPrice' => rand(1, 10000),
+            'maximumCost' => rand(1, 10000),
+            'minimumCost' => rand(1, 10000),
             'maximumFee' => rand(1, 10000),
             'minimumFee' => rand(1, 10000),
-            'percentagePrice' => rand(1, 100),
+            'percentageCost' => rand(1, 100),
         ];
 
         $res = $this->actingAs($creator)
@@ -59,11 +61,11 @@ class AccountFeeTest extends TestCase
         $res->assertStatus(200);
         $res->assertJson(
             fn ($json) => $json
-                ->where('data.maximumPrice', $data['maximumPrice'])
-                ->where('data.minimumPrice', $data['minimumPrice'])
+                ->where('data.maximumCost', $data['maximumCost'])
+                ->where('data.minimumCost', $data['minimumCost'])
                 ->where('data.maximumFee', $data['maximumFee'])
                 ->where('data.minimumFee', $data['minimumFee'])
-                ->where('data.percentagePrice', $data['percentagePrice'])
+                ->where('data.percentageCost', $data['percentageCost'])
         );
     }
 

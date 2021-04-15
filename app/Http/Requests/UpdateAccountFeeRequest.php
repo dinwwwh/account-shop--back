@@ -24,11 +24,11 @@ class UpdateAccountFeeRequest extends FormRequest
     public function rules()
     {
         return [
-            'maximumPrice' => 'nullable|integer',
-            'minimumPrice' => 'nullable|integer',
+            'maximumCost' => 'nullable|integer',
+            'minimumCost' => 'nullable|integer',
             'maximumFee' => 'nullable|integer',
             'minimumFee' => 'nullable|integer',
-            'percentagePrice' => 'nullable|integer',
+            'percentageCost' => 'nullable|integer',
         ];
     }
 }

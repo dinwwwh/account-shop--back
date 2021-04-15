@@ -16,11 +16,11 @@ class AccountFeeResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'maximumPrice' => $this->maximum_price,
-            'minimumPrice' => $this->minimum_price,
+            'maximumCost' => $this->maximum_cost,
+            'minimumCost' => $this->minimum_cost,
             'maximumFee' => $this->maximum_fee,
             'minimumFee' => $this->minimum_fee,
-            'percentagePrice' => $this->percentage_price,
+            'percentageCost' => $this->percentage_cost,
             'accountTypeId' => $this->account_type_id,
         ];
     }
