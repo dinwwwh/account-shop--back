@@ -207,7 +207,9 @@ class AccountTest extends TestCase
 
     public function testUpdate()
     {
-        $account = Account::inRandomOrder()->first();
+        $account = Account::inRandomOrder()
+            ->whereIn('status_code', [0, 440])
+            ->first();
         $creator = $account->creator;
         $creator->givePermissionTo('update_account');
         $creator->refresh();

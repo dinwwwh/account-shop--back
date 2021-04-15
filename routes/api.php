@@ -23,10 +23,7 @@ use App\Models\Permission;
 // auth()->user()->refresh();
 
 Route::get('test', function (Request $request) {
-    $arr = [1, 2, 3];
-    $arr2 = $arr;
-    $arr2[0] = 'dfdsfs';
-    dd($arr);
+    App\Models\AccountFee::destroy(1);
 });
 
 Route::get('login', function () {
@@ -97,6 +94,27 @@ Route::prefix('account-type')->group(function () {
     // Route::delete('{accountType}', [App\Http\Controllers\AccountTypeController::class, 'destroy'])
     //     ->middleware('can:delete,accountType')
     //     ->name('account-type.destroy');
+});
+
+/**
+ * --------------------------------
+ * FEATURE ACCOUNT FEE
+ * --------------------------------
+ * Contain infos of account type.
+ */
+Route::prefix('account-fee')->group(function () {
+    // Store
+    Route::post('{accountType}', [App\Http\Controllers\AccountFeeController::class, 'store'])
+        ->middleware(['auth', 'can:create,App\Models\AccountFee,accountType'])
+        ->name('account-fee.store');
+    // Update
+    Route::put('{accountFee}', [App\Http\Controllers\AccountFeeController::class, 'update'])
+        ->middleware(['auth', 'can:update,accountFee'])
+        ->name('account-fee.update');
+    // Destroy
+    Route::delete('{accountFee}', [App\Http\Controllers\AccountFeeController::class, 'destroy'])
+        ->middleware('can:delete,accountFee')
+        ->name('account-fee.destroy');
 });
 
 /**

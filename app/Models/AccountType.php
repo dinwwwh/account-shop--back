@@ -112,8 +112,23 @@ class AccountType extends Model
             ->withPivot('status_code');
     }
 
+    /**
+     * Relationship one-one with Models\Game
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
     public function game()
     {
         return $this->belongsTo(Game::class);
+    }
+
+    /**
+     * Relationship one-many with Models\AccountFee
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function accountFees()
+    {
+        return $this->belongsTo(AccountFee::class);
     }
 }
