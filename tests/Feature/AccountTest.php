@@ -32,14 +32,14 @@ class AccountTest extends TestCase
         ]);
         $game->rolesCanCreatedGame()->sync('tester');
 
-        $x = rand(2, 5);
+        $x = rand(4, 6);
         for ($zz = 0; $zz < $x; $zz++) {
             $accountType = AccountType::create([
                 'name' => Str::random(40),
                 'slug' => Str::random(40),
                 'game_id' => $game->id,
             ]);
-            $accountType->allowRole('tester', rand(0, 1) ? 0 : 440);
+            $accountType->allowRole('tester', $zz % 2 == 1 ? 0 : 440);
 
             $rand = rand(5, 10);
             for ($i = 0; $i < $rand; $i++) {
@@ -337,6 +337,7 @@ class AccountTest extends TestCase
                         ->where('username', $account->username)
                         ->where('password', $account->password)
                         ->where('cost', $account->cost)
+                        ->where('price', $account->calculateTemporaryPrice())
                         ->where('statusCode', $account->status_code)
                         ->where('description', $account->description)
                         ->has('representativeImagePath')
@@ -367,7 +368,7 @@ class AccountTest extends TestCase
 
         $route = route('account.buy', ['account' => $account]);
         $user = User::factory()->make();
-        $goldCoin = rand($account->cost, $account->cost + 200000);
+        $goldCoin = rand($account->calculateTemporaryPrice(), $account->calculateTemporaryPrice() + 200000);
         $user->gold_coin = $goldCoin;
         $user->save();
 

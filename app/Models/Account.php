@@ -5,11 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use App\ModelTraits\ManageAccountFeeInAccount;
+use App\ModelTraits\ManagePriceInAccount;
 
 class Account extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory,
+        SoftDeletes,
+        ManageAccountFeeInAccount,
+        ManagePriceInAccount;
 
     protected $fillable = [
         'username',

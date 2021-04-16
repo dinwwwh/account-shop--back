@@ -21,6 +21,7 @@ class AccountResource extends JsonResource
             'username' => $this->username,
             'password' => $this->password,
             'cost' => $this->cost,
+            'price' => $this->calculateTemporaryPrice(),
             'statusCode' => $this->status_code,
             'description' => $this->description,
             'representativeImagePath' => Storage::url($this->representative_image_path),

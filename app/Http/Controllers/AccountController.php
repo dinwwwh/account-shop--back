@@ -524,6 +524,6 @@ class AccountController extends Controller
 
     private function getBestPrice(Request $request, Account $account)
     {
-        return $account->cost;
+        return $account->calculateTemporaryPrice();
     }
 }
