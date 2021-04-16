@@ -291,25 +291,30 @@ class AccountTest extends TestCase
 
     public function testApprove()
     {
+        $account = Account::inRandomOrder()
+            ->where('status_code', '>=', 0)
+            ->where('status_code', '<=', 99)
+            ->first();
+        $route = route('account.approve', ['account' => $account]);
+        $user = User::factory()->make();
+        $user->save();
+        $user->givePermissionTo('approve_account');
+        $user->refresh();
+
+        $res = $this->actingAs($user)
+            ->json('post', $route);
+
+        $res->assertStatus(200);
+        $res->assertJson(
+            fn ($j) => $j
+                ->where('data.statusCode', 480)
+        );
+    }
+
+    public function testMultipleApprove()
+    {
         foreach ([1, 2] as $nNnO) {
-            $account = Account::inRandomOrder()
-                ->where('status_code', '>=', 0)
-                ->where('status_code', '<=', 99)
-                ->first();
-            $route = route('account.approve', ['account' => $account]);
-            $user = User::factory()->make();
-            $user->save();
-            $user->givePermissionTo('approve_account');
-            $user->refresh();
-
-            $res = $this->actingAs($user)
-                ->json('post', $route);
-
-            $res->assertStatus(200);
-            $res->assertJson(
-                fn ($j) => $j
-                    ->where('data.statusCode', 480)
-            );
+            $this->testApprove();
         }
     }
 

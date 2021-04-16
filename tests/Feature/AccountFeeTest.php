@@ -13,32 +13,38 @@ class AccountFeeTest extends TestCase
 {
     public function testStore()
     {
-        foreach ([1, 2, 3] as $nAnNnN) {
-            $accountType = AccountType::inRandomOrder()->first();
-            $route = route('account-fee.store', ['accountType' => $accountType]);
-            $creator = $accountType->creator;
-            $creator->givePermissionTo('update_account_type');
-            $creator->refresh();
 
-            $data = [
-                'maximumCost' => rand(1, 10000),
-                'minimumCost' => rand(1, 10000),
-                'maximumFee' => rand(1, 10000),
-                'minimumFee' => rand(1, 10000),
-                'percentageCost' => rand(1, 100),
-            ];
+        $accountType = AccountType::inRandomOrder()->first();
+        $route = route('account-fee.store', ['accountType' => $accountType]);
+        $creator = $accountType->creator;
+        $creator->givePermissionTo('update_account_type');
+        $creator->refresh();
 
-            $res = $this->actingAs($creator)
-                ->json('post', $route, $data);
-            $res->assertStatus(201);
-            $res->assertJson(
-                fn ($json) => $json
-                    ->where('data.maximumCost', $data['maximumCost'])
-                    ->where('data.minimumCost', $data['minimumCost'])
-                    ->where('data.maximumFee', $data['maximumFee'])
-                    ->where('data.minimumFee', $data['minimumFee'])
-                    ->where('data.percentageCost', $data['percentageCost'])
-            );
+        $data = [
+            'maximumCost' => rand(1, 10000),
+            'minimumCost' => rand(1, 10000),
+            'maximumFee' => rand(1, 10000),
+            'minimumFee' => rand(1, 10000),
+            'percentageCost' => rand(1, 100),
+        ];
+
+        $res = $this->actingAs($creator)
+            ->json('post', $route, $data);
+        $res->assertStatus(201);
+        $res->assertJson(
+            fn ($json) => $json
+                ->where('data.maximumCost', $data['maximumCost'])
+                ->where('data.minimumCost', $data['minimumCost'])
+                ->where('data.maximumFee', $data['maximumFee'])
+                ->where('data.minimumFee', $data['minimumFee'])
+                ->where('data.percentageCost', $data['percentageCost'])
+        );
+    }
+
+    public function testMultipleStore()
+    {
+        foreach ([1, 2, 3, 4] as $Nan) {
+            $this->testStore();
         }
     }
 
