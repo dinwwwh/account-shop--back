@@ -28,6 +28,12 @@ trait ManagePriceInAccount
      */
     public function calculatePrice($discountCode)
     {
-        $discountCode = DiscountCodeHelper::musBeDiscountCode($discountCode);
+        $discountCode = DiscountCodeHelper::mustBeDiscountCode($discountCode);
+        $discount = is_null($discountCode) ? 0
+            : $discountCode->calculateDiscount($this->cost);
+        $fee = $this->calculateFee() < $discount ? 0
+            : $this->calculateFee() - $discount;
+
+        return $this->cost + $fee;
     }
 }

@@ -4,7 +4,7 @@ namespace App\ModelTraits;
 
 trait HelperForDiscountCode
 {
-    public function discount(float $price)
+    public function calculateDiscount(float $price)
     {
         $discount = 0;
 

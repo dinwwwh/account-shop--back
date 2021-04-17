@@ -228,72 +228,6 @@ class AccountController extends Controller
     }
 
     /**
-     * User buy a account.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Account  $account
-     * @return \Illuminate\Http\Response
-     */
-    public function buy(Request $request, Account $account)
-    {
-        // Initial data
-        $bestPrice = $this->getBestPrice($request, $account);
-
-        // Check whether user can buy this account
-        if (auth()->user()->gold_coin <= $bestPrice) {
-            return response()->json([
-                'message' => 'Bạn không đủ số lượng đồng vàng để mua tài khoản này.',
-            ], 501);
-        }
-
-        try {
-            DB::beginTransaction();
-            BuyingAccountHook::execute($account);
-
-            // Do something before send account for user
-            switch ($account->status_code) {
-                case 480:
-                    $account->status_code = 880;
-                    break;
-
-                case 440:
-                    $account->status_code = 840;
-                    break;
-
-                default:
-                    # code...
-                    break;
-            }
-
-            // Handle on user
-            {
-                auth()->user()->gold_coin -= $bestPrice;
-                auth()->user()->save();
-            }
-
-            // Handle on account
-            {
-                $account->buyer_id = auth()->user()->id;
-                $account->sold_at_price = $bestPrice;
-                $account->sold_at = Carbon::now();
-                $account->save();
-            }
-
-            // When Success
-            DB::commit();
-            BoughtAccountHook::execute($account);
-        } catch (\Throwable $th) {
-            //throw $th;
-            DB::rollback();
-            return response()->json([
-                'message' => 'Nỗi nội bộ sever, vui lòng thử lại sau',
-            ], 500);
-        }
-
-        return new AccountResource($account);
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -520,10 +454,5 @@ class AccountController extends Controller
         return $accountType->rolesCanUsedAccountType
             ->find($role->getKey())
             ->pivot->status_code;
-    }
-
-    private function getBestPrice(Request $request, Account $account)
-    {
-        return $account->calculateTemporaryPrice();
     }
 }

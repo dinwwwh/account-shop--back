@@ -217,10 +217,6 @@ Route::prefix('account')->group(function () {
     // Show
     Route::get('{account}', [App\Http\Controllers\AccountController::class, 'show'])
         ->name('account.show');
-    // buy
-    Route::post('buy/{account}', [App\Http\Controllers\AccountController::class, 'buy'])
-        ->middleware(['auth', 'can:buy,account'])
-        ->name('account.buy');
     // Update
     Route::put('{account}', [App\Http\Controllers\AccountController::class, 'update'])
         ->middleware(['auth', 'can:update,account'])
@@ -228,4 +224,17 @@ Route::prefix('account')->group(function () {
     // Destroy
     // Route::delete('{account}', [App\Http\Controllers\AccountController::class, 'destroy'])
     //     ->name('account.destroy');
+});
+
+/**
+ * --------------------------------
+ * FEATURE ACCOUNT
+ * --------------------------------
+ * Contain infos of account type.
+ */
+Route::prefix('account-trading')->group(function () {
+    // buy
+    Route::post('buy/{account}', [App\Http\Controllers\AccountTradingController::class, 'buy'])
+        ->middleware(['auth', 'can:buy,account'])
+        ->name('account-trading.buy');
 });
