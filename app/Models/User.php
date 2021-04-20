@@ -8,10 +8,16 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\ModelTraits\ManagePermissionInUser;
 use App\ModelTraits\ManageRoleInUser;
+use App\ModelTraits\ManageCoinInUser;
+
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, ManagePermissionInUser, ManageRoleInUser;
+    use HasFactory,
+        Notifiable,
+        ManagePermissionInUser,
+        ManageRoleInUser,
+        ManageCoinInUser;
 
     /**
      * The attributes that are mass assignable.

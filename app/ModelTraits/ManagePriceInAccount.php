@@ -24,15 +24,23 @@ trait ManagePriceInAccount
      * It's price user can buy it.
      *
      * @param string $discountCode
-     * @return integer
+     * @return integer or array
      */
-    public function calculatePrice($discountCode)
+    public function calculatePrice($discountCode, $detail = false)
     {
         $discountCode = DiscountCodeHelper::mustBeDiscountCode($discountCode);
         $discount = is_null($discountCode) ? 0
             : $discountCode->calculateDiscount($this->cost);
         $fee = $this->calculateFee() < $discount ? 0
             : $this->calculateFee() - $discount;
+
+
+        if ($detail) {
+            return [
+                'cost' => $this->cost,
+                'fee' => $fee,
+            ];
+        }
 
         return $this->cost + $fee;
     }

@@ -17,24 +17,40 @@ class DiscountCode extends Model
 
     protected $fillable = [
         'discount_code',
-        'type_code',
+        'price',
+        'buyable',
+        'name',
+        'description',
+
         'maximum_price',
         'minimum_price',
         'maximum_discount',
         'minimum_discount',
         'percentage_discount',
         'direct_discount',
+        'usable_at',
+        'usable_closed_at',
+        'offered_at',
+        'offer_closed_at',
     ];
 
     protected $casts = [
         'discount_code' => 'string',
-        'type_code' => 'integer',
+        'price' => 'integer',
+        'buyable' => 'boolean',
+        'name' => 'string',
+        'description' => 'string',
+
         'maximum_price' => 'integer',
         'minimum_price' => 'integer',
         'maximum_discount' => 'integer',
         'minimum_discount' => 'integer',
         'percentage_discount' => 'integer',
         'direct_discount' => 'integer',
+        'usable_at' => 'timestamp',
+        'usable_closed_at' => 'timestamp',
+        'offered_at' => 'timestamp',
+        'offer_closed_at' => 'timestamp',
     ];
 
     /**

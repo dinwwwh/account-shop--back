@@ -23,7 +23,7 @@ use App\Models\Permission;
 // auth()->user()->refresh();
 
 Route::get('test', function (Request $request) {
-    App\Models\AccountFee::destroy(1);
+    return Carbon\Carbon::now()->format('d-m-Y H:i:s');
 });
 
 Route::get('login', function () {
@@ -194,6 +194,10 @@ Route::prefix('game')->group(function () {
     // Route::delete('{game}', [App\Http\Controllers\GameController::class, 'destroy'])
     //     ->middleware('can:delete,game')
     //     ->name('game.destroy');
+    // allow discount code
+    Route::post('{game}/{discountCode}', [App\Http\Controllers\GameController::class, 'allowDiscountCode'])
+        ->middleware(['auth', 'can:allowDiscountCode,game,discountCode'])
+        ->name('game.allow-discount-code');
 });
 
 /**
@@ -228,13 +232,34 @@ Route::prefix('account')->group(function () {
 
 /**
  * --------------------------------
- * FEATURE ACCOUNT
+ * FEATURE ACCOUNT TRADING
  * --------------------------------
- * Contain infos of account type.
+ *
  */
 Route::prefix('account-trading')->group(function () {
     // buy
     Route::post('buy/{account}', [App\Http\Controllers\AccountTradingController::class, 'buy'])
         ->middleware(['auth', 'can:buy,account'])
         ->name('account-trading.buy');
+    // calculate detail price
+    Route::post('detail-price/{account}', [App\Http\Controllers\AccountTradingController::class, 'calculateDetailPrice'])
+        ->name('account-trading.calculate-detail-price');
+});
+
+/**
+ * --------------------------------
+ * FEATURE DISCOUNT CODE
+ * --------------------------------
+ *
+ */
+Route::prefix('discount-code')->group(function () {
+    // store
+    Route::post('', [App\Http\Controllers\DiscountCodeController::class, 'store'])
+        ->middleware(['auth', 'can:create,App\Models\DiscountCode'])
+        ->name('discount-code.store');
+
+    // update
+    Route::put('{discountCode}', [App\Http\Controllers\DiscountCodeController::class, 'update'])
+        ->middleware(['auth', 'can:update,discountCode'])
+        ->name('discount-code.update');
 });

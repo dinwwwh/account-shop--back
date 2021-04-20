@@ -51,7 +51,7 @@ class Rule extends Model
         });
 
         static::updating(function ($query) {
-            // 
+            //
         });
     }
 

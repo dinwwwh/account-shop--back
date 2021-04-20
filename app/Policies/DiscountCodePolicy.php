@@ -3,11 +3,10 @@
 namespace App\Policies;
 
 use App\Models\DiscountCode;
-use App\Models\Game;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class GamePolicy
+class DiscountCodePolicy
 {
     use HandlesAuthorization;
 
@@ -19,30 +18,30 @@ class GamePolicy
      */
     public function viewAny(User $user)
     {
-        return true;
+        //
     }
 
     /**
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Game  $game
+     * @param  \App\Models\DiscountCode  $discountCode
      * @return mixed
      */
-    public function view(User $user, Game $game)
+    public function view(User $user, DiscountCode $discountCode)
     {
-        return true;
+        //
     }
 
     /**
-     * Determine whether the user can manage the model.
+     * Determine whether the user can manage models.
      *
      * @param  \App\Models\User  $user
      * @return mixed
      */
     public function manage(User $user)
     {
-        return $user->hasPermissionTo('manage_game');
+        return $user->hasPermissionTo('manage_discount_code');
     }
 
     /**
@@ -53,57 +52,42 @@ class GamePolicy
      */
     public function create(User $user)
     {
-        return $user->hasPermissionTo('create_game');
+        return $user->hasPermissionTo('create_discount_code');
     }
 
     /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Game  $game
+     * @param  \App\Models\DiscountCode  $discountCode
      * @return mixed
      */
-    public function update(User $user, Game $game)
+    public function update(User $user, DiscountCode $discountCode)
     {
-        return $user->hasPermissionTo('update_game')
-            && ($this->manage($user) || $game->creator->is($user));
+        return $user->hasPermissionTo('update_discount_code')
+            && ($discountCode->creator->is($user) || $this->manage($user));
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Game  $game
-     * @return mixed
-     */
-    public function delete(User $user, Game $game)
-    {
-        return $user->hasPermissionTo('delete_game')
-            && ($this->manage($user) || $game->creator->is($user));
-    }
-
-    /**
-     * Determine whether the user can allow a discount code
-     * for $game to discount price.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Game  $game
      * @param  \App\Models\DiscountCode  $discountCode
      * @return mixed
      */
-    public function allowDiscountCode(User $user, Game $game, DiscountCode $discountCode)
+    public function delete(User $user, DiscountCode $discountCode)
     {
-        return $this->update($user, $game);
+        //
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Game  $game
+     * @param  \App\Models\DiscountCode  $discountCode
      * @return mixed
      */
-    public function restore(User $user, Game $game)
+    public function restore(User $user, DiscountCode $discountCode)
     {
         //
     }
@@ -112,10 +96,10 @@ class GamePolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Game  $game
+     * @param  \App\Models\DiscountCode  $discountCode
      * @return mixed
      */
-    public function forceDelete(User $user, Game $game)
+    public function forceDelete(User $user, DiscountCode $discountCode)
     {
         //
     }

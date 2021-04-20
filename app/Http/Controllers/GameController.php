@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Requests\UpdateGameRequest;
+use App\Models\DiscountCode;
+use App\Http\Requests\Request;
 
 class GameController extends Controller
 {
@@ -174,6 +176,40 @@ class GameController extends Controller
 
         return response()->json([
             'message' => 'Xoá game thành công.',
+        ], 200);
+    }
+
+    /**
+     * allow a discount code able use in $game to reduce price.
+     *
+     * @param App\Http\Requests\Request $request
+     * @param App\Models\Game $game
+     * @param App\Models\DiscountCode $discountCode
+     * @return \Illuminate\Http\Response
+     */
+    public function allowDiscountCode(Request $request, Game $game, DiscountCode $discountCode)
+    {
+        $pivot = $request->typeCode ? ['type_code' => $request->typeCode] : null;
+        try {
+            DB::beginTransaction();
+            $discountCode->supportedGames()->attach($game->id, $pivot);
+            DB::commit();
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Cho phép phiếu giảm giá được phép sử dụng trong '
+                    . $game->name . ' thất bại, vui lòng thử lại sau!',
+            ], 500);
+        }
+
+
+        return response()->json([
+            'message' => 'Cho phép phiếu giảm giá ' .
+                $discountCode->discount_code .
+                ' được phép sử dụng trong '
+                . $game->name .
+                ' thành công!',
         ], 200);
     }
 }

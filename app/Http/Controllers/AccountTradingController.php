@@ -22,7 +22,7 @@ class AccountTradingController extends Controller
         $bestPrice = $account->calculatePrice($request->discountCode);
 
         // Check whether user can buy this account
-        if (auth()->user()->gold_coin <= $bestPrice) {
+        if (auth()->user()->checkEnoughGoldCoin($bestPrice)) {
             return response()->json([
                 'message' => 'Bạn không đủ số lượng đồng vàng để mua tài khoản này.',
             ], 501);
@@ -47,10 +47,7 @@ class AccountTradingController extends Controller
             }
 
             // Handle on user
-            {
-                auth()->user()->gold_coin -= $bestPrice;
-                auth()->user()->save();
-            }
+            auth()->user()->reduceGoldCoin($bestPrice);
 
             // Handle on account
             {
@@ -73,5 +70,19 @@ class AccountTradingController extends Controller
         return response()->json([
             'message' => 'Mua tài khoản thành công, vui lòng vào lịch sử giao dịch để xem chi tiết.'
         ], 200);
+    }
+
+    /**
+     * calculate detail price include cost and fee of account.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Account  $account
+     * @return \Illuminate\Http\Response
+     */
+    public function calculateDetailPrice(Request $request, Account $account)
+    {
+        return [
+            'data' => $account->calculatePrice($request->discountCode, true),
+        ];
     }
 }

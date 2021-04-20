@@ -32,7 +32,7 @@ class AccountTest extends TestCase
         ]);
         $game->rolesCanCreatedGame()->sync('tester');
 
-        $x = rand(4, 6);
+        $x = rand(4, 7);
         for ($zz = 0; $zz < $x; $zz++) {
             $accountType = AccountType::create([
                 'name' => Str::random(40),
@@ -106,46 +106,44 @@ class AccountTest extends TestCase
         $user->refresh();
         $game = $this->makeIdealGame();
 
-        for ($aBc = 0; $aBc < 7; $aBc++) {
-            $accountType = $game->accountTypes->random();
-            $route = route('account.store', ['accountType' => $accountType]);
-            $dataOfAccountActions = $this->makeDataForAccountActions($accountType);
-            $dataOfAccountInfos = $this->makeDataForAccountInfos($accountType);
-            $data = [
-                'roleKey' => 'tester',
-                'username' => Str::random(60),
-                'password' => Str::random(60),
-                'cost' => rand(20000, 50000),
-                'description' => Str::random(100),
-                'representativeImage' => UploadedFile::fake()->image('avatar.jpg'),
-                'images' => [
-                    UploadedFile::fake()->image('avatar343243.jpg'),
-                    UploadedFile::fake()->image('avatar4324.jpg'),
-                ],
-                'accountInfos' => $dataOfAccountInfos,
-                'accountActions' => $dataOfAccountActions,
-            ];
+        $accountType = $game->accountTypes->random();
+        $route = route('account.store', ['accountType' => $accountType]);
+        $dataOfAccountActions = $this->makeDataForAccountActions($accountType);
+        $dataOfAccountInfos = $this->makeDataForAccountInfos($accountType);
+        $data = [
+            'roleKey' => 'tester',
+            'username' => Str::random(60),
+            'password' => Str::random(60),
+            'cost' => rand(20000, 50000),
+            'description' => Str::random(100),
+            'representativeImage' => UploadedFile::fake()->image('avatar.jpg'),
+            'images' => [
+                UploadedFile::fake()->image('avatar343243.jpg'),
+                UploadedFile::fake()->image('avatar4324.jpg'),
+            ],
+            'accountInfos' => $dataOfAccountInfos,
+            'accountActions' => $dataOfAccountActions,
+        ];
 
-            $res = $this->actingAs($user)
-                ->json('post', $route, $data);
-            $res->assertStatus(201);
-            $res->assertJson(
-                fn ($j) => $j
-                    ->has(
-                        'data',
-                        fn ($j) => $j
-                            ->where('username', $data['username'])
-                            ->where('password', $data['password'])
-                            ->where('cost', $data['cost'])
-                            ->where('description', $data['description'])
-                            ->has('representativeImagePath')
-                            ->has('images.' . array_key_last($data['images']))
-                            ->has('infos.' . (count($data['accountInfos']) - 1))
-                            ->has('actions.' . (count($data['accountActions']) - 1))
-                            ->etc()
-                    )
-            );
-        }
+        $res = $this->actingAs($user)
+            ->json('post', $route, $data);
+        $res->assertStatus(201);
+        $res->assertJson(
+            fn ($j) => $j
+                ->has(
+                    'data',
+                    fn ($j) => $j
+                        ->where('username', $data['username'])
+                        ->where('password', $data['password'])
+                        ->where('cost', $data['cost'])
+                        ->where('description', $data['description'])
+                        ->has('representativeImagePath')
+                        ->has('images.' . array_key_last($data['images']))
+                        ->has('infos.' . (count($data['accountInfos']) - 1))
+                        ->has('actions.' . (count($data['accountActions']) - 1))
+                        ->etc()
+                )
+        );
 
         $accountType = $game->accountTypes->random();
         $route = route('account.store', ['accountType' => $accountType]);
@@ -203,6 +201,13 @@ class AccountTest extends TestCase
                 ->has('errors.roleKey')
                 ->etc()
         );
+    }
+
+    public function testMultipleStore()
+    {
+        for ($i  = 0; $i < 12; $i++) {
+            $this->testStore();
+        }
     }
 
     public function testUpdate()

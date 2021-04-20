@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Account;
+use App\Models\DiscountCode;
+use Illuminate\Support\Str;
 
 class AccountTradingTest extends TestCase
 {
@@ -64,6 +66,8 @@ class AccountTradingTest extends TestCase
          * Not auth
          * ------------
          */
+        $this->json('post', route('account-trading.buy', ['account' => $validAccount]))
+            ->assertStatus(401);
 
         /**
          * Auth as creator
@@ -108,4 +112,31 @@ class AccountTradingTest extends TestCase
             ->json('post', route('account-trading.buy', ['account' => $boughtAccount]))
             ->assertStatus(403);
     }
+
+    // public function testCalculateDetailPrice()
+    // {
+    //     $account = Account::inRandomOrder()->first();
+    //     $route = route('account-trading.calculate-detail-price', ['account' => $account]);
+
+    //     $discountCode = DiscountCode::create([
+    //         'discount_code' => Str::random(50),
+    //         'percentage_discount' => rand(0, 100),
+    //         'directDiscount' => rand(0, 20000),
+    //     ]);
+    //     $discountCode->refresh();
+
+    //     $fee =
+
+    //     $res = $this->json('post', $route, [
+    //         'discountCode' => $discountCode->getKey(),
+    //     ]);
+    //     $res->assertStatus(200);
+    //     $res->assertJson(fn ($j) => $j
+    //         ->has(
+    //             'data',
+    //             fn ($j) => $j
+    //                 ->where('cost', $account->cost)
+    //                 ->where('fee', $fee)
+    //         ));
+    // }
 }

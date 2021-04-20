@@ -38,6 +38,7 @@ class PermissionSeeder extends Seeder
             'account_type' => 'kiểu tài khoản',
             'account_info' => 'thông tin tài khoản',
             'account_action' => 'hành động thực hiện trên tài khoản',
+            'discount_code' => 'mã giảm giá',
         ];
 
         foreach ($modules as $key => $name) {
