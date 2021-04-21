@@ -236,7 +236,7 @@ class AccountController extends Controller
      */
     public function update(UpdateAccountRequest $request, Account $account)
     {
-        $accountType = $account->type;
+        $accountType = $account->accountType;
 
         // Get role use to update
         $roleThatUsing = auth()->user()->roles->find($request->roleKey ?? $account->last_role_key_editor_used);

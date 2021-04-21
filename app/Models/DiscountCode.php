@@ -102,7 +102,7 @@ class DiscountCode extends Model
      */
     public function supportedGames()
     {
-        return $this->belongsToMany(Game::class, 'discount_code_supports_game')
-            ->withPivot('style_code');
+        return $this->belongsToMany(Game::class, 'discount_code_supports_game', 'discount_code')
+            ->withPivot('type_code');
     }
 }

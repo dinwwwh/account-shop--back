@@ -87,10 +87,21 @@ class Game extends Model
      * Relationship one-many with AccountType.
      * Include account types this model has.
      *
-     * @return void
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function accountTypes()
     {
         return $this->hasMany(AccountType::class);
+    }
+
+    /**
+     * Relationship many-many with DiscountCode
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function supportedDiscountCodes()
+    {
+        return $this->belongsToMany(DiscountCode::class, 'discount_code_supports_game', null, 'discount_code')
+            ->withPivot('type_code');
     }
 }

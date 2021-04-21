@@ -34,7 +34,7 @@ class AccountResource extends JsonResource
             'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
             'creator' => new UserResource($this->creator),
             'censor' => new UserResource($this->censor),
-            'type' => new AccountTypeResource($this->type),
+            'type' => new AccountTypeResource($this->accountType),
 
             // Relationship contain pivot
             'infos' => AccountInfoResource::collection($this->infos),

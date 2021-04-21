@@ -172,14 +172,4 @@ class Account extends Model
         return $this->belongsToMany(AccountAction::class, 'account_account_action')
             ->withPivot('value');
     }
-
-    /**
-     * Relationship one-one with Models\AccountType
-     *
-     * @return Illuminate\Database\Eloquent\Factories\Relationship
-     */
-    public function type()
-    {
-        return $this->belongsTo(AccountType::class, 'account_type_id');
-    }
 }

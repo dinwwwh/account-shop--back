@@ -29,9 +29,18 @@ trait ManagePriceInAccount
     public function calculatePrice($discountCode, $detail = false)
     {
         $discountCode = DiscountCodeHelper::mustBeDiscountCode($discountCode);
-        $discount = is_null($discountCode) ? 0
+        if (
+            is_null($discountCode)
+            || !$discountCode->supportedGames->contains($this->accountType->game)
+        ) {
+            $discountCode = null;
+        }
+
+        $discount = is_null($discountCode)
+            ? 0
             : $discountCode->calculateDiscount($this->cost);
-        $fee = $this->calculateFee() < $discount ? 0
+        $fee = $this->calculateFee() < $discount
+            ? 0
             : $this->calculateFee() - $discount;
 
 

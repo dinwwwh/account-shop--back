@@ -195,7 +195,7 @@ Route::prefix('game')->group(function () {
     //     ->middleware('can:delete,game')
     //     ->name('game.destroy');
     // allow discount code
-    Route::post('{game}/{discountCode}', [App\Http\Controllers\GameController::class, 'allowDiscountCode'])
+    Route::post('allow-discount-code/{game}/{discountCode}', [App\Http\Controllers\GameController::class, 'allowDiscountCode'])
         ->middleware(['auth', 'can:allowDiscountCode,game,discountCode'])
         ->name('game.allow-discount-code');
 });
