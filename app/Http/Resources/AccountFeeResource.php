@@ -21,6 +21,7 @@ class AccountFeeResource extends JsonResource
             'maximumFee' => $this->maximum_fee,
             'minimumFee' => $this->minimum_fee,
             'percentageCost' => $this->percentage_cost,
+            'directFee' => $this->direct_fee,
             'accountTypeId' => $this->account_type_id,
         ];
     }

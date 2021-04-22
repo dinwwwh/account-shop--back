@@ -12,10 +12,11 @@ trait ManageAccountFeeInAccount
 
         foreach ($accountFees ?? [] as $accountFee) {
             if (
-                (is_null($accountFee->maximum_cost) && $cost <= $accountFee->maximum_cost)
-                && (is_null($accountFee->minimum_cost) && $cost >= $accountFee->minimum_cost)
+                (is_null($accountFee->maximum_cost) || $cost <= $accountFee->maximum_cost)
+                && (is_null($accountFee->minimum_cost) || $cost >= $accountFee->minimum_cost)
             ) {
                 $temporaryFee = $cost * $accountFee->percentage_cost / 100;
+                $temporaryFee += $accountFee->direct_fee;
                 $temporaryFee = is_numeric($accountFee->maximum_fee) && $temporaryFee > $accountFee->maximum_fee
                     ? $accountFee->maximum_fee
                     : $temporaryFee;

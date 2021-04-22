@@ -28,7 +28,8 @@ class StoreAccountFeeRequest extends FormRequest
             'minimumCost' => 'nullable|integer',
             'maximumFee' => 'nullable|integer',
             'minimumFee' => 'nullable|integer',
-            'percentageCost' => 'required|integer',
+            'percentageCost' => 'nullable|integer',
+            'directFee' => 'nullable|integer',
         ];
     }
 }

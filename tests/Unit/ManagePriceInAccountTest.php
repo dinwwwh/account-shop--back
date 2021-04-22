@@ -5,13 +5,13 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use App\Models\Account;
 use App\Models\DiscountCode;
+use App\Models\User;
 
 class ManagePriceInAccountTest extends TestCase
 {
     public function testCalculateTemporaryPrice()
     {
         $account = Account::inRandomOrder()->first();
-        $account->cost = rand(1, 100000000);
 
         $temporaryPrice = $account->calculateTemporaryPrice();
         $this->assertTrue($temporaryPrice === $account->cost + $account->calculateFee());
@@ -20,7 +20,6 @@ class ManagePriceInAccountTest extends TestCase
     public function testCalculatePrice()
     {
         $account = Account::inRandomOrder()->first();
-        $account->cost = rand(1, 100000000);
         $discountCode = DiscountCode::inRandomOrder()->first();
 
         # discount code not support
@@ -31,11 +30,15 @@ class ManagePriceInAccountTest extends TestCase
 
         # discount supported
         $discountCode->supportedGames()->attach($account->accountType->game);
+        $fee = $account->calculateFee();
+
+        $fee = $fee <= $discountCode->calculateDiscount($fee, $account->cost)
+            ? 0
+            : $fee - $discountCode->calculateDiscount($fee, $account->cost);
+
         $this->assertTrue(
             $account->calculatePrice($discountCode->getKey())
-                <= $account->cost + $account->calculateFee()
-                && $account->calculatePrice($discountCode->getKey())
-                >= $account->cost
+                === $fee + $account->cost
         );
     }
 

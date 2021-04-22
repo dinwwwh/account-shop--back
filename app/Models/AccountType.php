@@ -129,6 +129,6 @@ class AccountType extends Model
      */
     public function accountFees()
     {
-        return $this->belongsTo(AccountFee::class);
+        return $this->hasMany(AccountFee::class);
     }
 }

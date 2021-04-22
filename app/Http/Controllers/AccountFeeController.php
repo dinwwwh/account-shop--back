@@ -27,6 +27,8 @@ class AccountFeeController extends Controller
             'minimumCost',
             'maximumFee',
             'minimumFee',
+            'percentageCost',
+            'directFee',
         ] as $key) {
             if ($request->filled($key)) {
                 $snackKey = Str::snake($key);
@@ -34,7 +36,6 @@ class AccountFeeController extends Controller
             }
         }
 
-        $accountFeeData['percentage_cost'] = $request->percentageCost;
         $accountFeeData['account_type_id'] = $accountType->getKey();
 
         try {

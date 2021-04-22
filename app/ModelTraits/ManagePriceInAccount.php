@@ -38,8 +38,8 @@ trait ManagePriceInAccount
 
         $discount = is_null($discountCode)
             ? 0
-            : $discountCode->calculateDiscount($this->cost);
-        $fee = $this->calculateFee() < $discount
+            : $discountCode->calculateDiscount($this->calculateFee(), $this->cost);
+        $fee = $this->calculateFee() <= $discount
             ? 0
             : $this->calculateFee() - $discount;
 

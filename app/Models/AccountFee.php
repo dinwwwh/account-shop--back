@@ -15,6 +15,7 @@ class AccountFee extends Model
         'maximum_fee',
         'minimum_fee',
         'percentage_cost',
+        'direct_fee',
         'account_type_id',
     ];
 
@@ -24,6 +25,7 @@ class AccountFee extends Model
         'maximum_fee' => 'integer',
         'minimum_fee' => 'integer',
         'percentage_cost' => 'integer',
+        'direct_fee' => 'integer',
         'account_type_id' => 'integer',
     ];
 

@@ -19,7 +19,10 @@ class CreateAccountFeesTable extends Migration
             $table->integer('minimum_cost')->nullable();
             $table->integer('maximum_fee')->nullable();
             $table->integer('minimum_fee')->nullable();
-            $table->integer('percentage_cost');
+            $table->integer('percentage_cost')->default(0);
+            $table->integer('direct_fee')->default(0);
+
+
             $table->integer('account_type_id');
             $table->bigInteger('last_updated_editor_id');
             $table->bigInteger('creator_id');

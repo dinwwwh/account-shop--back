@@ -29,6 +29,7 @@ class UpdateAccountFeeRequest extends FormRequest
             'maximumFee' => 'nullable|integer',
             'minimumFee' => 'nullable|integer',
             'percentageCost' => 'nullable|integer',
+            'directFee' => 'nullable|integer',
         ];
     }
 }
