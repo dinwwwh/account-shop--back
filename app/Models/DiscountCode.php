@@ -47,10 +47,10 @@ class DiscountCode extends Model
         'minimum_discount' => 'integer',
         'percentage_discount' => 'integer',
         'direct_discount' => 'integer',
-        'usable_at' => 'timestamp',
-        'usable_closed_at' => 'timestamp',
-        'offered_at' => 'timestamp',
-        'offer_closed_at' => 'timestamp',
+        'usable_at' => 'datetime',
+        'usable_closed_at' => 'datetime',
+        'offered_at' => 'datetime',
+        'offer_closed_at' => 'datetime',
     ];
 
     /**

@@ -2,6 +2,8 @@
 
 namespace App\ModelTraits;
 
+use Carbon\Carbon;
+
 trait HelperForDiscountCode
 {
     /**
@@ -11,15 +13,15 @@ trait HelperForDiscountCode
      * @param int $cost use to restrict apply discount
      * @return int
      */
-    public function calculateDiscount($fee, $cost = null)
+    public function calculateDiscount(int $fee, int $cost = null)
     {
         $cost = is_null($cost) ? $fee : $cost;
 
         $discount = 0;
 
         if (
-            (is_null($this->maximum_price) && $cost <= $this->maximum_price)
-            && (is_null($this->minimum_price) && $cost >= $this->minimum_price)
+            (is_null($this->maximum_price) || $cost <= $this->maximum_price)
+            && (is_null($this->minimum_price) || $cost >= $this->minimum_price)
         ) {
             $discount = $fee * $this->percentage_discount / 100;
             $discount += $this->direct_discount;
@@ -32,5 +34,16 @@ trait HelperForDiscountCode
         }
 
         return $discount;
+    }
+
+    /**
+     * Check whether this discount code usable
+     *
+     * @return boolean
+     */
+    public function check()
+    {
+        return (is_null($this->usable_at) || $this->usable_at->lte(Carbon::now()))
+            && (is_null($this->usable_closed_at) || $this->usable_closed_at->gte(Carbon::now()));
     }
 }
