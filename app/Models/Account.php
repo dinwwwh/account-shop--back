@@ -46,11 +46,11 @@ class Account extends Model
         'censor_id' => 'integer',
         'buyer_id' => 'integer',
         'sold_at_price' => 'integer',
-        'sold_at' => 'timestamp',
+        'sold_at' => 'datetime',
         'last_updated_editor_id' => 'integer',
         'creator_id' => 'integer',
         'last_role_key_editor_used' => 'string',
-        'approved_at' => 'timestamp',
+        'approved_at' => 'datetime',
 
         // Pivot can't work
         // 'value' => 'array',

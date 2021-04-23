@@ -28,8 +28,8 @@ class DeleteFile extends Model
         'model_key' => 'string',
         'errors' => 'string',
         'successes' => 'array',
-        'delete_file_at' => 'timestamp',
-        'deleted_file_at' => 'timestamp',
+        'delete_file_at' => 'datetime',
+        'deleted_file_at' => 'datetime',
         'creator_id' => 'integer',
         'last_updated_editor_id' => 'integer',
     ];
