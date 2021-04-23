@@ -7,22 +7,26 @@ trait ManageCoinInUser
     /**
      * check whether user enough gold coin
      *
-     * @param number as $coin
+     * @param int as $coin
      * @return boolean
      */
-    public function checkEnoughGoldCoin($coin)
+    public function checkEnoughGoldCoin(int $coin)
     {
-        return $this->gold_coin <= $coin;
+        return $this->gold_coin >= $coin;
     }
 
     /**
      * reduce gold coin base $coin
      *
-     * @param number as $coin
+     * @param int $coin
      * @return boolean
      */
-    public function reduceGoldCoin($coin)
+    public function reduceGoldCoin(int $coin)
     {
+        if (!$this->checkEnoughGoldCoin($coin)) {
+            return false;
+        }
+
         return $this->update([
             'gold_coin' => $this->gold_coin - $coin,
         ]);
