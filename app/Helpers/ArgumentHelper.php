@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 use Illuminate\Database\Eloquent\Collection;
 
-class ParameterHelper
+class ArgumentHelper
 {
     /**
      * if first parameter is an array or like array

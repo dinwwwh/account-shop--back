@@ -3,7 +3,7 @@
 namespace App\ModelTraits;
 
 use App\Models\Permission;
-use App\Helpers\ParameterHelper;
+use App\Helpers\ArgumentHelper;
 use App\Helpers\PermissionHelper;
 
 trait ManagePermissionInUser
@@ -39,7 +39,7 @@ trait ManagePermissionInUser
      */
     public function hasAnyPermission(...$permissions)
     {
-        $permissions = ParameterHelper::firstOrAll($permissions);
+        $permissions = ArgumentHelper::firstOrAll($permissions);
 
         foreach ($permissions as $permission) {
             if ($this->hasPermissionTo($permission)) {
@@ -57,7 +57,7 @@ trait ManagePermissionInUser
      */
     public function hasAllPermissions(...$permissions)
     {
-        $permissions = ParameterHelper::firstOrAll($permissions);
+        $permissions = ArgumentHelper::firstOrAll($permissions);
 
         foreach ($permissions as $permission) {
             if (!$this->hasPermissionTo($permission)) {
@@ -75,7 +75,7 @@ trait ManagePermissionInUser
      */
     public function givePermissionTo(...$permissions)
     {
-        $permissions = ParameterHelper::firstOrAll($permissions);
+        $permissions = ArgumentHelper::firstOrAll($permissions);
 
         foreach ($permissions as $permission) {
             $this->_attachPermission($permission);
@@ -91,7 +91,7 @@ trait ManagePermissionInUser
      */
     public function revokePermissionTo(...$permissions)
     {
-        $permissions = ParameterHelper::firstOrAll($permissions);
+        $permissions = ArgumentHelper::firstOrAll($permissions);
 
         foreach ($permissions as $permission) {
             $this->_detachPermission($permission);
@@ -180,7 +180,7 @@ trait ManagePermissionInUser
      */
     protected function _syncPermissions(...$permissions)
     {
-        $permissions = ParameterHelper::firstOrAll($permissions);
+        $permissions = ArgumentHelper::firstOrAll($permissions);
 
         $permissions = PermissionHelper::mustBeManyPermissions($permissions);
 

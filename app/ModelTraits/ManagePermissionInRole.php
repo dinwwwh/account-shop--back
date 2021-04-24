@@ -3,7 +3,7 @@
 namespace App\ModelTraits;
 
 use App\Models\Permission;
-use App\Helpers\ParameterHelper;
+use App\Helpers\ArgumentHelper;
 use App\Helpers\PermissionHelper;
 
 trait ManagePermissionInRole
@@ -36,7 +36,7 @@ trait ManagePermissionInRole
      */
     public function hasAnyPermission(...$permissions)
     {
-        $permissions = ParameterHelper::firstOrAll($permissions);
+        $permissions = ArgumentHelper::firstOrAll($permissions);
 
         foreach ($permissions as $permission) {
             if ($this->hasPermissionTo($permission)) {
@@ -54,7 +54,7 @@ trait ManagePermissionInRole
      */
     public function hasAllPermissions(...$permissions)
     {
-        $permissions = ParameterHelper::firstOrAll($permissions);
+        $permissions = ArgumentHelper::firstOrAll($permissions);
 
         foreach ($permissions as $permission) {
             if (!$this->hasPermissionTo($permission)) {
@@ -72,7 +72,7 @@ trait ManagePermissionInRole
      */
     public function givePermissionTo(...$permissions)
     {
-        $permissions = ParameterHelper::firstOrAll($permissions);
+        $permissions = ArgumentHelper::firstOrAll($permissions);
 
         foreach ($permissions as $permission) {
             $this->_attachPermission($permission);
@@ -88,7 +88,7 @@ trait ManagePermissionInRole
      */
     public function revokePermissionTo(...$permissions)
     {
-        $permissions = ParameterHelper::firstOrAll($permissions);
+        $permissions = ArgumentHelper::firstOrAll($permissions);
 
         foreach ($permissions as $permission) {
             $this->_detachPermission($permission);
@@ -105,7 +105,7 @@ trait ManagePermissionInRole
     public function syncPermissions(...$permissions)
     {
 
-        $permissions = ParameterHelper::firstOrAll($permissions);
+        $permissions = ArgumentHelper::firstOrAll($permissions);
 
         return $this->_syncPermissions($permissions);
     }
@@ -170,7 +170,7 @@ trait ManagePermissionInRole
     protected function _syncPermissions(...$permissions)
     {
 
-        $permissions = ParameterHelper::firstOrAll($permissions);
+        $permissions = ArgumentHelper::firstOrAll($permissions);
         $permissions = PermissionHelper::mustBeManyPermissions($permissions);
 
         return $this->permissions()->sync($permissions);

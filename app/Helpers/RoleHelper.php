@@ -34,7 +34,7 @@ class RoleHelper
      */
     public static function mustBeManyRoles(...$roles)
     {
-        $roles = ParameterHelper::firstOrAll($roles);
+        $roles = ArgumentHelper::firstOrAll($roles);
 
         $result = new Collection;
         foreach ($roles as $role) {

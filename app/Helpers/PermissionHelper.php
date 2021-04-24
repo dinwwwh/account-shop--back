@@ -3,7 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Permission;
-use App\Helpers\ParameterHelper;
+use App\Helpers\ArgumentHelper;
 use Illuminate\Database\Eloquent\Collection;
 
 class PermissionHelper
@@ -35,7 +35,7 @@ class PermissionHelper
      */
     public static function mustBeManyPermissions(...$permissions)
     {
-        $permissions = ParameterHelper::firstOrAll($permissions);
+        $permissions = ArgumentHelper::firstOrAll($permissions);
 
         $result = new Collection;
         foreach ($permissions as $permission) {

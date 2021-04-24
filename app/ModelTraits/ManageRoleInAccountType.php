@@ -2,7 +2,7 @@
 
 namespace App\ModelTraits;
 
-use App\Helpers\ParameterHelper;
+use App\Helpers\ArgumentHelper;
 use App\Helpers\RoleHelper;
 
 trait ManageRoleInAccountType
