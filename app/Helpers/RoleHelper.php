@@ -40,6 +40,7 @@ class RoleHelper
         foreach ($roles as $role) {
             $role = static::mustBeRole($role);
 
+
             if (!is_null($role)) {
                 $result->push($role);
             }

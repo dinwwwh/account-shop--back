@@ -48,6 +48,8 @@ trait ManageRoleInUser
      */
     public function syncRoles(...$roles)
     {
+        $roles = ParameterHelper::firstOrAll($roles);
+
         return $this->_syncRoles($roles);
     }
 

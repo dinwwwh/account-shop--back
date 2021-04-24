@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use \Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
 class ParameterHelper
 {
@@ -19,7 +19,7 @@ class ParameterHelper
             return $parameters;
         }
 
-        if (is_array($parameters[0]) || ($parameters[0] instanceof \Illuminate\Database\Eloquent\Collection)) {
+        if (is_array($parameters[0]) || ($parameters[0] instanceof Collection)) {
             $parameters = $parameters[0];
         }
 
