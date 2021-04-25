@@ -12,9 +12,9 @@ trait ManagePriceInAccount
      * Not apply any discount code,
      * This is max price
      *
-     * @return integer
+     * @return int
      */
-    public function calculateTemporaryPrice()
+    public function calculateTemporaryPrice(): int
     {
         return $this->cost + $this->calculateFee();
     }
@@ -24,9 +24,9 @@ trait ManagePriceInAccount
      * It's price user can buy it.
      *
      * @param string $discountCode
-     * @return integer or array
+     * @return int or array
      */
-    public function calculatePrice($discountCode, $detail = false)
+    public function calculatePrice($discountCode = null, $detail = false): int
     {
         $discountCode = DiscountCodeHelper::mustBeDiscountCode($discountCode);
         if (

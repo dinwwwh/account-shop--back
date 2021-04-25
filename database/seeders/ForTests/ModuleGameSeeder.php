@@ -3,8 +3,9 @@
 namespace Database\Seeders\ForTests;
 
 use App\Models\Account;
-use App\Models\AccountFee;
 use App\Models\AccountType;
+use App\Models\AccountAction;
+use App\Models\AccountInfo;
 use Illuminate\Database\Seeder;
 use App\Models\Game;
 use App\Models\User;
@@ -28,12 +29,27 @@ class ModuleGameSeeder extends Seeder
                         'last_updated_editor_id' => User::all()->random()->getKey(),
                         'creator_id' => User::all()->random()->getKey(),
                     ])
+                    ->has(AccountInfo::factory()->count(6), 'accountActions')
+                    ->has(AccountAction::factory()->count(6), 'accountInfos')
                     ->a28s(),
                 'accountTypes'
             )
             ->create();
 
         foreach ($games as $game) {
+            $game->rolesCanCreatedGame()->sync('tester');
+
+            foreach ($game->accountTypes as $accountType) {
+                $accountType->allowRole('tester', rand(1, 100) < 70 ? 0 : 440);
+                foreach ($accountType->accountInfos as $accountInfo) {
+                    $accountInfo->rolesNeedFilling()->attach('tester');
+                }
+                foreach ($accountType->accountActions as $accountAction) {
+                    $accountAction->rolesThatNeedPerformingAccountAction()->attach('tester');
+                }
+            }
+
+
             $account = Account::factory()
                 ->count(5)
                 ->state(new Sequence(

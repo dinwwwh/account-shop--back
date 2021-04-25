@@ -14,7 +14,7 @@ class AccountActionTest extends TestCase
 {
     public function testStore()
     {
-        $user = User::factory()->make();
+        $user = User::inRandomOrder()->first();
         $user->save();
         $user->givePermissionTo('create_account_action');
         $user->refresh();
@@ -128,9 +128,9 @@ class AccountActionTest extends TestCase
     {
         $accountType = AccountType::inRandomOrder()->first();
         $route = route('account-action.store', ['accountType' => $accountType]);
-        $user = User::factory()->make();
-        $user->save();
-        $user->revokePermissionTo('update_account_action', 'manage_account_action');
+        $user = User::inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
         $user->refresh();
 
         /**
@@ -162,12 +162,14 @@ class AccountActionTest extends TestCase
     {
         $accountAction = AccountAction::inRandomOrder()->first();
         $creator = $accountAction->creator;
-        $creator->revokePermissionTo('update_account_action', 'manage_account_action');
+        $creator->syncPermissions();
+        $creator->syncRoles();
         $creator->refresh();
         $route = route('account-action.update', ['accountAction' => $accountAction]);
-        $user = User::factory()->make();
-        $user->save();
-        $user->revokePermissionTo('update_account_action', 'manage_account_action');
+        $user = User::whereNotIn('id', [$creator->getKey()])
+            ->inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
         $user->refresh();
 
         /**

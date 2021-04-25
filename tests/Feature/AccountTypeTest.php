@@ -19,9 +19,8 @@ class AccountTypeTest extends TestCase
          * ---------------
          * auth - create
          */
-        $user = User::factory()->make();
+        $user = User::inRandomOrder()->first();
         $route = route('account-type.store', ['game' => Game::inRandomOrder()->first()]);
-        $user->save();
 
         # Case: 0 0
         $res = $this->json('post', $route);
@@ -51,8 +50,11 @@ class AccountTypeTest extends TestCase
         $creator = $accountType->creator;
         $creator->revokePermissionTo('update_account_type', 'manage_account_type');
         $creator->refresh();
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::whereNotIn('id', [$creator->getKey()])
+            ->inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
+        $user->refresh();
 
         # Case: 0 0 0
         $res = $this->json('put', route('account-type.update', ['accountType' => $accountType]));
@@ -116,8 +118,7 @@ class AccountTypeTest extends TestCase
     public function testStore()
     {
         // Initial data
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::inRandomOrder()->first();
         $user->givePermissionTo('create_account_type');
         $user->refresh();
         $game = Game::inRandomOrder()->first();

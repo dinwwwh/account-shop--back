@@ -32,13 +32,12 @@ class DiscountCodeTest extends TestCase
             'minimumDiscount' => rand(1000, 2000),
             'percentageDiscount' => rand(1, 100),
             'directDiscount' => rand(0, 20000),
-            'usableAt' => Carbon::now()->format('y-m-d h:i:s'),
-            'usableClosedAt' => Carbon::now()->format('y-m-d h:i:s'),
-            'offeredAt' => Carbon::now()->format('y-m-d h:i:s'),
-            'offerClosedAt' => Carbon::now()->format('y-m-d h:i:s'),
+            'usableAt' => Carbon::now(),
+            'usableClosedAt' => Carbon::now(),
+            'offeredAt' => Carbon::now(),
+            'offerClosedAt' => Carbon::now(),
         ];
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::inRandomOrder()->first();
         $user->givePermissionTo('create_discount_code');
         $user->refresh();
 
@@ -86,8 +85,10 @@ class DiscountCodeTest extends TestCase
          * Auth
          * --------------------
          */
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
+        $user->refresh();
 
         # Can't create
         $this->actingAs($user)
@@ -122,10 +123,10 @@ class DiscountCodeTest extends TestCase
             'minimumDiscount' => rand(1000, 2000),
             'percentageDiscount' => rand(1, 100),
             'directDiscount' => rand(0, 20000),
-            'usableAt' => Carbon::now()->format('y-m-d h:i:s'),
-            'usableClosedAt' => Carbon::now()->format('y-m-d h:i:s'),
-            'offeredAt' => Carbon::now()->format('y-m-d h:i:s'),
-            'offerClosedAt' => Carbon::now()->format('y-m-d h:i:s'),
+            'usableAt' => Carbon::now(),
+            'usableClosedAt' => Carbon::now(),
+            'offeredAt' => Carbon::now(),
+            'offerClosedAt' => Carbon::now(),
         ];
 
         $res =  $this->actingAs($creator)
@@ -170,8 +171,11 @@ class DiscountCodeTest extends TestCase
         $creator = $discountCode->creator;
         $creator->revokePermissionTo('update_discount_code', 'manage_discount_code');
         $creator->refresh();
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::whereNotIn('id', [$creator->getKey()])
+            ->inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
+        $user->refresh();
 
         # 0 - 0 (as user)
         $this->actingAs($user)

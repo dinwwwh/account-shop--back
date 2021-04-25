@@ -41,13 +41,6 @@ class AccountFeeTest extends TestCase
         );
     }
 
-    public function testMultipleStore()
-    {
-        foreach ([1, 2, 3, 4] as $Nan) {
-            $this->testStore();
-        }
-    }
-
     public function testUpdate()
     {
         $accountFee = AccountFee::inRandomOrder()->first();
@@ -61,7 +54,6 @@ class AccountFeeTest extends TestCase
             'minimumFee' => rand(1, 10000),
             'percentageCost' => rand(1, 100),
         ];
-
         $res = $this->actingAs($creator)
             ->json('put', $route, $data);
         $res->assertStatus(200);
@@ -92,8 +84,11 @@ class AccountFeeTest extends TestCase
          * -------------------------
          * can update correspond account type
          */
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::whereNotIn('id', [$accountFee->creator->getKey()])
+            ->inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
+        $user->refresh();
 
         # 0
         $this->actingAs($user)
@@ -120,8 +115,9 @@ class AccountFeeTest extends TestCase
             ->json('delete', $route);
         $res->assertStatus(200);
 
-        $this->json('put', route('account-fee.update', ['accountFee' => $accountFee]))
-            ->assertStatus(404);
+        $this->assertDatabaseMissing('account_fees', [
+            'id' => $accountFee->getKey()
+        ]);
     }
 
     public function testStoreRouteMiddleware()
@@ -141,8 +137,10 @@ class AccountFeeTest extends TestCase
          * -------------------------
          * can update correspond account type
          */
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
+        $user->refresh();
 
         # 0
         $this->actingAs($user)
@@ -155,6 +153,6 @@ class AccountFeeTest extends TestCase
         $user->refresh();
         $this->actingAs($user)
             ->json('post', $route)
-            ->assertStatus(422);
+            ->assertStatus(201);
     }
 }

@@ -4,7 +4,7 @@ namespace App\ModelTraits;
 
 trait ManageAccountFeeInAccount
 {
-    public function calculateFee()
+    public function calculateFee(): int
     {
         $accountFees = $this->accountType->accountFees;
         $cost = $this->cost;

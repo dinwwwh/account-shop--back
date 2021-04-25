@@ -41,7 +41,7 @@ class ManageAccountFeeInAccountTest extends TestCase
             }
         }
 
-        $this->assertTrue($fee1 === $fee2);
+        $this->assertTrue($fee1 === (int)$fee2);
     }
 
     public function testCarefully()

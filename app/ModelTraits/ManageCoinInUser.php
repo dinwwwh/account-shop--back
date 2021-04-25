@@ -28,7 +28,7 @@ trait ManageCoinInUser
         }
 
         return $this->update([
-            'gold_coin' => $this->gold_coin - $coin,
+            'gold_coin' => ($this->gold_coin - $coin),
         ]);
     }
 }

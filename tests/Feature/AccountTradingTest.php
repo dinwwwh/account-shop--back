@@ -21,7 +21,7 @@ class AccountTradingTest extends TestCase
 
 
         $route = route('account-trading.buy', ['account' => $account]);
-        $user = User::factory()->make();
+        $user = User::inRandomOrder()->first();
         $goldCoin = rand($account->calculateTemporaryPrice(), $account->calculateTemporaryPrice() + 200000);
         $user->gold_coin = $goldCoin;
         $user->save();
@@ -30,13 +30,10 @@ class AccountTradingTest extends TestCase
         $res = $this->actingAs($user)
             ->json('post', $route);
         $res->assertStatus(200);
-
-        $res = $this->actingAs($user)
-            ->json('get', route('profile.show'));
-        $res->assertJson(
-            fn ($j) => $j
-                ->where('data.goldCoin',  $goldCoin - $account->cost)
-        );
+        $this->assertDatabaseHas('users', [
+            'id' => $user->getKey(),
+            'gold_coin' => ($goldCoin - $account->calculateTemporaryPrice()),
+        ]);
 
         $account = Account::inRandomOrder()
             ->where('status_code', '>=', 400)
@@ -94,13 +91,23 @@ class AccountTradingTest extends TestCase
          * Auth as regular user
          * -------------
          */
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::whereNotIn('id', [
+            $validAccount->creator->getKey(),
+            $boughtAccount->creator->getKey(),
+            $invalidAccount->creator->getKey(),
+        ])
+            ->inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
+        $user->refresh();
 
         # valid account
+        $user->gold_coin = rand($validAccount->calculateTemporaryPrice(), $validAccount->calculateTemporaryPrice() + 200000);
+        $user->save();
+        $user->refresh();
         $this->actingAs($user)
             ->json('post', route('account-trading.buy', ['account' => $validAccount]))
-            ->assertStatus(501);
+            ->assertStatus(200);
 
         # invalid account
         $this->actingAs($user)

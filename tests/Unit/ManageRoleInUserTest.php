@@ -77,8 +77,7 @@ class ManageRoleInUserTest extends TestCase
         }
 
         # no role
-        $roles = [];
-        $user->syncRoles($roles);
+        $user->syncRoles();
 
         $roles = Role::all();
         foreach ($roles as $role) {

@@ -17,8 +17,7 @@ class GameTest extends TestCase
     public function testCreate()
     {
         // Initial data
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::inRandomOrder()->first();
         $user->givePermissionTo('create_game');
         $user->refresh();
         $data = [
@@ -74,7 +73,7 @@ class GameTest extends TestCase
          * Had power to read sensitive info
          * ---------------------------------
          */
-        $game = Game::inRandomOrder()->inRandomOrder()->inRandomOrder()->first();
+        $game = Game::inRandomOrder()->first();
         $res = $this->json('get', route('game.show', ['game' => $game]));
         $res->assertStatus(200);
         $res->assertJson(
@@ -102,7 +101,7 @@ class GameTest extends TestCase
     public function testUpdate()
     {
         // Initial data
-        $game = Game::inRandomOrder()->inRandomOrder()->inRandomOrder()->first();
+        $game = Game::inRandomOrder()->first();
         $creator = $game->creator;
         $data = [
             'order' => rand(1, 100),
@@ -149,8 +148,7 @@ class GameTest extends TestCase
 
     public function testStoreRouteMiddleware()
     {
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::inRandomOrder()->first();
 
         /**
          * Route game.store
@@ -184,13 +182,14 @@ class GameTest extends TestCase
          * -------------------------------
          * auth - update - mange
          */
-        $user = User::factory()->make();
-        $user->save();
-        $game = Game::inRandomOrder()->inRandomOrder()->inRandomOrder()->first();
+        $game = Game::inRandomOrder()->first();
         $creator = $game->creator;
         $creator->revokePermissionTo('update_game', 'manage_game');
         $creator->refresh();
-        $user->revokePermissionTo('update_game', 'manage_game');
+        $user = User::whereNotIn('id', [$creator->getKey()])
+            ->inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
         $user->refresh();
 
         # Case: 0 0 0

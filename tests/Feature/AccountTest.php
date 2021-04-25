@@ -18,55 +18,13 @@ use Illuminate\Http\UploadedFile;
 
 class AccountTest extends TestCase
 {
-    public function makeIdealGame()
+    public function test_freshDatabaseForTest()
     {
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::inRandomOrder()->first();
         $this->actingAs($user);
+        $this->seed(\Database\Seeders\ForTestSeeder::class);
 
-        $game = Game::create([
-            'publisher_name' => 'Sohagame',
-            'name' => Str::random(40),
-            'slug' => Str::random(40),
-            'image_path' => Str::random(40),
-        ]);
-        $game->rolesCanCreatedGame()->sync('tester');
-
-        $x = rand(4, 7);
-        for ($zz = 0; $zz < $x; $zz++) {
-            $accountType = AccountType::create([
-                'name' => Str::random(40),
-                'slug' => Str::random(40),
-                'game_id' => $game->id,
-            ]);
-            $accountType->allowRole('tester', $zz % 2 == 1 ? 0 : 440);
-
-            $rand = rand(5, 10);
-            for ($i = 0; $i < $rand; $i++) {
-                $rule = Rule::create(['required' => true]);
-                $accountInfo = AccountInfo::create([
-                    'name' => Str::random(40),
-                    'slug' => Str::random(40),
-                    'rule_id' => $rule->id,
-                    'account_type_id' => $accountType->id,
-                ]);
-                $accountInfo->rolesNeedFilling()->attach('tester');
-            }
-
-            $rand = rand(5, 10);
-            for ($nn = 0; $nn < $rand; $nn++) {
-                $accountAction = AccountAction::create([
-                    'name' => Str::random(40),
-                    'slug' => Str::random(40),
-                    'video_path' => Str::random(40),
-                    'account_type_id' => $accountType->id,
-                    'required' => true,
-                ]);
-                $accountAction->rolesThatNeedPerformingAccountAction()->attach('tester');
-            }
-        }
-
-        return $game;
+        $this->assertTrue(true);
     }
 
     public function makeDataForAccountInfos(AccountType $accountType)
@@ -76,7 +34,11 @@ class AccountTest extends TestCase
 
         foreach ($accountInfos as $accountInfo) {
             if ($accountInfo->rule->required) {
-                $data['id' . $accountInfo->getKey()] = Str::random(40);
+                if ($accountInfo->rule->datatype == 'string') {
+                    $data['id' . $accountInfo->getKey()] = Str::random(10);
+                } elseif ($accountInfo->rule->datatype == 'integer') {
+                    $data['id' . $accountInfo->getKey()] = rand(1, 01000);
+                }
             }
         }
 
@@ -99,12 +61,11 @@ class AccountTest extends TestCase
 
     public function testStore()
     {
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::inRandomOrder()->first();
         $user->givePermissionTo('create_account');
         $user->assignRole('tester');
         $user->refresh();
-        $game = $this->makeIdealGame();
+        $game = Game::inRandomOrder()->first();
 
         $accountType = $game->accountTypes->random();
         $route = route('account.store', ['accountType' => $accountType]);
@@ -217,6 +178,7 @@ class AccountTest extends TestCase
             ->first();
         $creator = $account->creator;
         $creator->givePermissionTo('update_account');
+        $creator->assignRole('tester');
         $creator->refresh();
 
         $accountType = $account->accountType;
@@ -301,8 +263,7 @@ class AccountTest extends TestCase
             ->where('status_code', '<=', 99)
             ->first();
         $route = route('account.approve', ['account' => $account]);
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::inRandomOrder()->first();
         $user->givePermissionTo('approve_account');
         $user->refresh();
 
@@ -365,7 +326,7 @@ class AccountTest extends TestCase
 
     public function testStoreRouteMiddleware()
     {
-        $game = $this->makeIdealGame();
+        $game = Game::inRandomOrder()->first();
         $accountType = $game->accountTypes->random();
         $route = route('account.store', ['accountType' => $accountType]);
 
@@ -374,15 +335,17 @@ class AccountTest extends TestCase
          * -------------------
          */
         $res = $this->json('post', $route);
-        $res->assertStatus(403);
+        $res->assertStatus(401);
 
         /**
          * Is auth
          * ---------------------
          * create - can use account type
          */
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
+        $user->refresh();
 
         # 0 - 0
         $res = $this->actingAs($user)
@@ -436,8 +399,10 @@ class AccountTest extends TestCase
          * ---------------------
          * approve - account is valid
          */
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
+        $user->refresh();
 
         # 0 - 0
         $res = $this->actingAs($user)
@@ -468,16 +433,25 @@ class AccountTest extends TestCase
         $validAccount = Account::inRandomOrder()
             ->whereIn('status_code', [0, 440])
             ->first();
+        $validAccount->creator->syncPermissions();
+        $validAccount->creator->syncRoles();
+        $validAccount->creator->refresh();
         $validRoute = route('account.update', ['account' => $validAccount]);
 
         $validProAccount = Account::inRandomOrder()
             ->whereIn('status_code', [480])
             ->first();
+        $validProAccount->creator->syncPermissions();
+        $validProAccount->creator->syncRoles();
+        $validProAccount->creator->refresh();
         $validProRoute = route('account.update', ['account' => $validProAccount]);
 
         $invalidAccount = Account::inRandomOrder()
             ->whereIn('status_code', [200, 600, 840, 880])
             ->first();
+        $invalidAccount->creator->syncPermissions();
+        $invalidAccount->creator->syncRoles();
+        $invalidAccount->creator->refresh();
         $invalidRoute = route('account.update', ['account' => $invalidAccount]);
 
         /**
@@ -501,8 +475,15 @@ class AccountTest extends TestCase
          * Regular user can't update
          * ---------------------------
          */
-        $user = User::factory()->make();
-        $user->save();
+        $user = User::whereNotIn('id', [
+            $validAccount->creator->getKey(),
+            $validProAccount->creator->getKey(),
+            $invalidAccount->creator->getKey(),
+        ])
+            ->inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
+        $user->refresh();
 
         # Valid route
         $this->actingAs($user)
@@ -546,22 +527,16 @@ class AccountTest extends TestCase
          */
 
         # Valid route
-        $validAccount->creator->revokePermissionTo('update_account');
-        $validAccount->creator->refresh();
         $this->actingAs($validAccount->creator)
             ->json('put', $validRoute)
             ->assertStatus(403);
 
         # Valid pro route
-        $validProAccount->creator->revokePermissionTo('update_account');
-        $validProAccount->creator->refresh();
         $this->actingAs($validProAccount->creator)
             ->json('put', $validProRoute)
             ->assertStatus(403);
 
         # Invalid route
-        $invalidAccount->creator->revokePermissionTo('update_account');
-        $invalidAccount->creator->refresh();
         $this->actingAs($invalidAccount->creator)
             ->json('put', $invalidRoute)
             ->assertStatus(403);
@@ -596,8 +571,8 @@ class AccountTest extends TestCase
          * Manager can update and mange
          * ---------------------------
          */
-        $manager = User::factory()->make();
-        $manager->save();
+        $manager = $user;
+        $manager->syncPermissions();
         $manager->givePermissionTo('update_account');
         $manager->givePermissionTo('manage_account');
         $manager->refresh();
