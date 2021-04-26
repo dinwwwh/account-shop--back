@@ -39,6 +39,7 @@ class AccountResource extends JsonResource
             // Relationship contain pivot
             'infos' => AccountInfoResource::collection($this->infos),
             'actions' => AccountActionResource::collection($this->actions),
+            'gameInfos' => GameInfoResource::collection($this->gameInfos),
 
             // Time
             'approvedAt' => $this->approved_at,

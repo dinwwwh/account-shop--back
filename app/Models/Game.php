@@ -104,4 +104,14 @@ class Game extends Model
         return $this->belongsToMany(DiscountCode::class, 'discount_code_supports_game', null, 'discount_code')
             ->withPivot('type_code');
     }
+
+    /**
+     * Relationship one-many with Models\GameInfo
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function gameInfos()
+    {
+        return $this->hasMany(GameInfo::class);
+    }
 }

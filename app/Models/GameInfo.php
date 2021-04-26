@@ -5,24 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\ModelTraits\HelperForAccountAction;
 
-class AccountAction extends Model
+class GameInfo extends Model
 {
-    use HasFactory,
-        SoftDeletes,
-        HelperForAccountAction;
+    use HasFactory;
+
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'order',
         'name',
         'slug',
         'description',
-        'video_path',
-        'required',
-        'account_type_id',
+        'rule_id',
+        'game_id',
         'last_updated_editor_id',
-        'creator_id',
+        'creator_id'
     ];
 
     protected $casts = [
@@ -30,9 +28,8 @@ class AccountAction extends Model
         'name' => 'string',
         'slug' => 'string',
         'description' => 'string',
-        'video_path' => 'string',
-        'required' => 'boolean',
-        'account_type_id' => 'integer',
+        'rule_id' => 'integer',
+        'game_id' => 'integer',
         'last_updated_editor_id' => 'integer',
         'creator_id' => 'integer',
     ];
@@ -61,7 +58,7 @@ class AccountAction extends Model
      * Relationship one-one with User
      * Include infos of model creator
      *
-     * @return void
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function creator()
     {
@@ -72,7 +69,7 @@ class AccountAction extends Model
      * Relationship one-one with User
      * Include infos of editor last updated model
      *
-     * @return void
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function lastUpdatedEditor()
     {
@@ -80,13 +77,22 @@ class AccountAction extends Model
     }
 
     /**
-     * Relationship many-many with Models\Role
-     * Include roles need perform account action
+     * Relationship one-one with rule model
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
-    public function rolesThatNeedPerformingAccountAction()
+    public function rule()
     {
-        return $this->belongsToMany(Role::class, 'role_need_performing_account_action');
+        return $this->belongsTo(Rule::class);
+    }
+
+    /**
+     * Relationship one-one with rule model
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function game()
+    {
+        return $this->belongsTo(Game::class);
     }
 }

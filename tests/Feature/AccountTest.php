@@ -59,6 +59,24 @@ class AccountTest extends TestCase
         return $data;
     }
 
+    public function makeDataForGameInfos(Game $game)
+    {
+        $gameInfos = $game->gameInfos;
+        $data = [];
+
+        foreach ($gameInfos as $gameInfo) {
+            if ($gameInfo->rule->required) {
+                if ($gameInfo->rule->datatype == 'string') {
+                    $data['id' . $gameInfo->getKey()] = Str::random(10);
+                } elseif ($gameInfo->rule->datatype == 'integer') {
+                    $data['id' . $gameInfo->getKey()] = rand(1, 01000);
+                }
+            }
+        }
+
+        return $data;
+    }
+
     public function testStore()
     {
         $user = User::inRandomOrder()->first();
@@ -71,6 +89,7 @@ class AccountTest extends TestCase
         $route = route('account.store', ['accountType' => $accountType]);
         $dataOfAccountActions = $this->makeDataForAccountActions($accountType);
         $dataOfAccountInfos = $this->makeDataForAccountInfos($accountType);
+        $dataOfGameInfos = $this->makeDataForGameInfos($game);
         $data = [
             'roleKey' => 'tester',
             'username' => Str::random(60),
@@ -84,6 +103,7 @@ class AccountTest extends TestCase
             ],
             'accountInfos' => $dataOfAccountInfos,
             'accountActions' => $dataOfAccountActions,
+            'gameInfos' => $dataOfGameInfos,
         ];
 
         $res = $this->actingAs($user)
@@ -102,28 +122,11 @@ class AccountTest extends TestCase
                         ->has('images.' . array_key_last($data['images']))
                         ->has('infos.' . (count($data['accountInfos']) - 1))
                         ->has('actions.' . (count($data['accountActions']) - 1))
+                        ->has('gameInfos.' . (count($data['gameInfos']) - 1))
                         ->etc()
                 )
         );
 
-        $accountType = $game->accountTypes->random();
-        $route = route('account.store', ['accountType' => $accountType]);
-        $dataOfAccountActions = $this->makeDataForAccountActions($accountType);
-        $dataOfAccountInfos = $this->makeDataForAccountInfos($accountType);
-        $data = [
-            'roleKey' => 'tester',
-            'username' => Str::random(60),
-            'password' => Str::random(60),
-            'cost' => rand(20000, 50000),
-            'description' => Str::random(100),
-            'representativeImage' => UploadedFile::fake()->image('avatar.jpg'),
-            'images' => [
-                UploadedFile::fake()->image('avatar343243.jpg'),
-                UploadedFile::fake()->image('avatar4324.jpg'),
-            ],
-            'accountInfos' => $dataOfAccountInfos,
-            'accountActions' => $dataOfAccountActions,
-        ];
         $intactData = $data;
 
         # Case: lack accountInfo
@@ -196,6 +199,7 @@ class AccountTest extends TestCase
             ],
             'accountInfos' =>  $this->makeDataForAccountInfos($accountType),
             'accountActions' => $this->makeDataForAccountActions($accountType),
+            'gameInfos' => $this->makeDataForGameInfos($account->accountType->game),
         ];
         $res = $this->actingAs($creator)
             ->json('put', $route, $data);
@@ -213,12 +217,13 @@ class AccountTest extends TestCase
                         ->has('images.' . array_key_last($data['images']))
                         ->has('infos.' . (count($data['accountInfos']) - 1))
                         ->has('actions.' . (count($data['accountActions']) - 1))
+                        ->has('gameInfos.' . (count($data['gameInfos']) - 1))
                         ->etc()
                 )
         );
-        $intactData = $data;
 
-        # Case: lack accountInfo
+        $intactData = $data;
+        # Case: lack a part of accountInfo
         $firstKeyAccountInfo = array_key_first($data['accountInfos']);
         unset($data['accountInfos'][$firstKeyAccountInfo]);
         $res = $this->actingAs($creator)
@@ -230,7 +235,7 @@ class AccountTest extends TestCase
                 ->etc()
         );
 
-        # Case: lack accountAction
+        # Case: lack lack a part of accountAction
         $data = $intactData;
         $firstKeyAccountAction = array_key_first($data['accountActions']);
         unset($data['accountActions'][$firstKeyAccountAction]);
@@ -317,6 +322,7 @@ class AccountTest extends TestCase
                         ->has('type')
                         ->has('infos')
                         ->has('actions')
+                        ->has('gameInfos')
                         ->has('approvedAt')
                         ->has('updatedAt')
                         ->has('createdAt')

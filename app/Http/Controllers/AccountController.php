@@ -26,6 +26,7 @@ use App\Hooks\ApprovingAccountHook;
 use App\Hooks\ApprovedAccountHook;
 use App\Hooks\BuyingAccountHook;
 use App\Hooks\BoughtAccountHook;
+use App\Models\GameInfo;
 use Carbon\Carbon;
 
 class AccountController extends Controller
@@ -89,6 +90,18 @@ class AccountController extends Controller
                     'errors' => ['accountActions' => $validate->errors()],
                 ], 422);
             }
+
+            // Validate Game infos
+            $validate = Validator::make(
+                $request->gameInfos ?? [], # case accountInfo is null
+                $this->makeRuleGameInfos($game->gameInfos),
+            );
+            if ($validate->fails()) {
+                return response()->json([
+                    'message' => 'Một số thông tin game không hợp lệ.',
+                    'errors' => ['gameInfos' => $validate->errors()],
+                ], 422);
+            }
         }
 
         // Make data to save
@@ -134,7 +147,7 @@ class AccountController extends Controller
                 $syncInfos = [];
                 foreach ($request->accountInfos ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)->contains($id)) {
+                    if ($accountType->accountInfos->contains($id)) {
                         $syncInfos[$id] =  ['value' => json_encode($value)];
                     }
                 }
@@ -144,11 +157,21 @@ class AccountController extends Controller
                 $syncActions = [];
                 foreach ($request->accountActions ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->accountActionsThatRoleNeedPerforming($roleThatUsing)->contains($id)) {
+                    if ($accountType->accountActions->contains($id)) {
                         $syncActions[$id] = ['value' => json_encode($value)];
                     }
                 }
                 $account->actions()->sync($syncActions);
+
+                // game info
+                $syncGameInfos = [];
+                foreach ($request->gameInfos ?? [] as $key => $value) {
+                    $id = (int)trim($key, $this->config['key']);
+                    if ($game->gameInfos->contains($id)) {
+                        $syncGameInfos[$id] = ['value' => json_encode($value)];
+                    }
+                }
+                $account->gameInfos()->sync($syncGameInfos);
             }
 
             // handle sub account images
@@ -237,6 +260,7 @@ class AccountController extends Controller
     public function update(UpdateAccountRequest $request, Account $account)
     {
         $accountType = $account->accountType;
+        $game = $accountType->game;
 
         // Get role use to update
         $roleThatUsing = auth()->user()->roles->find($request->roleKey ?? $account->last_role_key_editor_used);
@@ -251,27 +275,45 @@ class AccountController extends Controller
         // Validate account info and account action
         {
             // Validate Account infos
-            $validate = Validator::make(
-                $request->accountInfos ?? [], # case accountInfo is null
-                $this->makeRuleAccountInfos($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)),
-            );
-            if ($validate->fails()) {
-                return response()->json([
-                    'message' => 'Thông tin tài khoản không hợp lệ.',
-                    'errors' => ['accountInfos' => $validate->errors()],
-                ], 422);
+            if ($request->accountInfos) {
+                $validate = Validator::make(
+                    $request->accountInfos ?? [], # case accountInfo is null
+                    $this->makeRuleAccountInfos($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)),
+                );
+                if ($validate->fails()) {
+                    return response()->json([
+                        'message' => 'Thông tin tài khoản không hợp lệ.',
+                        'errors' => ['accountInfos' => $validate->errors()],
+                    ], 422);
+                }
             }
 
             // Validate Account actions
-            $validate = Validator::make(
-                $request->accountActions ?? [], # case accountAction is null
-                $this->makeRuleAccountActions($accountType->accountActionsThatRoleNeedPerforming($roleThatUsing)),
-            );
-            if ($validate->fails()) {
-                return response()->json([
-                    'message' => 'Một số hành động bắt buộc đối với tài khoản còn thiếu.',
-                    'errors' => ['accountActions' => $validate->errors()],
-                ], 422);
+            if ($request->accountActions) {
+                $validate = Validator::make(
+                    $request->accountActions ?? [], # case accountAction is null
+                    $this->makeRuleAccountActions($accountType->accountActionsThatRoleNeedPerforming($roleThatUsing)),
+                );
+                if ($validate->fails()) {
+                    return response()->json([
+                        'message' => 'Một số hành động bắt buộc đối với tài khoản còn thiếu.',
+                        'errors' => ['accountActions' => $validate->errors()],
+                    ], 422);
+                }
+            }
+
+            // Validate Game infos
+            if ($request->gameInfos) {
+                $validate = Validator::make(
+                    $request->gameInfos ?? [], # case accountInfo is null
+                    $this->makeRuleGameInfos($game->gameInfos),
+                );
+                if ($validate->fails()) {
+                    return response()->json([
+                        'message' => 'Một số thông tin game không hợp lệ.',
+                        'errors' => ['gameInfos' => $validate->errors()],
+                    ], 422);
+                }
             }
         }
 
@@ -315,25 +357,41 @@ class AccountController extends Controller
             // Handle relationship
             {
                 // account infos
-                $syncInfos = [];
-                foreach ($request->accountInfos ?? [] as $key => $value) {
-                    $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)->contains($id)) {
-                        $syncInfos[$id] =  ['value' => json_encode($value)];
+                if ($request->accountInfos) {
+                    $syncInfos = [];
+                    foreach ($request->accountInfos ?? [] as $key => $value) {
+                        $id = (int)trim($key, $this->config['key']);
+                        if ($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)->contains($id)) {
+                            $syncInfos[$id] =  ['value' => json_encode($value)];
+                        }
                     }
+                    $account->infos()->sync($syncInfos);
                 }
-                $account->infos()->sync($syncInfos);
 
 
                 // account actions
-                $syncActions = [];
-                foreach ($request->accountActions ?? [] as $key => $value) {
-                    $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->accountActionsThatRoleNeedPerforming($roleThatUsing)->contains($id)) {
-                        $syncActions[$id] = ['value' => json_encode($value)];
+                if ($request->accountActions) {
+                    $syncActions = [];
+                    foreach ($request->accountActions ?? [] as $key => $value) {
+                        $id = (int)trim($key, $this->config['key']);
+                        if ($accountType->accountActionsThatRoleNeedPerforming($roleThatUsing)->contains($id)) {
+                            $syncActions[$id] = ['value' => json_encode($value)];
+                        }
                     }
+                    $account->actions()->sync($syncActions);
                 }
-                $account->actions()->sync($syncActions);
+
+                // game info
+                if ($request->gameInfos) {
+                    $syncGameInfos = [];
+                    foreach ($request->gameInfos ?? [] as $key => $value) {
+                        $id = (int)trim($key, $this->config['key']);
+                        if ($game->gameInfos->contains($id)) {
+                            $syncGameInfos[$id] = ['value' => json_encode($value)];
+                        }
+                    }
+                    $account->gameInfos()->sync($syncGameInfos);
+                }
 
                 // sub account images
                 if ($request->hasFile('images')) {
@@ -419,14 +477,14 @@ class AccountController extends Controller
         $rules = [];
         foreach ($accountInfos as $accountInfo) {
             // Get rule
-            $rule = $accountInfo->rule->make();
+            $rule = $accountInfo->rule->generateRule();
 
             // Make rule for validate
-            if (is_array($rule)) { # If account info is a array
-                $rules[$this->config['key'] . $accountInfo->id] = $rule['parent'];
-                $rules[$this->config['key'] . $accountInfo->id . '.*'] = $rule['children'];
+            if ($rule['nested']) { # if nested
+                $rules[$this->config['key'] . $accountInfo->id] = $rule['ruleOfParent'];
+                $rules[$this->config['key'] . $accountInfo->id . '.*'] = $rule['ruleOfChild'];
             } else {
-                $rules[$this->config['key'] . $accountInfo->id] = $rule;
+                $rules[$this->config['key'] . $accountInfo->id] = $rule['rule'];
             }
         }
 
@@ -440,10 +498,28 @@ class AccountController extends Controller
         $rules = [];
         foreach ($accountActions as $accountAction) {
             // Make rule
-            $rule = $accountAction->required
-                ? 'required|' . RuleHelper::in(true)
-                : 'nullable|boolean';
+            $rule = $accountAction->generateRule();
             $rules[$this->config['key'] . $accountAction->id] = $rule;
+        }
+
+        return $rules;
+    }
+
+    private function makeRuleGameInfos($gameInfos)
+    {
+        // Initial data
+        $rules = [];
+        foreach ($gameInfos as $gameInfo) {
+            // Get rule
+            $rule = $gameInfo->rule->generateRule();
+
+            // Make rule for validate
+            if ($rule['nested']) { # if nested
+                $rules[$this->config['key'] . $gameInfo->getKey()] = $rule['ruleOfParent'];
+                $rules[$this->config['key'] . $gameInfo->getKey() . '.*'] = $rule['ruleOfChild'];
+            } else {
+                $rules[$this->config['key'] . $gameInfo->getKey()] = $rule['rule'];
+            }
         }
 
         return $rules;

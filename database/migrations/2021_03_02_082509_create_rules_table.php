@@ -17,8 +17,8 @@ class CreateRulesTable extends Migration
             $table->id();
             $table->string('datatype');
             $table->string('placeholder')->nullable();
-            $table->boolean('required')->default(0);
-            $table->boolean('multiple')->default(0);
+            $table->boolean('required')->default(false);
+            $table->boolean('multiple')->default(false);
             $table->integer('min')->nullable();
             $table->integer('max')->nullable();
             $table->json('values')->nullable();

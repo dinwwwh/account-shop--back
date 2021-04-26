@@ -172,4 +172,15 @@ class Account extends Model
         return $this->belongsToMany(AccountAction::class, 'account_account_action')
             ->withPivot('value');
     }
+
+    /**
+     * Relationship many-many with Models\GameInfo
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function gameInfos()
+    {
+        return $this->belongsToMany(GameInfo::class, 'account_has_game_infos')
+            ->withPivot('value');
+    }
 }

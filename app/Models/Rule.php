@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Rule as RuleHelper;
+use App\ModelTraits\HelperForRule;
 
 class Rule extends Model
 {
-    use HasFactory;
+    use HasFactory, HelperForRule;
 
     protected $fillable = [
         'placeholder',
@@ -53,49 +53,5 @@ class Rule extends Model
         static::updating(function ($query) {
             //
         });
-    }
-
-    /**
-     * To make rule for validator
-     *
-     * @return void
-     */
-    public function make()
-    {
-        $result = $this->datatype;
-
-        if (!empty($this->min)) {
-            $result .= '|min:' . $this->min;
-        }
-
-        if (!empty($this->max)) {
-            $result .= '|max:' . $this->max;
-        }
-
-        if (!empty($this->values)) {
-            $result .= '|' . RuleHelper::in($this->values);
-        }
-
-        if (!empty($this->multiple)) {
-            $parent = '';
-            if ($this->required) {
-                $parent .= 'required';
-            } else {
-                $parent .= 'nullable';
-            }
-
-            $result =  [
-                'parent' => $parent . '|array',
-                'children' => trim($result, '|'),
-            ];
-        } else {
-            if ($this->required) {
-                $result .= '|required';
-            } else {
-                $result .= '|nullable';
-            }
-        }
-
-        return $result;
     }
 }

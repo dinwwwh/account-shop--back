@@ -8,6 +8,7 @@ use App\Models\AccountAction;
 use App\Models\AccountInfo;
 use Illuminate\Database\Seeder;
 use App\Models\Game;
+use App\Models\GameInfo;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
@@ -23,12 +24,13 @@ class ModuleGameSeeder extends Seeder
         $games = Game::factory()
             ->count(10)
             ->has(
+                GameInfo::factory()
+                    ->count(6),
+                'gameInfos'
+            )
+            ->has(
                 AccountType::factory()
                     ->count(3)
-                    ->state([
-                        'last_updated_editor_id' => User::all()->random()->getKey(),
-                        'creator_id' => User::all()->random()->getKey(),
-                    ])
                     ->has(AccountInfo::factory()->count(6), 'accountActions')
                     ->has(AccountAction::factory()->count(6), 'accountInfos')
                     ->a28s(),

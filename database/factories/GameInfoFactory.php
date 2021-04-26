@@ -2,18 +2,19 @@
 
 namespace Database\Factories;
 
-use App\Models\AccountAction;
+use App\Models\GameInfo;
+use App\Models\Rule;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-class AccountActionFactory extends Factory
+class GameInfoFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = AccountAction::class;
+    protected $model = GameInfo::class;
 
     /**
      * Define the model's default state.
@@ -22,12 +23,12 @@ class AccountActionFactory extends Factory
      */
     public function definition()
     {
+        // Must define game_id
         return [
-            'name' => 'AccountInfo' . Str::random(20),
+            'name' => $this->faker->name,
             'slug' => fn ($attrs) => Str::slug($attrs['name']),
             'description' => Str::random(40),
-            'video_path' => 'no thing this is test',
-            'required' => rand(0, 99) < 70 ? true : false,
+            'rule_id' => Rule::factory(),
         ];
     }
 }

@@ -32,6 +32,10 @@ class UpdateAccountRequest extends FormRequest
             'representativeImage' => 'nullable|image',
             'images' => 'nullable|array',
             'images.*' => 'image',
+
+            'accountInfos' => 'nullable|array',
+            'accountActions' => 'nullable|array',
+            'gameInfos' => 'nullable|array',
         ];
     }
 }
