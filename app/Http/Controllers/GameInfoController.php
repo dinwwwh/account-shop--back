@@ -1,0 +1,149 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\StoreGameInfoRequest;
+use App\Http\Requests\UpdateGameInfoRequest;
+use App\Http\Resources\GameInfoResource;
+use App\Models\Game;
+use App\Models\GameInfo;
+use App\Models\Rule;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+
+class GameInfoController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @param \App\Models\Game $game
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Game $game)
+    {
+        return GameInfoResource::collection($game->gameInfos);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\StoreGameInfoRequest  $request
+     * @param  \App\Models\Game  $game
+     * @return \Illuminate\Http\Response
+     */
+    public function store(StoreGameInfoRequest $request, Game $game)
+    {
+        // Initialize data
+        $gameInfoData = [];
+        foreach ([
+            'order', 'description'
+        ] as $key) {
+            if ($request->filled($key)) {
+                $gameInfoData[Str::snake($key)] = $request->$key;
+            }
+        }
+        $gameInfoData['name'] = $request->name;
+        $gameInfoData['slug'] = Str::slug($gameInfoData['name']);
+        $gameInfoData['game_id'] = $game->getKey();
+
+        try {
+            DB::beginTransaction();
+
+            // rule relationship
+            $gameInfoData['rule_id'] = Rule::create($request->rule ?? [])->getKey();
+            $gameInfo = GameInfo::create($gameInfoData);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Thêm mới thông tin game thất bại, vui lòng thừ lại sau.',
+            ], 500);
+        }
+
+        return new GameInfoResource($gameInfo->refresh());
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\GameInfo  $gameInfo
+     * @return \Illuminate\Http\Response
+     */
+    public function show(GameInfo $gameInfo)
+    {
+        return new GameInfoResource($gameInfo);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \App\Http\Requests\UpdateGameInfoRequest  $request
+     * @param  \App\Models\GameInfo  $gameInfo
+     * @return \Illuminate\Http\Response
+     */
+    public function update(UpdateGameInfoRequest $request, GameInfo $gameInfo)
+    {
+        // Initialize data
+        $gameInfoData = [];
+        foreach ([
+            'order', 'description', 'name'
+        ] as $key) {
+            if ($request->filled($key)) {
+                $gameInfoData[Str::snake($key)] = $request->$key;
+            }
+        }
+        if (array_key_exists('name', $gameInfoData)) {
+            $gameInfoData['slug'] = Str::slug($gameInfoData['name']);
+        }
+
+        try {
+            DB::beginTransaction();
+            $gameInfo->update($gameInfoData);
+            // rule relationship
+            $gameInfo->rule->update($request->rule ?? []);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Cập nhật thông tin game thất bại, vui lòng thừ lại sau.',
+            ], 500);
+        }
+
+        return new GameInfoResource($gameInfo->refresh());
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\GameInfo  $gameInfo
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(GameInfo $gameInfo)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Relationship
+            $gameInfo->rule->delete();
+            // Main
+            $gameInfo->delete();
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            //throw $th;
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Xoá thông tin game thất bại, vui lòng thừ lại sau.',
+            ], 500);
+        }
+
+        return response()->json([
+            'message' => 'Xoá thông tin game thành công!',
+        ], 200);
+    }
+}

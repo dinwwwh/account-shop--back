@@ -203,6 +203,32 @@ Route::prefix('game')->group(function () {
 
 /**
  * --------------------------------
+ * FEATURE GAME INFO
+ * --------------------------------
+ */
+Route::prefix('game-info')->group(function () {
+    // Index
+    Route::get('{game}', [App\Http\Controllers\GameInfoController::class, 'index'])
+        ->name('game-info.index');
+    // Store
+    Route::post('{game}', [App\Http\Controllers\GameInfoController::class, 'store'])
+        ->middleware(['auth', 'can:create,App\Models\GameInfo,game'])
+        ->name('game-info.store');
+    // Show
+    Route::get('show/{gameInfo}', [App\Http\Controllers\GameInfoController::class, 'show'])
+        ->name('game-info.show');
+    // Update
+    Route::put('{gameInfo}', [App\Http\Controllers\GameInfoController::class, 'update'])
+        ->middleware(['auth', 'can:update,gameInfo'])
+        ->name('game-info.update');
+    // Destroy
+    Route::delete('{gameInfo}', [App\Http\Controllers\GameInfoController::class, 'destroy'])
+        ->middleware(['auth', 'can:delete,gameInfo'])
+        ->name('game-info.destroy');
+});
+
+/**
+ * --------------------------------
  * FEATURE ACCOUNT
  * --------------------------------
  * Contain infos of account type.

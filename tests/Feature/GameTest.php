@@ -149,14 +149,15 @@ class GameTest extends TestCase
     public function testStoreRouteMiddleware()
     {
         $user = User::inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
+        $user->refresh();
 
         /**
          * Route game.store
          * -------------------------------
          * auth - create
          */
-        $user->revokePermissionTo('create_game');
-        $user->refresh();
 
         # Case: 0 0
         $res = $this->json('post', route('game.store'));

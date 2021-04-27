@@ -19,8 +19,6 @@ class GameInfo extends Model
         'description',
         'rule_id',
         'game_id',
-        'last_updated_editor_id',
-        'creator_id'
     ];
 
     protected $casts = [
@@ -30,8 +28,6 @@ class GameInfo extends Model
         'description' => 'string',
         'rule_id' => 'integer',
         'game_id' => 'integer',
-        'last_updated_editor_id' => 'integer',
-        'creator_id' => 'integer',
     ];
 
     /**
