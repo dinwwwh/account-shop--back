@@ -169,7 +169,8 @@ class DiscountCodeTest extends TestCase
          * Update - Manage
          */
         $creator = $discountCode->creator;
-        $creator->revokePermissionTo('update_discount_code', 'manage_discount_code');
+        $creator->syncPermissions();
+        $creator->syncRoles();
         $creator->refresh();
         $user = User::whereNotIn('id', [$creator->getKey()])
             ->inRandomOrder()->first();

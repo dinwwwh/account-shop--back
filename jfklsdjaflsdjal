@@ -1,0 +1,18 @@
+warning: LF will be replaced by CRLF in database/migrations/2014_10_12_000000_create_users_table.php.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in tests/Feature/DiscountCodeTest.php.
+The file will have its original line endings in your working directory
+[1mdiff --git a/tests/Feature/DiscountCodeTest.php b/tests/Feature/DiscountCodeTest.php[m
+[1mindex f26d0ec..8a8081d 100644[m
+[1m--- a/tests/Feature/DiscountCodeTest.php[m
+[1m+++ b/tests/Feature/DiscountCodeTest.php[m
+[36m@@ -169,7 +169,8 @@[m [mclass DiscountCodeTest extends TestCase[m
+          * Update - Manage[m
+          */[m
+         $creator = $discountCode->creator;[m
+[31m-        $creator->revokePermissionTo('update_discount_code', 'manage_discount_code');[m
+[32m+[m[32m        $creator->syncPermissions();[m
+[32m+[m[32m        $creator->syncRoles();[m
+         $creator->refresh();[m
+         $user = User::whereNotIn('id', [$creator->getKey()])[m
+             ->inRandomOrder()->first();[m
