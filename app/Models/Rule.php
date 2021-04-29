@@ -54,4 +54,15 @@ class Rule extends Model
             //
         });
     }
+
+    /**
+     * Relationship many-many with Models\Role
+     * Include roles must required in this rule
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function requiredRoles()
+    {
+        return $this->belongsToMany(Role::class, 'rule_required_roles');
+    }
 }

@@ -18,6 +18,7 @@ class CreateGamesTable extends Migration
             $table->integer('order')->nullable();
             $table->string('name');
             $table->string('slug');
+            $table->string('description')->nullable();
             $table->string('publisher_name');
             $table->string('image_path');
             $table->bigInteger('last_updated_editor_id');

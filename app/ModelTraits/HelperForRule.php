@@ -2,6 +2,7 @@
 
 namespace App\ModelTraits;
 
+use App\Models\Role;
 use Illuminate\Validation\Rule as RuleHelper;
 
 trait HelperForRule
@@ -51,5 +52,20 @@ trait HelperForRule
         }
 
         return $rule;
+    }
+
+    /**
+     * Determine whether $role must required this rule
+     *
+     * @param \App\Models\Role $role
+     * @return boolean
+     */
+    public function isRequired(Role $role)
+    {
+        if (!is_null($this->required)) {
+            return $this->required;
+        }
+
+        return $this->requiredRoles->contains($role);
     }
 }
