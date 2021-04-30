@@ -7,6 +7,25 @@ use Carbon\Carbon;
 trait HelperForDiscountCode
 {
     /**
+     * Mutate input to must a DiscountCode
+     *
+     * @param string or App\Models\AccountType as $accountType
+     * @return App\Models\DiscountCode or null
+     */
+    public static function mustBeDiscountCode($discountCode)
+    {
+        if (!($discountCode instanceof static)) {
+            if (is_string($discountCode) || is_numeric($discountCode)) {
+                $discountCode = static::find($discountCode);
+            } else {
+                return null;
+            }
+        }
+
+        return $discountCode;
+    }
+
+    /**
      * Calculate Discount
      *
      * @param int $fee use to calculate discount
