@@ -43,7 +43,7 @@ class Rule extends Model
         static::creating(function ($query) {
             $query->placeholder = $query->placeholder ?? null;
             $query->datatype = $query->datatype ?? 'string';
-            $query->required = $query->required ?? false;
+            // $query->required = $query->required ?? false;
             $query->multiple = $query->multiple ?? false;
             $query->min = $query->min ?? null;
             $query->max = $query->max ?? null;

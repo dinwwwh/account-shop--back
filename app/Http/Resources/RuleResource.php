@@ -25,6 +25,9 @@ class RuleResource extends JsonResource
             'values' => $this->values,
             'updatedAt' => $this->updated_at,
             'createdAt' => $this->created_at,
+
+            // relationship
+            'requiredRoles' => RoleResource::collection($this->requiredRoles),
         ];
     }
 }

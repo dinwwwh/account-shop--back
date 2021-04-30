@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\ModelTraits\HelperForRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,7 +11,10 @@ use App\ModelTraits\ManagePermissionInRole;
 
 class Role extends Model
 {
-    use HasFactory, SoftDeletes, ManagePermissionInRole;
+    use HasFactory,
+        SoftDeletes,
+        ManagePermissionInRole,
+        HelperForRole;
 
 
     protected $primaryKey = 'key';
