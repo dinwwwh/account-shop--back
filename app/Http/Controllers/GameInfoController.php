@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateGameInfoRequest;
 use App\Http\Resources\GameInfoResource;
 use App\Models\Game;
 use App\Models\GameInfo;
+use App\Models\Role;
 use App\Models\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -51,7 +52,13 @@ class GameInfoController extends Controller
             DB::beginTransaction();
 
             // rule relationship
-            $gameInfoData['rule_id'] = Rule::create($request->rule ?? [])->getKey();
+            $rule = Rule::create($request->rule)->refresh();
+            if (is_null($rule->required)) {
+                $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoles'] ?? []);
+                $rule->requiredRoles()->attach($requiredRoles);
+            }
+            $gameInfoData['rule_id'] = $rule->getKey();
+
             $gameInfo = GameInfo::create($gameInfoData);
 
             DB::commit();
@@ -102,12 +109,22 @@ class GameInfoController extends Controller
         try {
             DB::beginTransaction();
             $gameInfo->update($gameInfoData);
+
             // rule relationship
-            $gameInfo->rule->update($request->rule ?? []);
+            if ($request->filled('rule')) {
+                $rule = $gameInfo->rule;
+                $rule->update($request->rule);
+                if (is_null($rule->required)) {
+                    $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoles'] ?? []);
+                    $rule->requiredRoles()->sync($requiredRoles);
+                } else {
+                    $rule->requiredRoles()->sync([]);
+                }
+            }
 
             DB::commit();
         } catch (\Throwable $th) {
-            //throw $th;
+            throw $th;
             DB::rollBack();
             return response()->json([
                 'message' => 'Cập nhật thông tin game thất bại, vui lòng thừ lại sau.',

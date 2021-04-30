@@ -27,7 +27,11 @@ class UpdateGameInfoRequest extends FormRequest
             'order' => 'nullable|integer',
             'name' => 'nullable|string',
             'description' => 'nullable|string',
+
+            // Relationship rule
             'rule' => 'nullable|array',
+            'rule.requiredRoles' => 'nullable|array',
+            'rule.requiredRoles.*' => 'string',
         ];
     }
 }
