@@ -29,7 +29,11 @@ class UpdateAccountInfoRequest extends FormRequest
             'order' => 'nullable|integer',
             'name' => 'nullable|string',
             'description' => 'nullable|string',
-            'rule' => 'nullable'
+
+            // Relationship rule
+            'rule' => 'nullable|array',
+            'rule.requiredRoles' => 'nullable|array',
+            'rule.requiredRoles.*' => 'string',
         ];
     }
 }

@@ -27,9 +27,13 @@ class StoreAccountInfoRequest extends FormRequest
             'order' => 'nullable|integer',
             'name' => 'required|string',
             'description' => 'nullable|string',
-            'rule' => 'nullable',
             'roleKeys' => 'nullable|array',
             'roleKeys.*' => 'string',
+
+            // Relationship rule
+            'rule' => 'nullable|array',
+            'rule.requiredRoles' => 'nullable|array',
+            'rule.requiredRoles.*' => 'string',
         ];
     }
 }

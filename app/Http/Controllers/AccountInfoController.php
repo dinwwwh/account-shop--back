@@ -49,7 +49,12 @@ class AccountInfoController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $accountInfoData['rule_id'] = Rule::create($request->rule ?? [])->id; // Save rule in database
+            $rule = Rule::create($request->rule ?? [])->refresh(); // Save rule in database
+            if (is_null($rule->required)) {
+                $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoles']);
+                $rule->requiredRoles()->attach($requiredRoles);
+            }
+            $accountInfoData['rule_id'] = $rule->getKey();
             $accountInfo = AccountInfo::create($accountInfoData); // Save account info to database
 
             // Relationship many-many with Models\Role
@@ -107,8 +112,18 @@ class AccountInfoController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $accountInfo->update($accountInfoData); // Save rule to database
-            $accountInfo->rule->update($request->rule ?? []);
+            $accountInfo->update($accountInfoData);
+
+            // Update rule
+            if ($request->filled('rule')) {
+                $accountInfo->rule->update($request->rule);
+                if (is_null($accountInfo->rule->required)) {
+                    $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoles']);
+                    $accountInfo->rule->requiredRoles()->sync($requiredRoles);
+                } else {
+                    $accountInfo->rule->requiredRoles()->sync([]);
+                }
+            }
 
             // Relationship many-many with Models\Role
             $role = Role::all();
