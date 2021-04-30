@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Helpers;
+namespace App\ModelTraits;
 
-use App\Models\Permission;
 use App\Helpers\ArgumentHelper;
 use Illuminate\Database\Eloquent\Collection;
 
-class PermissionHelper
+trait HelperForPermission
 {
     /**
      * Mutate first parameter to model permission
@@ -17,9 +16,9 @@ class PermissionHelper
      */
     public static function mustBePermission($permission)
     {
-        if (!($permission instanceof Permission)) {
+        if (!($permission instanceof static)) {
             if (is_string($permission) || is_numeric($permission)) {
-                $permission = Permission::find($permission);
+                $permission = static::find($permission);
             } else {
                 return null;
             }

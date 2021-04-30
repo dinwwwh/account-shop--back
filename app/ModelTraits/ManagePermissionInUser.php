@@ -4,7 +4,6 @@ namespace App\ModelTraits;
 
 use App\Models\Permission;
 use App\Helpers\ArgumentHelper;
-use App\Helpers\PermissionHelper;
 
 trait ManagePermissionInUser
 {
@@ -138,7 +137,7 @@ trait ManagePermissionInUser
      */
     public function _attachPermission($permission)
     {
-        $permission = PermissionHelper::mustBePermission($permission);
+        $permission = Permission::mustBePermission($permission);
 
         if (is_null($permission)) {
             return false;
@@ -159,7 +158,7 @@ trait ManagePermissionInUser
      */
     protected function _detachPermission($permission)
     {
-        $permission = PermissionHelper::mustBePermission($permission);
+        $permission = Permission::mustBePermission($permission);
 
         if (is_null($permission)) {
             return true;
@@ -182,7 +181,7 @@ trait ManagePermissionInUser
     {
         $permissions = ArgumentHelper::firstOrAll($permissions);
 
-        $permissions = PermissionHelper::mustBeManyPermissions($permissions);
+        $permissions = Permission::mustBeManyPermissions($permissions);
 
         return $this->permissions()->sync($permissions);
     }
