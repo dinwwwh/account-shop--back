@@ -51,7 +51,7 @@ class AccountInfoController extends Controller
             DB::beginTransaction();
             $rule = Rule::create($request->rule ?? [])->refresh(); // Save rule in database
             if (is_null($rule->required)) {
-                $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoles']);
+                $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoles'] ?? []);
                 $rule->requiredRoles()->attach($requiredRoles);
             }
             $accountInfoData['rule_id'] = $rule->getKey();
@@ -118,7 +118,7 @@ class AccountInfoController extends Controller
             if ($request->filled('rule')) {
                 $accountInfo->rule->update($request->rule);
                 if (is_null($accountInfo->rule->required)) {
-                    $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoles']);
+                    $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoles'] ?? []);
                     $accountInfo->rule->requiredRoles()->sync($requiredRoles);
                 } else {
                     $accountInfo->rule->requiredRoles()->sync([]);
