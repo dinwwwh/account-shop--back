@@ -3,7 +3,7 @@
 namespace App\ModelTraits;
 
 use App\Helpers\ArgumentHelper;
-use App\Helpers\RoleHelper;
+use App\Models\Role;
 
 trait ManageRoleInAccountType
 {
@@ -18,7 +18,7 @@ trait ManageRoleInAccountType
             return null;
         }
 
-        $role = RoleHelper::mustBeRole($role);
+        $role = Role::mustBeRole($role);
         $pivots = !is_null($statusCode) ? ['status_code' => $statusCode] : null;
         return $this->rolesCanUsedAccountType()->attach($role, $pivots);
     }

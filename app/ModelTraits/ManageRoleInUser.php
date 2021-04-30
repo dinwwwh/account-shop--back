@@ -5,7 +5,6 @@ namespace App\ModelTraits;
 use App\Models\Role;
 use App\Models\Permission;
 use App\Helpers\ArgumentHelper;
-use App\Helpers\RoleHelper;
 
 trait ManageRoleInUser
 {
@@ -60,7 +59,7 @@ trait ManageRoleInUser
      */
     public function _attachRole($role)
     {
-        $role = RoleHelper::mustBeRole($role);
+        $role = Role::mustBeRole($role);
 
         if (is_null($role)) {
             return false;
@@ -81,7 +80,7 @@ trait ManageRoleInUser
      */
     public function _detachRole($role)
     {
-        $role = RoleHelper::mustBeRole($role);
+        $role = Role::mustBeRole($role);
 
         if (is_null($role)) {
             return true;
@@ -104,7 +103,7 @@ trait ManageRoleInUser
     {
         $roles = ArgumentHelper::firstOrAll($roles);
 
-        $roles = RoleHelper::mustBeManyRoles($roles);
+        $roles = Role::mustBeManyRoles($roles);
 
         return $this->roles()->sync($roles);
     }

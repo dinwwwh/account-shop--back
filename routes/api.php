@@ -18,10 +18,10 @@ use App\Http\Requests\Request;
 use App\Models\Role;
 use App\Models\Permission;
 
-auth()->attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
-auth()->user()->assignRole('tester');
-auth()->user()->assignRole('administrator');
-auth()->user()->refresh();
+// auth()->attempt(['email' => 'dinhdjj@gmail.com', 'password' => '12345678']);
+// auth()->user()->assignRole('tester');
+// auth()->user()->assignRole('administrator');
+// auth()->user()->refresh();
 
 Route::get('test', function (Request $request) {
     dd(Role::mustBeRole(Role::first()));

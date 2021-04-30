@@ -52,7 +52,7 @@ class GameInfoController extends Controller
             DB::beginTransaction();
 
             // rule relationship
-            $rule = Rule::create($request->rule)->refresh();
+            $rule = Rule::create($request->rule ?? [])->refresh();
             if (is_null($rule->required)) {
                 $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoles'] ?? []);
                 $rule->requiredRoles()->attach($requiredRoles);
