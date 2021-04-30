@@ -21,7 +21,7 @@ class AccountTradingTest extends TestCase
 
 
         $route = route('account-trading.buy', ['account' => $account]);
-        $user = User::inRandomOrder()->first();
+        $user = User::where('id', '!=', $account->creator->getKey())->inRandomOrder()->first();
         $goldCoin = rand($account->calculateTemporaryPrice(), $account->calculateTemporaryPrice() + 200000);
         $user->gold_coin = $goldCoin;
         $user->save();

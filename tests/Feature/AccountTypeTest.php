@@ -20,6 +20,9 @@ class AccountTypeTest extends TestCase
          * auth - create
          */
         $user = User::inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
+        $user->refresh();
         $route = route('account-type.store', ['game' => Game::inRandomOrder()->first()]);
 
         # Case: 0 0

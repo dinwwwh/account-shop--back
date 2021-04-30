@@ -185,7 +185,8 @@ class GameTest extends TestCase
          */
         $game = Game::inRandomOrder()->first();
         $creator = $game->creator;
-        $creator->revokePermissionTo('update_game', 'manage_game');
+        $creator->syncPermissions();
+        $creator->syncRoles();
         $creator->refresh();
         $user = User::whereNotIn('id', [$creator->getKey()])
             ->inRandomOrder()->first();

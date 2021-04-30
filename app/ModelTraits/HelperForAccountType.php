@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Helpers;
+namespace App\ModelTraits;
 
-use App\Models\AccountType;
-
-class AccountTypeHelper
+trait HelperForAccountType
 {
     /**
      * Mutate input to must a AccountType
@@ -13,9 +11,9 @@ class AccountTypeHelper
      */
     public static function mustBeAccountType($accountType)
     {
-        if (!($accountType instanceof AccountType)) {
+        if (!($accountType instanceof static)) {
             if (is_string($accountType) || is_numeric($accountType)) {
-                $accountType = AccountType::find($accountType);
+                $accountType = static::find($accountType);
             } else {
                 return null;
             }

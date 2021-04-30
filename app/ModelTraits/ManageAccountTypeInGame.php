@@ -4,7 +4,6 @@ namespace App\ModelTraits;
 
 use Illuminate\Database\Eloquent\Collection;
 use App\Models\AccountType;
-use App\Helpers\AccountTypeHelper;
 
 trait ManageAccountTypeInGame
 {
@@ -48,7 +47,7 @@ trait ManageAccountTypeInGame
      */
     public function checkCurrentUserCanUseAccountType($accountType)
     {
-        $accountType = AccountTypeHelper::mustBeAccountType($accountType);
+        $accountType = AccountType::mustBeAccountType($accountType);
         $accountTypesThatCurrentUserCanUse = $this->getAccountTypesThatCurrentUserCanUse();
 
         return $accountTypesThatCurrentUserCanUse->contains($accountType);
@@ -61,7 +60,7 @@ trait ManageAccountTypeInGame
     //  */
     // public function giveUserUseAccountType($user ,$accountType)
     // {
-    //     $accountType = AccountTypeHelper::mustBeAccountType($accountType);
+    //     $accountType = AccountType::mustBeAccountType($accountType);
 
     //     return $accountType->rolesCanUsedAccountType()->attach($user)
     // }
