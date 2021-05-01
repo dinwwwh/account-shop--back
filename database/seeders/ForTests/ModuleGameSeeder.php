@@ -53,6 +53,12 @@ class ModuleGameSeeder extends Seeder
                 }
             }
 
+            foreach ($game->gameInfos as $gameInfos) {
+                if (is_null($gameInfos->rule->required)) {
+                    $gameInfos->rule->requiredRoles()->attach('tester');
+                }
+            }
+
 
             $account = Account::factory()
                 ->count(5)

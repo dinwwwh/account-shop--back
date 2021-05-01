@@ -62,7 +62,7 @@ class AccountTest extends TestCase
         $data = [];
 
         foreach ($gameInfos as $gameInfo) {
-            if ($gameInfo->rule->required) {
+            if ($gameInfo->rule->isRequired(Role::find('tester'))) {
                 if ($gameInfo->rule->datatype == 'string') {
                     $data['id' . $gameInfo->getKey()] = Str::random(10);
                 } elseif ($gameInfo->rule->datatype == 'integer') {
