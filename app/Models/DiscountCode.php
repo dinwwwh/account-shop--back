@@ -105,4 +105,14 @@ class DiscountCode extends Model
         return $this->belongsToMany(Game::class, 'discount_code_supports_game', 'discount_code')
             ->withPivot('type_code');
     }
+
+    /**
+     * Relationship many-many with Models\Users
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function buyers()
+    {
+        return $this->belongsToMany(User::class, 'discount_code_has_been_bought_by_users', 'discount_code');
+    }
 }
