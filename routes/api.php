@@ -285,8 +285,25 @@ Route::prefix('discount-code')->group(function () {
         ->middleware(['auth', 'can:create,App\Models\DiscountCode'])
         ->name('discount-code.store');
 
+    // show
+    Route::get('{discountCode}', [App\Http\Controllers\DiscountCodeController::class, 'show'])
+        ->name('discount-code.show');
+
     // update
     Route::put('{discountCode}', [App\Http\Controllers\DiscountCodeController::class, 'update'])
         ->middleware(['auth', 'can:update,discountCode'])
         ->name('discount-code.update');
+});
+
+/**
+ * --------------------------------
+ * FEATURE DISCOUNT CODE TRADING
+ * --------------------------------
+ *
+ */
+Route::prefix('discount-code-trading')->group(function () {
+    // buy
+    Route::post('{discountCode}', [App\Http\Controllers\DiscountCodeTradingController::class, 'buy'])
+        ->middleware(['auth', 'can:buy,discountCode'])
+        ->name('discount-code-trading.buy');
 });

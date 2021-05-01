@@ -69,7 +69,7 @@ class DiscountCodeController extends Controller
      */
     public function show(DiscountCode $discountCode)
     {
-        //
+        return new DiscountCodeResource($discountCode);
     }
 
     /**
@@ -119,6 +119,16 @@ class DiscountCodeController extends Controller
      */
     public function destroy(DiscountCode $discountCode)
     {
-        //
+        // try {
+        //     DB::beginTransaction();
+
+        //     $discountCode->supportedGames->delete();
+        //     $discountCode->delete();
+
+        //     DB::commit();
+        // } catch (\Throwable $th) {
+        //     //throw $th;
+        //     DB::rollBack();
+        // }
     }
 }

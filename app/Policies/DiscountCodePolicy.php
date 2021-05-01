@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\DiscountCode;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Carbon\Carbon;
 
 class DiscountCodePolicy
 {
@@ -53,6 +54,23 @@ class DiscountCodePolicy
     public function create(User $user)
     {
         return $user->hasPermissionTo('create_discount_code');
+    }
+
+    /**
+     * Determine whether the user can create models.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\DiscountCode  $discountCode
+     * @return mixed
+     */
+    public function buy(User $user, DiscountCode $discountCode)
+    {
+        $buyableDiscountCode =
+            (is_null($discountCode->offered_at) || $discountCode->offered_at->lte(Carbon::now()))
+            && (is_null($discountCode->offer_closed_at) || $discountCode->offer_closed_at->gte(Carbon::now()));
+        $enoughSilverCoin = $user->checkEnoughSilverCoin($discountCode->price);
+
+        return $buyableDiscountCode && $enoughSilverCoin;
     }
 
     /**

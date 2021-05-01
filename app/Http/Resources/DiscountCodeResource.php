@@ -31,6 +31,15 @@ class DiscountCodeResource extends JsonResource
             'usableClosedAt' => $this->usable_closed_at,
             'offeredAt' => $this->offered_at,
             'offerClosedAt' => $this->offer_closed_at,
+
+            'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
+            'creator' => new UserResource($this->Creator),
+            'updatedAt' => $this->updated_at,
+            'createdAt' => $this->created_at,
+            'pivot' => $this->pivot,
+
+            // Relationship
+            'buyers' => UserResource::collection($this->buyers),
         ];
     }
 }
