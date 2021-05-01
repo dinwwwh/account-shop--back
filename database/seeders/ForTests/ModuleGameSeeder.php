@@ -44,7 +44,9 @@ class ModuleGameSeeder extends Seeder
             foreach ($game->accountTypes as $accountType) {
                 $accountType->allowRole('tester', rand(1, 100) < 70 ? 0 : 440);
                 foreach ($accountType->accountInfos as $accountInfo) {
-                    $accountInfo->rolesNeedFilling()->attach('tester');
+                    if (is_null($accountInfo->rule->required)) {
+                        $accountInfo->rule->requiredRoles()->attach('tester');
+                    }
                 }
                 foreach ($accountType->accountActions as $accountAction) {
                     $accountAction->rolesThatNeedPerformingAccountAction()->attach('tester');

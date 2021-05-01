@@ -20,11 +20,12 @@ class AccountInfoTest extends TestCase
         $user->givePermissionTo('create_account_info');
         $user->refresh();
         $this->actingAs($user);
+
+        # Case normal rule
         $data = [
             'order' => rand(1, 100),
             'name' => Str::random(10),
             'description' => Str::random(30),
-            'roleKeys' => ['administrator', 'customer'],
         ];
 
         $res = $this->json('post', $route, $data);
@@ -37,22 +38,27 @@ class AccountInfoTest extends TestCase
                         ->where('order', $data['order'])
                         ->where('name', $data['name'])
                         ->where('description', $data['description'])
-                        ->has(
-                            'rolesNeedFilling',
-                            fn ($json) => $json
-                                ->has(
-                                    0,
-                                    fn ($json) => $json
-                                        ->where('key', $data['roleKeys'][0])
-                                        ->etc()
-                                )
-                                ->has(
-                                    1,
-                                    fn ($json) => $json
-                                        ->where('key', $data['roleKeys'][1])
-                                        ->etc()
-                                )
-                        )
+                        ->etc()
+                )
+        );
+
+        # Case advanced rule
+        $data['rule'] = [
+            'required' => null,
+            'requiredRoles' => ['tester']
+        ];
+        $res = $this->json('post', $route, $data);
+        $res->assertStatus(201);
+        $res->assertJson(
+            fn ($json) => $json
+                ->has(
+                    'data',
+                    fn ($json) => $json
+                        ->where('order', $data['order'])
+                        ->where('name', $data['name'])
+                        ->where('description', $data['description'])
+                        ->where('rule.required', null)
+                        ->where('rule.requiredRoles.0.key', 'tester')
                         ->etc()
                 )
         );
@@ -80,7 +86,6 @@ class AccountInfoTest extends TestCase
                         ->has('updatedAt')
                         ->has('createdAt')
                         ->has('pivot')
-                        ->has('rolesNeedFilling')
                 )
         );
     }
@@ -96,7 +101,6 @@ class AccountInfoTest extends TestCase
             'order' => rand(1, 100),
             'name' => Str::random(10),
             'description' => Str::random(30),
-            'roleKeys' => ['administrator', 'customer', 'tester'],
         ];
 
         $this->actingAs($creator);
@@ -110,7 +114,6 @@ class AccountInfoTest extends TestCase
                         ->where('order', $data['order'])
                         ->where('name', $data['name'])
                         ->where('description', $data['description'])
-                        ->has('rolesNeedFilling.2.key')
                         ->etc()
                 )
         );

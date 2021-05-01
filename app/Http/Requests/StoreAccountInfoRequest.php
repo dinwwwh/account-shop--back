@@ -27,8 +27,6 @@ class StoreAccountInfoRequest extends FormRequest
             'order' => 'nullable|integer',
             'name' => 'required|string',
             'description' => 'nullable|string',
-            'roleKeys' => 'nullable|array',
-            'roleKeys.*' => 'string',
 
             // Relationship rule
             'rule' => 'nullable|array',

@@ -6,10 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
-use App\Models\AccountAction;
-use App\Models\AccountInfo;
 use App\Models\AccountType;
-use App\Models\Rule;
 use App\Models\Role;
 use Illuminate\Support\Str;
 use App\Models\Game;
@@ -29,11 +26,11 @@ class AccountTest extends TestCase
 
     public function makeDataForAccountInfos(AccountType $accountType)
     {
-        $accountInfos = $accountType->accountInfosThatRoleNeedFilling(Role::find('tester'));
+        $accountInfos = $accountType->accountInfos;
         $data = [];
 
         foreach ($accountInfos as $accountInfo) {
-            if ($accountInfo->rule->required) {
+            if ($accountInfo->rule->isRequired(Role::find('tester'))) {
                 if ($accountInfo->rule->datatype == 'string') {
                     $data['id' . $accountInfo->getKey()] = Str::random(10);
                 } elseif ($accountInfo->rule->datatype == 'integer') {

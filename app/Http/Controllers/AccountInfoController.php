@@ -49,6 +49,7 @@ class AccountInfoController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
+
             $rule = Rule::create($request->rule ?? [])->refresh(); // Save rule in database
             if (is_null($rule->required)) {
                 $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoles'] ?? []);
@@ -57,13 +58,6 @@ class AccountInfoController extends Controller
             $accountInfoData['rule_id'] = $rule->getKey();
             $accountInfo = AccountInfo::create($accountInfoData); // Save account info to database
 
-            // Relationship many-many with Models\Role
-            $role = Role::all();
-            foreach ($request->roleKeys ?? [] as $roleKey) {
-                if ($role->contains($roleKey)) {
-                    $accountInfo->rolesNeedFilling()->attach($roleKey);
-                }
-            }
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -125,15 +119,6 @@ class AccountInfoController extends Controller
                 }
             }
 
-            // Relationship many-many with Models\Role
-            $role = Role::all();
-            $syncRoleKeys = [];
-            foreach ($request->roleKeys ?? [] as $roleKey) {
-                if ($role->contains($roleKey)) {
-                    $syncRoleKeys[] = $roleKey;
-                }
-            }
-            $accountInfo->rolesNeedFilling()->sync($syncRoleKeys);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();

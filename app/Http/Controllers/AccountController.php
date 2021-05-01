@@ -70,7 +70,7 @@ class AccountController extends Controller
             // Validate Account infos
             $validate = Validator::make(
                 $request->accountInfos ?? [], # case accountInfo is null
-                $this->makeRuleAccountInfos($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)),
+                $this->makeRuleAccountInfos($accountType->accountInfos, $roleThatUsing),
             );
             if ($validate->fails()) {
                 return response()->json([
@@ -94,7 +94,7 @@ class AccountController extends Controller
             // Validate Game infos
             $validate = Validator::make(
                 $request->gameInfos ?? [], # case accountInfo is null
-                $this->makeRuleGameInfos($game->gameInfos),
+                $this->makeRuleGameInfos($game->gameInfos, $roleThatUsing),
             );
             if ($validate->fails()) {
                 return response()->json([
@@ -278,7 +278,7 @@ class AccountController extends Controller
             if ($request->accountInfos) {
                 $validate = Validator::make(
                     $request->accountInfos ?? [], # case accountInfo is null
-                    $this->makeRuleAccountInfos($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)),
+                    $this->makeRuleAccountInfos($accountType->accountInfos, $roleThatUsing),
                 );
                 if ($validate->fails()) {
                     return response()->json([
@@ -306,7 +306,7 @@ class AccountController extends Controller
             if ($request->gameInfos) {
                 $validate = Validator::make(
                     $request->gameInfos ?? [], # case accountInfo is null
-                    $this->makeRuleGameInfos($game->gameInfos),
+                    $this->makeRuleGameInfos($game->gameInfos, $roleThatUsing),
                 );
                 if ($validate->fails()) {
                     return response()->json([
@@ -361,7 +361,7 @@ class AccountController extends Controller
                     $syncInfos = [];
                     foreach ($request->accountInfos ?? [] as $key => $value) {
                         $id = (int)trim($key, $this->config['key']);
-                        if ($accountType->accountInfosThatRoleNeedFilling($roleThatUsing)->contains($id)) {
+                        if ($accountType->accountInfos->contains($id)) {
                             $syncInfos[$id] =  ['value' => json_encode($value)];
                         }
                     }
@@ -471,13 +471,13 @@ class AccountController extends Controller
     // -------------------------------------------------------
     // -------------------------------------------------------
 
-    private function makeRuleAccountInfos($accountInfos)
+    private function makeRuleAccountInfos($accountInfos, Role $role)
     {
         // Initial data
         $rules = [];
         foreach ($accountInfos as $accountInfo) {
             // Get rule
-            $rule = $accountInfo->rule->generateRule();
+            $rule = $accountInfo->rule->generateRule($role);
 
             // Make rule for validate
             if ($rule['nested']) { # if nested
@@ -505,13 +505,13 @@ class AccountController extends Controller
         return $rules;
     }
 
-    private function makeRuleGameInfos($gameInfos)
+    private function makeRuleGameInfos($gameInfos, Role $role)
     {
         // Initial data
         $rules = [];
         foreach ($gameInfos as $gameInfo) {
             // Get rule
-            $rule = $gameInfo->rule->generateRule();
+            $rule = $gameInfo->rule->generateRule($role);
 
             // Make rule for validate
             if ($rule['nested']) { # if nested

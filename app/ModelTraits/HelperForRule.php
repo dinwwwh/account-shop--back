@@ -12,7 +12,7 @@ trait HelperForRule
      *
      * @return array
      */
-    public function generateRule()
+    public function generateRule(Role $role)
     {
         $rule = [
             'nested' => $this->multiple,
@@ -33,7 +33,7 @@ trait HelperForRule
             $rule['rule'] .= '|' . RuleHelper::in($this->values);
         }
 
-        if ($this->required) {
+        if ($this->isRequired($role)) {
             $rule['rule'] .= '|required';
         } else {
             $rule['rule'] .= '|nullable';

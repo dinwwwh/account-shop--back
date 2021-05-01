@@ -84,15 +84,4 @@ class AccountInfo extends Model
     {
         return $this->belongsTo(Rule::class);
     }
-
-    /**
-     * Relationship many-many with Models\Role
-     * Include roles need filling account info
-     *
-     * @return Illuminate\Database\Eloquent\Factories\Relationship
-     */
-    public function rolesNeedFilling()
-    {
-        return $this->belongsToMany(Role::class, 'role_need_filling_account_info');
-    }
 }

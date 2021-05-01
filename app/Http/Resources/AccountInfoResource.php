@@ -33,9 +33,6 @@ class AccountInfoResource extends JsonResource
             'updatedAt' => $this->updated_at,
             'createdAt' => $this->created_at,
             'pivot' => $this->pivot,
-
-            // Relationship
-            'rolesNeedFilling' => RoleResource::collection($this->rolesNeedFilling),
         ];
     }
 }

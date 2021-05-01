@@ -26,7 +26,7 @@ class RuleFactory extends Factory
         return [
             'placeholder' => Str::random(20),
             'datatype' => Arr::random(['string', 'integer']),
-            'required' => rand(0, 99) < 70 ? true : false,
+            'required' => Arr::random([true, false, null]),
         ];
     }
 }
