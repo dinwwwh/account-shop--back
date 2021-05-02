@@ -293,6 +293,11 @@ Route::prefix('discount-code')->group(function () {
     Route::put('{discountCode}', [App\Http\Controllers\DiscountCodeController::class, 'update'])
         ->middleware(['auth', 'can:update,discountCode'])
         ->name('discount-code.update');
+
+    // update
+    Route::delete('{discountCode}', [App\Http\Controllers\DiscountCodeController::class, 'destroy'])
+        ->middleware(['auth', 'can:delete,discountCode'])
+        ->name('discount-code.destroy');
 });
 
 /**

@@ -262,4 +262,126 @@ class DiscountCodeTest extends TestCase
             ->json('put', $route)
             ->assertStatus(200);
     }
+
+    public function testDestroy()
+    {
+        $discountCode = DiscountCode::inRandomOrder()->first();
+        $creator = $discountCode->creator;
+        $creator->assignRole('administrator');
+        $creator->refresh();
+        $buyers = $discountCode->buyers;
+        $supportedGames = $discountCode->supportedGames;
+        $route = route('discount-code.destroy', ['discountCode' => $discountCode]);
+
+        $res = $this->actingAs($creator)
+            ->json('delete', $route);
+
+        $res->assertStatus(200);
+        $this->assertDatabaseMissing('discount_codes', [
+            'discount_code' => $discountCode->getKey()
+        ]);
+        foreach ($buyers as $buyer) {
+            $this->assertDatabaseMissing('discount_code_has_been_bought_by_users', [
+                'discount_code' => $discountCode->getKey(),
+                'user_id' => $buyer->getKey(),
+            ]);
+        }
+        foreach ($supportedGames as $game) {
+            $this->assertDatabaseMissing('discount_code_supports_games', [
+                'discount_code' => $discountCode->getKey(),
+                'game_id' => $game->getKey(),
+            ]);
+        }
+    }
+
+    public function testDestroyRouteMiddleware()
+    {
+        $discountCode = DiscountCode::inRandomOrder()->first();
+        $route = route('discount-code.update', ['discountCode' => $discountCode]);
+        $creator = $discountCode->creator;
+        $creator->syncPermissions();
+        $creator->syncRoles();
+        $creator->refresh();
+        $user = User::whereNotIn('id', [$creator->getKey()])
+            ->inRandomOrder()->first();
+        $user->syncPermissions();
+        $user->syncRoles();
+        $user->refresh();
+
+        /**
+         * Auth
+         * --------------------
+         * delete - manage
+         */
+
+        # Case 0 - 0 (as user)
+        $this->actingAs($user)
+            ->json('delete', $route)
+            ->assertStatus(403);
+
+        # Case 0 - 0 (as creator)
+        $this->actingAs($creator)
+            ->json('delete', $route)
+            ->assertStatus(403);
+
+        # Case 0 - 1 (as user)
+        $user->givePermissionTo('manage_discount_code');
+        $user->refresh();
+        $this->actingAs($user)
+            ->json('delete', $route)
+            ->assertStatus(403);
+
+        # Case 0 - 1 (as creator)
+        $creator->givePermissionTo('manage_discount_code');
+        $creator->refresh();
+        $this->actingAs($creator)
+            ->json('delete', $route)
+            ->assertStatus(403);
+
+        # Case 1 - 0 (as user)
+        $user->revokePermissionTo('manage_discount_code');
+        $user->givePermissionTo('delete_discount_code');
+        $user->refresh();
+        $this->actingAs($user)
+            ->json('delete', $route)
+            ->assertStatus(403);
+
+        # Case 1 - 0 (as creator)
+        $creator->revokePermissionTo('manage_discount_code');
+        $creator->givePermissionTo('delete_discount_code');
+        $creator->refresh();
+        $this->actingAs($creator)
+            ->json('delete', $route)
+            ->assertStatus(200);
+
+        // Refresh discount code since discount code has been deleted
+        $discountCode = DiscountCode::inRandomOrder()->first();
+        $route = route('discount-code.update', ['discountCode' => $discountCode]);
+        $creator = $discountCode->creator;
+        $creator->syncPermissions();
+        $creator->syncRoles();
+        $creator->refresh();
+
+        # Case 1 - 1 (as user)
+        $user->givePermissionTo('manage_discount_code');
+        $user->refresh();
+        $this->actingAs($user)
+            ->json('delete', $route)
+            ->assertStatus(200);
+
+        // Refresh discount code since discount code has been deleted
+        $discountCode = DiscountCode::inRandomOrder()->first();
+        $route = route('discount-code.update', ['discountCode' => $discountCode]);
+        $creator = $discountCode->creator;
+        $creator->syncPermissions();
+        $creator->syncRoles();
+        $creator->refresh();
+
+        # Case 1 - 1 (as creator)
+        $creator->givePermissionTo('manage_discount_code', 'delete_discount_code');
+        $creator->refresh();
+        $this->actingAs($creator)
+            ->json('delete', $route)
+            ->assertStatus(200);
+    }
 }

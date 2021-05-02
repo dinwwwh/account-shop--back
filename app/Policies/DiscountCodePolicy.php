@@ -95,7 +95,8 @@ class DiscountCodePolicy
      */
     public function delete(User $user, DiscountCode $discountCode)
     {
-        //
+        return $user->hasPermissionTo('delete_discount_code')
+            && ($discountCode->creator->is($user) || $this->manage($user));
     }
 
     /**
