@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\AccountAction;
 use App\Models\AccountType;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 class AccountActionTest extends TestCase
 {
@@ -21,13 +22,15 @@ class AccountActionTest extends TestCase
         $this->actingAs($user);
         $accountType = AccountType::inRandomOrder()->first();
         $route = route('account-action.store', ['accountType' => $accountType]);
+
+        # Case required is null
         $data = [
             'order' => rand(1, 100),
             'name' => Str::random(10),
             'description' => Str::random(10),
             'videoPath' => Str::random(10),
-            'required' => rand(1, 100) > 50 ? true : false,
-            'roleKeys' => ['administrator', 'customer'],
+            'required' => null,
+            'requiredRoleKeys' => ['administrator', 'customer'],
         ];
 
         $res = $this->json('post', $route, $data);
@@ -43,21 +46,47 @@ class AccountActionTest extends TestCase
                         ->where('videoPath', $data['videoPath'])
                         ->where('required', $data['required'])
                         ->has(
-                            'rolesThatNeedPerformingAccountAction',
+                            'requiredRoles',
                             fn ($json) => $json
                                 ->has(
                                     0,
                                     fn ($json) => $json
-                                        ->where('key', $data['roleKeys'][0])
+                                        ->where('key', $data['requiredRoleKeys'][0])
                                         ->etc()
                                 )
                                 ->has(
                                     1,
                                     fn ($json) => $json
-                                        ->where('key', $data['roleKeys'][1])
+                                        ->where('key', $data['requiredRoleKeys'][1])
                                         ->etc()
                                 )
                         )
+                        ->etc()
+                )
+        );
+
+        # Case required isn't null
+        $data = [
+            'order' => rand(1, 100),
+            'name' => Str::random(10),
+            'description' => Str::random(10),
+            'videoPath' => Str::random(10),
+            'required' => Arr::random([true, false]),
+        ];
+
+        $res = $this->json('post', $route, $data);
+        $res->assertStatus(201);
+        $res->assertJson(
+            fn ($json) => $json
+                ->has(
+                    'data',
+                    fn ($json) => $json
+                        ->where('order', $data['order'])
+                        ->where('name', $data['name'])
+                        ->where('description', $data['description'])
+                        ->where('videoPath', $data['videoPath'])
+                        ->where('required', $data['required'])
+                        ->where('requiredRoles', [])
                         ->etc()
                 )
         );
@@ -80,7 +109,7 @@ class AccountActionTest extends TestCase
                         ->where('description', $accountAction->description)
                         ->where('videoPath', $accountAction->video_path)
                         ->where('required', $accountAction->required)
-                        ->has('rolesThatNeedPerformingAccountAction')
+                        ->has('requiredRoles')
                         ->has('creator')
                         ->has('lastUpdatedEditor')
                         ->has('updatedAt')
@@ -96,15 +125,16 @@ class AccountActionTest extends TestCase
         $creator->givePermissionTo('update_account_action');
         $creator->refresh();
         $this->actingAs($creator);
-
         $route = route('account-action.update', ['accountAction' => $accountAction]);
+
+        # Case required is null
         $data = [
             'order' => rand(1, 100),
             'name' => Str::random(10),
             'description' => Str::random(10),
             'videoPath' => Str::random(10),
-            'required' => rand(1, 100) > 50 ? true : false,
-            'roleKeys' => ['administrator', 'customer', 'tester'],
+            'required' => null,
+            'requiredRoleKeys' => ['administrator', 'customer', 'tester'],
         ];
 
         $res = $this->json('put', $route, $data);
@@ -119,7 +149,33 @@ class AccountActionTest extends TestCase
                         ->where('description', $data['description'])
                         ->where('videoPath', $data['videoPath'])
                         ->where('required', $data['required'])
-                        ->has('rolesThatNeedPerformingAccountAction.2.key')
+                        ->has('requiredRoles.2.key')
+                        ->etc()
+                )
+        );
+
+        # Case required isn't null
+        $data = [
+            'order' => rand(1, 100),
+            'name' => Str::random(10),
+            'description' => Str::random(10),
+            'videoPath' => Str::random(10),
+            'required' => Arr::random([true, false]),
+        ];
+
+        $res = $this->json('put', $route, $data);
+        $res->assertStatus(200);
+        $res->assertJson(
+            fn ($json) => $json
+                ->has(
+                    'data',
+                    fn ($json) => $json
+                        ->where('order', $data['order'])
+                        ->where('name', $data['name'])
+                        ->where('description', $data['description'])
+                        ->where('videoPath', $data['videoPath'])
+                        ->where('required', $data['required'])
+                        ->where('requiredRoles', [])
                         ->etc()
                 )
         );

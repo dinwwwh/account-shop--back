@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\AccountAction;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 class AccountActionFactory extends Factory
 {
@@ -27,7 +28,7 @@ class AccountActionFactory extends Factory
             'slug' => fn ($attrs) => Str::slug($attrs['name']),
             'description' => Str::random(40),
             'video_path' => 'no thing this is test',
-            'required' => rand(0, 99) < 70 ? true : false,
+            'required' => Arr::random([null, true, false]),
         ];
     }
 }

@@ -36,8 +36,7 @@ class AccountActionResource extends JsonResource
             'pivot' => $this->pivot,
 
             // Relationship
-            'rolesThatNeedPerformingAccountAction'
-            => RoleResource::collection($this->rolesThatNeedPerformingAccountAction),
+            'requiredRoles' => RoleResource::collection($this->requiredRoles),
         ];
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRoleNeedPerformingAccountActionTable extends Migration
+class CreateAccountActionRequiredRolesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateRoleNeedPerformingAccountActionTable extends Migration
      */
     public function up()
     {
-        Schema::create('role_need_performing_account_action', function (Blueprint $table) {
-            $table->string('role_key');
+        Schema::create('account_action_required_roles', function (Blueprint $table) {
             $table->integer('account_action_id');
+            $table->string('role_key');
         });
     }
 
@@ -26,6 +26,6 @@ class CreateRoleNeedPerformingAccountActionTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('role_need_performing_account_action');
+        Schema::dropIfExists('account_action_required_roles');
     }
 }

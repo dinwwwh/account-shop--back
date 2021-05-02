@@ -82,7 +82,7 @@ class AccountController extends Controller
             // Validate Account actions
             $validate = Validator::make(
                 $request->accountActions ?? [], # case accountInfo is null
-                $this->makeRuleAccountActions($accountType->accountActionsThatRoleNeedPerforming($roleThatUsing)),
+                $this->makeRuleAccountActions($accountType->accountActions, $roleThatUsing),
             );
             if ($validate->fails()) {
                 return response()->json([
@@ -292,7 +292,7 @@ class AccountController extends Controller
             if ($request->accountActions) {
                 $validate = Validator::make(
                     $request->accountActions ?? [], # case accountAction is null
-                    $this->makeRuleAccountActions($accountType->accountActionsThatRoleNeedPerforming($roleThatUsing)),
+                    $this->makeRuleAccountActions($accountType->accountActions, $roleThatUsing),
                 );
                 if ($validate->fails()) {
                     return response()->json([
@@ -374,7 +374,7 @@ class AccountController extends Controller
                     $syncActions = [];
                     foreach ($request->accountActions ?? [] as $key => $value) {
                         $id = (int)trim($key, $this->config['key']);
-                        if ($accountType->accountActionsThatRoleNeedPerforming($roleThatUsing)->contains($id)) {
+                        if ($accountType->accountActions->contains($id)) {
                             $syncActions[$id] = ['value' => json_encode($value)];
                         }
                     }
@@ -491,14 +491,14 @@ class AccountController extends Controller
         return $rules;
     }
 
-    private function makeRuleAccountActions($accountActions)
+    private function makeRuleAccountActions($accountActions, Role $role)
     {
 
         // Initial data
         $rules = [];
         foreach ($accountActions as $accountAction) {
             // Make rule
-            $rule = $accountAction->generateRule();
+            $rule = $accountAction->generateRule($role);
             $rules[$this->config['key'] . $accountAction->id] = $rule;
         }
 

@@ -20,6 +20,7 @@ class AccountAction extends Model
         'description',
         'video_path',
         'required',
+        'display_type',
         'account_type_id',
         'last_updated_editor_id',
         'creator_id',
@@ -32,6 +33,7 @@ class AccountAction extends Model
         'description' => 'string',
         'video_path' => 'string',
         'required' => 'boolean',
+        'display_type' => 'integer',
         'account_type_id' => 'integer',
         'last_updated_editor_id' => 'integer',
         'creator_id' => 'integer',
@@ -81,12 +83,11 @@ class AccountAction extends Model
 
     /**
      * Relationship many-many with Models\Role
-     * Include roles need perform account action
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
-    public function rolesThatNeedPerformingAccountAction()
+    public function requiredRoles()
     {
-        return $this->belongsToMany(Role::class, 'role_need_performing_account_action');
+        return $this->belongsToMany(Role::class, 'account_action_required_roles');
     }
 }

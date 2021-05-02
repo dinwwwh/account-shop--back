@@ -49,7 +49,7 @@ class ModuleGameSeeder extends Seeder
                     }
                 }
                 foreach ($accountType->accountActions as $accountAction) {
-                    $accountAction->rolesThatNeedPerformingAccountAction()->attach('tester');
+                    $accountAction->requiredRoles()->attach('tester');
                 }
             }
 

@@ -29,8 +29,10 @@ class StoreAccountActionRequest extends FormRequest
             'description' => 'nullable|string',
             'videoPath' => 'nullable|string',
             'required' => 'nullable|boolean',
-            'roleKeys' => 'nullable|array',
-            'roleKeys.*' => 'string',
+
+            // Relationship
+            'requiredRoleKeys' => 'nullable|array',
+            'requiredRoleKeys.*' => 'string',
         ];
     }
 }

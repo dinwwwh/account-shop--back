@@ -20,7 +20,8 @@ class CreateAccountActionsTable extends Migration
             $table->string('slug');
             $table->string('description')->nullable();
             $table->string('video_path')->nullable();
-            $table->boolean('required')->default(0);
+            $table->boolean('required')->nullable()->default(false);
+            $table->integer('display_type')->default(0);
             $table->integer('account_type_id');
             $table->bigInteger('last_updated_editor_id');
             $table->bigInteger('creator_id');

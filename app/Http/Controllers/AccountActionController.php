@@ -35,29 +35,27 @@ class AccountActionController extends Controller
         // Initialize data
         $accountActionData = [];
         foreach ([
-            'order', 'name', 'description', 'videoPath', 'required'
+            'order', 'name', 'description', 'videoPath'
         ] as $key) {
             if ($request->filled($key)) {
                 $accountActionData[Str::snake($key)] = $request->$key;
             }
         }
+        $accountActionData['required'] = $request->required;
         $accountActionData['slug'] = Str::slug($accountActionData['name']);
         $accountActionData['account_type_id'] = $accountType->id;
 
         // DB transaction
         try {
             DB::beginTransaction();
-            $accountAction = AccountAction::create($accountActionData); // Save account info to database
+            $accountAction = AccountAction::create($accountActionData)->refresh(); // Save account info to database
 
-            // Relationship many-many with Models\Role
-            $role = Role::all();
-            $syncRoleKeys = [];
-            foreach ($request->roleKeys ?? [] as $roleKey) {
-                if ($role->contains($roleKey)) {
-                    $syncRoleKeys[] = $roleKey;
-                }
+            // Relationship
+            if (is_null($accountAction->required)) {
+                $roles = Role::mustBeManyRoles($request->requiredRoleKeys ?? []);
+                $accountAction->requiredRoles()->attach($roles);
             }
-            $accountAction->rolesThatNeedPerformingAccountAction()->sync($syncRoleKeys);
+
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -66,7 +64,7 @@ class AccountActionController extends Controller
             ], 500);
         }
 
-        return new AccountActionResource($accountAction->refresh());
+        return new AccountActionResource($accountAction);
     }
 
     /**
@@ -92,7 +90,7 @@ class AccountActionController extends Controller
         // Initialize data
         $accountActionData = [];
         foreach ([
-            'order', 'name', 'description', 'videoPath', 'required'
+            'order', 'name', 'description', 'videoPath'
         ] as $key) {
             if ($request->filled($key)) {
                 $accountActionData[Str::snake($key)] = $request->$key;
@@ -101,22 +99,21 @@ class AccountActionController extends Controller
         if (array_key_exists('name', $accountActionData)) {
             $accountActionData['slug'] = Str::slug($accountActionData['name']);
         }
-        $accountActionData['last_updated_editor_id'] = auth()->user()->id;
+        $accountActionData['required'] = $request->required;
 
         // DB transaction
         try {
             DB::beginTransaction();
             $accountAction->update($accountActionData); // Save account info to database
 
-            // Relationship many-many with Models\Role
-            $role = Role::all();
-            $syncRoleKeys = [];
-            foreach ($request->roleKeys ?? [] as $roleKey) {
-                if ($role->contains($roleKey)) {
-                    $syncRoleKeys[] = $roleKey;
-                }
+            // Relationship
+            if (is_null($accountAction->required)) {
+                $roles = Role::mustBeManyRoles($request->requiredRoleKeys ?? []);
+                $accountAction->requiredRoles()->sync($roles);
+            } else {
+                $accountAction->requiredRoles()->sync([]);
             }
-            $accountAction->rolesThatNeedPerformingAccountAction()->sync($syncRoleKeys);
+
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();

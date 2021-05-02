@@ -44,11 +44,11 @@ class AccountTest extends TestCase
 
     public function makeDataForAccountActions(AccountType $accountType)
     {
-        $accountActions = $accountType->accountActionsThatRoleNeedPerforming(Role::find('tester'));
+        $accountActions = $accountType->accountActions;
         $data = [];
 
         foreach ($accountActions as $accountAction) {
-            if ($accountAction->required) {
+            if ($accountAction->isRequired(Role::find('tester'))) {
                 $data['id' . $accountAction->getKey()] = true;
             }
         }
@@ -117,12 +117,30 @@ class AccountTest extends TestCase
                         ->where('description', $data['description'])
                         ->has('representativeImagePath')
                         ->has('images.' . array_key_last($data['images']))
-                        ->has('infos.' . (count($data['accountInfos']) - 1))
-                        ->has('actions.' . (count($data['accountActions']) - 1))
-                        ->has('gameInfos.' . (count($data['gameInfos']) - 1))
                         ->etc()
                 )
         );
+        foreach ($data['accountInfos'] as $key => $value) {
+            $this->assertDatabaseHas('account_account_info', [
+                'account_id' => $res->getData()->data->id,
+                'account_info_id' => (int)trim($key, 'id '),
+                'value' => json_encode($value),
+            ]);
+        }
+        foreach ($data['accountActions'] as $key => $value) {
+            $this->assertDatabaseHas('account_account_action', [
+                'account_id' => $res->getData()->data->id,
+                'account_action_id' => (int)trim($key, 'id '),
+                'value' => json_encode($value),
+            ]);
+        }
+        foreach ($data['gameInfos'] as $key => $value) {
+            $this->assertDatabaseHas('account_has_game_infos', [
+                'account_id' => $res->getData()->data->id,
+                'game_info_id' => (int)trim($key, 'id '),
+                'value' => json_encode($value),
+            ]);
+        }
 
         $intactData = $data;
 
@@ -212,12 +230,30 @@ class AccountTest extends TestCase
                         ->where('description', $data['description'])
                         ->has('representativeImagePath')
                         ->has('images.' . array_key_last($data['images']))
-                        ->has('infos.' . (count($data['accountInfos']) - 1))
-                        ->has('actions.' . (count($data['accountActions']) - 1))
-                        ->has('gameInfos.' . (count($data['gameInfos']) - 1))
                         ->etc()
                 )
         );
+        foreach ($data['accountInfos'] as $key => $value) {
+            $this->assertDatabaseHas('account_account_info', [
+                'account_id' => $res->getData()->data->id,
+                'account_info_id' => (int)trim($key, 'id '),
+                'value' => json_encode($value),
+            ]);
+        }
+        foreach ($data['accountActions'] as $key => $value) {
+            $this->assertDatabaseHas('account_account_action', [
+                'account_id' => $res->getData()->data->id,
+                'account_action_id' => (int)trim($key, 'id '),
+                'value' => json_encode($value),
+            ]);
+        }
+        foreach ($data['gameInfos'] as $key => $value) {
+            $this->assertDatabaseHas('account_has_game_infos', [
+                'account_id' => $res->getData()->data->id,
+                'game_info_id' => (int)trim($key, 'id '),
+                'value' => json_encode($value),
+            ]);
+        }
 
         $intactData = $data;
         # Case: lack a part of accountInfo
