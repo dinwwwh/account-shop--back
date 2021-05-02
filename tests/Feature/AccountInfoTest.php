@@ -45,7 +45,7 @@ class AccountInfoTest extends TestCase
         # Case advanced rule
         $data['rule'] = [
             'required' => null,
-            'requiredRoles' => ['tester']
+            'requiredRoleKeys' => ['tester']
         ];
         $res = $this->json('post', $route, $data);
         $res->assertStatus(201);
