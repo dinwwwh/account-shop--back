@@ -30,8 +30,8 @@ class UpdateGameInfoRequest extends FormRequest
 
             // Relationship rule
             'rule' => 'nullable|array',
-            'rule.requiredRoles' => 'nullable|array',
-            'rule.requiredRoles.*' => 'string',
+            'rule.requiredRoleKeys' => 'nullable|array',
+            'rule.requiredRoleKeys.*' => 'string',
         ];
     }
 }

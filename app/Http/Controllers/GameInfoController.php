@@ -54,7 +54,7 @@ class GameInfoController extends Controller
             // rule relationship
             $rule = Rule::create($request->rule ?? [])->refresh();
             if (is_null($rule->required)) {
-                $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoles'] ?? []);
+                $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoleKeys'] ?? []);
                 $rule->requiredRoles()->attach($requiredRoles);
             }
             $gameInfoData['rule_id'] = $rule->getKey();
@@ -115,7 +115,7 @@ class GameInfoController extends Controller
                 $rule = $gameInfo->rule;
                 $rule->update($request->rule);
                 if (is_null($rule->required)) {
-                    $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoles'] ?? []);
+                    $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoleKeys'] ?? []);
                     $rule->requiredRoles()->sync($requiredRoles);
                 } else {
                     $rule->requiredRoles()->sync([]);
