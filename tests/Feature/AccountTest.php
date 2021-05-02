@@ -322,7 +322,7 @@ class AccountTest extends TestCase
         }
     }
 
-    public function testShow()
+    public function testBaseResource()
     {
         $account = Account::inRandomOrder()->first();
 
@@ -339,7 +339,6 @@ class AccountTest extends TestCase
                     fn ($j) => $j
                         ->where('id', $account->id)
                         ->where('username', $account->username)
-                        ->where('password', $account->password)
                         ->where('cost', $account->cost)
                         ->where('price', $account->calculateTemporaryPrice())
                         ->where('statusCode', $account->status_code)
@@ -353,12 +352,123 @@ class AccountTest extends TestCase
                         ->has('creator')
                         ->has('censor')
                         ->has('type')
-                        ->has('infos')
-                        ->has('actions')
                         ->has('gameInfos')
                         ->has('approvedAt')
                         ->has('updatedAt')
                         ->has('createdAt')
+                )
+        );
+    }
+
+    public function testSensitiveInfoInResource()
+    {
+        $account = Account::where('buyer_id', '!=', null)
+            ->inRandomOrder()
+            ->first();
+        $route = route('account.show', ['account' => $account]);
+        $buyer = $account->buyer;
+        $buyer->syncPermissions();
+        $buyer->syncRoles();
+        $buyer->refresh();
+        $user = User::whereNotIn('id', [$account->buyer->getKey(), $account->creator->getKey()])
+            ->inRandomOrder()
+            ->first();
+        $user->syncPermissions();
+        $user->syncRoles();
+        $user->refresh();
+
+
+        # case as a manager
+        $user->givePermissionTo('manage_account');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('get', $route);
+        $res->assertJson(
+            fn ($json) => $json
+                ->has(
+                    'data',
+                    fn ($json) => $json
+                        ->has('actions')
+                        ->has('infos')
+                        ->where('password', $account->password)
+                        ->etc()
+                )
+        );
+
+        # case as a buyer
+        $res = $this->actingAs($buyer)
+            ->json('get', $route);
+        $res->assertJson(
+            fn ($json) => $json
+                ->has(
+                    'data',
+                    fn ($json) => $json
+                        ->has('actions')
+                        ->has('infos')
+                        ->where('password', $account->password)
+                        ->etc()
+                )
+        );
+
+        # case as a creator
+        $account = Account::whereIn('status_code', [0, 440])
+            ->inRandomOrder()
+            ->first();
+        $route = route('account.show', ['account' => $account]);
+        $creator = $account->creator;
+        $creator->syncRoles();
+        $creator->syncPermissions();
+        $creator->refresh();
+        $res = $this->actingAs($creator)
+            ->json('get', $route);
+        $res->assertJson(
+            fn ($json) => $json
+                ->has(
+                    'data',
+                    fn ($json) => $json
+                        ->has('actions')
+                        ->has('infos')
+                        ->where('password', $account->password)
+                        ->etc()
+                )
+        );
+
+        # case user can approve account
+        $account = Account::where('status_code', '<=', 99)
+            ->inRandomOrder()
+            ->first();
+        $route = route('account.show', ['account' => $account]);
+        $user->revokePermissionTo('manage_account');
+        $user->givePermissionTo('approve_account');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('get', $route);
+        $res->assertJson(
+            fn ($json) => $json
+                ->has(
+                    'data',
+                    fn ($json) => $json
+                        ->has('actions')
+                        ->has('infos')
+                        ->where('password', $account->password)
+                        ->etc()
+                )
+        );
+
+        # case other user
+        $user->revokePermissionTo('approve_account');
+        $user->refresh();
+        $res = $this->actingAs($user)
+            ->json('get', $route);
+        $res->assertJson(
+            fn ($json) => $json
+                ->has(
+                    'data',
+                    fn ($json) => $json
+                        ->missing('actions')
+                        ->missing('infos')
+                        ->missing('password')
+                        ->etc()
                 )
         );
     }

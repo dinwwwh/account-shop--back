@@ -19,7 +19,6 @@ class AccountResource extends JsonResource
         return [
             'id' => $this->id,
             'username' => $this->username,
-            'password' => $this->password,
             'cost' => $this->cost,
             'price' => $this->calculateTemporaryPrice(),
             'statusCode' => $this->status_code,
@@ -37,14 +36,19 @@ class AccountResource extends JsonResource
             'type' => new AccountTypeResource($this->accountType),
 
             // Relationship contain pivot
-            'infos' => AccountInfoResource::collection($this->infos),
-            'actions' => AccountActionResource::collection($this->actions),
             'gameInfos' => GameInfoResource::collection($this->gameInfos),
 
             // Time
             'approvedAt' => $this->approved_at,
             'updatedAt' => $this->updated_at,
             'createdAt' => $this->created_at,
+
+            // Conditional merge
+            $this->mergeWhen(auth()->check() && auth()->user()->can('viewSensitiveInfo', $this->resource), [
+                'actions' => AccountActionResource::collection($this->actions),
+                'infos' => AccountInfoResource::collection($this->infos),
+                'password' => $this->password,
+            ])
         ];
     }
 }

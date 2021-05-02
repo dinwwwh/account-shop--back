@@ -36,6 +36,47 @@ class AccountPolicy
     }
 
     /**
+     * Determine whether the user can view sensitive info of the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Account  $account
+     * @return mixed
+     */
+    public function viewSensitiveInfo(User $user, Account $account)
+    {
+        # user is a manager
+        if (
+            $this->manage($user)
+            // && in_array($account->status_code, [])
+        ) {
+            return true;
+        }
+
+        # user is buyer
+        if (
+            optional($account->buyer)->is($user)
+            && in_array($account->status_code, [840, 880])
+        ) {
+            return true;
+        }
+
+        # user can approve account
+        if (
+            $this->approve($user, $account)
+        ) {
+            return true;
+        }
+
+        # user is creator
+        if (
+            $account->creator->is($user)
+            && in_array($account->status_code, [440, 0])
+        ) {
+            return true;
+        }
+    }
+
+    /**
      * Determine whether the user can manage the model.
      *
      * @param  \App\Models\User  $user
