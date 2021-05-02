@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
 use Tests\TestCase;
+use Illuminate\Support\Arr;
 
 class GameInfoTest extends TestCase
 {
@@ -20,10 +21,15 @@ class GameInfoTest extends TestCase
         $user->assignRole('administrator');
         $user->refresh();
 
+        # Case rule's required is null
         $data = [
             'order' => rand(1, 5),
             'name' => Str::random(40),
             'description' => Str::random(80),
+            'rule' => [
+                'required' => null,
+                'requiredRoleKeys' => ['tester'],
+            ],
         ];
         $res = $this->actingAs($user)
             ->json('post', $route, $data);
@@ -34,6 +40,30 @@ class GameInfoTest extends TestCase
                 ->where('data.order', $data['order'])
                 ->where('data.name', $data['name'])
                 ->where('data.description', $data['description'])
+                ->where('data.rule.required', $data['rule']['required'])
+                ->where('data.rule.requiredRoles.0.key', $data['rule']['requiredRoleKeys'][0])
+        );
+
+        # Case rule's required isn't null
+        $data = [
+            'order' => rand(1, 5),
+            'name' => Str::random(40),
+            'description' => Str::random(80),
+            'rule' => [
+                'required' => Arr::random([true, false]),
+            ],
+        ];
+        $res = $this->actingAs($user)
+            ->json('post', $route, $data);
+
+        $res->assertStatus(201);
+        $res->assertJson(
+            fn ($j) => $j
+                ->where('data.order', $data['order'])
+                ->where('data.name', $data['name'])
+                ->where('data.description', $data['description'])
+                ->where('data.rule.required', $data['rule']['required'])
+                ->where('data.rule.requiredRoles', [])
         );
     }
 
@@ -73,10 +103,15 @@ class GameInfoTest extends TestCase
         $user->assignRole('administrator');
         $user->refresh();
 
+        # Case rule's required is null
         $data = [
             'order' => rand(1, 5),
             'name' => Str::random(40),
             'description' => Str::random(80),
+            'rule' => [
+                'required' => null,
+                'requiredRoleKeys' => ['tester'],
+            ],
         ];
         $res = $this->actingAs($user)
             ->json('put', $route, $data);
@@ -87,6 +122,31 @@ class GameInfoTest extends TestCase
                 ->where('data.order', $data['order'])
                 ->where('data.name', $data['name'])
                 ->where('data.description', $data['description'])
+                ->where('data.rule.required', $data['rule']['required'])
+                ->where('data.rule.requiredRoles.0.key', $data['rule']['requiredRoleKeys'][0])
+        );
+
+        # Case rule's required isn't null
+        $data = [
+            'order' => rand(1, 5),
+            'name' => Str::random(40),
+            'description' => Str::random(80),
+            'rule' => [
+                'required' => Arr::random([true, false]),
+                'requiredRoleKeys' => ['tester'],
+            ],
+        ];
+        $res = $this->actingAs($user)
+            ->json('put', $route, $data);
+
+        $res->assertStatus(200);
+        $res->assertJson(
+            fn ($j) => $j
+                ->where('data.order', $data['order'])
+                ->where('data.name', $data['name'])
+                ->where('data.description', $data['description'])
+                ->where('data.rule.required', $data['rule']['required'])
+                ->where('data.rule.requiredRoles', [])
         );
     }
 
