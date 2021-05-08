@@ -46,18 +46,6 @@ class Role extends Model
     }
 
     /**
-     * Include games that role can created mustn't approving
-     *
-     * @return void
-     */
-    public function canCreatedGameMustNotApproving()
-    {
-        $result =  $this->belongsToMany(Game::class, 'role_can_created_game_must_not_approving')
-            ->get();
-        return $result;
-    }
-
-    /**
      * Relationship one-one with User
      * Include infos of model creator
      *
