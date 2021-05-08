@@ -29,7 +29,7 @@ class AuthSeeder extends Seeder
             'email' => 'dinhdjj.test@gmail.com',
         ], [
             'name' => 'Lê Định Tester',
-            'password' => Hash::make(Str::random(10)),
+            'password' => Hash::make('12345678'),
         ]);
     }
 }
