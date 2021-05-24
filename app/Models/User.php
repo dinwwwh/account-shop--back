@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use App\ModelTraits\ManagePermissionInUser;
 use App\ModelTraits\ManageRoleInUser;
 use App\ModelTraits\ManageCoinInUser;
+use App\Notifications\ResetPasswordNotification;
 
 
 class User extends Authenticatable
@@ -73,5 +74,16 @@ class User extends Authenticatable
     public function permissions()
     {
         return $this->belongsToMany(Permission::class, 'user_has_permission');
+    }
+
+    /**
+     * Send a password reset notification to the user.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }
