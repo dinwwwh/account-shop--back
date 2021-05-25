@@ -12,7 +12,7 @@ use App\ModelTraits\ManageCoinInUser;
 use App\Notifications\ResetPasswordNotification;
 
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory,
         Notifiable,

@@ -14,7 +14,27 @@ use Illuminate\Support\Facades\Route;
 */
 
 // ====================================================
-// Auth routes
+// User routes
+// ====================================================
+use App\Http\Controllers\UserController;
+
+// Register
+Route::post('register', [UserController::class, 'register'])
+    ->name('register');
+// Show profile
+Route::get('profile', [UserController::class, 'show'])
+    ->name('profile.show');
+// Verify email
+Route::get('verify/{id}/{hash}', [UserController::class, 'verify'])
+    ->middleware(['auth', 'signed'])
+    ->name('verification.verify');
+// Send email verification notification
+Route::post('verification-notification', [UserController::class, 'sendEmailVerificationNotification'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
+
+// ====================================================
+// Password routes
 // ====================================================
 use App\Http\Controllers\PasswordController;
 
@@ -26,3 +46,17 @@ Route::post('forgot-password', [PasswordController::class, 'forgotPassword'])
 Route::post('reset-password', [PasswordController::class, 'resetPassword'])
     ->middleware('guest')
     ->name('password.update');
+
+// ====================================================
+// Auth routes
+// ====================================================
+use App\Http\Controllers\AuthController;
+
+// Login
+Route::post('login', [AuthController::class, 'login'])
+    ->middleware('guest')
+    ->name('login');
+// Logout
+Route::post('logout', [AuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');

@@ -27,26 +27,12 @@ Route::get('test', function (Request $request) {
     dd(Role::mustBeRole(Role::first()));
 });
 
-Route::get('login', function () {
-    return response()->json([
-        'message' => 'Bạn vui lòng đăng nhập để sử dụng chức năng này.'
-    ], 401);
-})->name('login');
-
 /**
  * --------------------------------
  * FEATURE PROFILE
  * --------------------------------
  * Info of current user
  */
-Route::prefix('profile')->group(function () {
-
-    Route::middleware('auth')->group(function () {
-        // Show
-        Route::get('', [App\Http\Controllers\ProfileController::class, 'show'])
-            ->name('profile.show');
-    });
-});
 
 /**
  * --------------------------------

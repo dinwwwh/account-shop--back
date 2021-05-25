@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -33,6 +35,17 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        VerifyEmail::toMailUsing(function ($notifiable, $url) {
+            $url = config('app.front_end_url') . '/verify-email?'
+                . http_build_query([
+                    'url' => $url
+                ]);
+
+            return (new MailMessage)
+                ->subject('Xác thực email')
+                ->line('Vui lòng nhất vào nút phía dưới để xác thực email của bạn.')
+                ->action('Xác Thực Email', $url)
+                ->line('Nếu bạn không đăng ký tài khoản vui lòng bỏ qua email này.');
+        });
     }
 }
