@@ -176,33 +176,6 @@ Route::prefix('account-action')->group(function () {
  * --------------------------------
  * Contain infos of account type.
  */
-Route::prefix('game')->group(function () {
-    // Index
-    Route::get('', [App\Http\Controllers\GameController::class, 'index'])
-        ->name('game.index');
-    // Show
-    Route::get('{game}', [App\Http\Controllers\GameController::class, 'show'])
-        ->name('game.show');
-
-    Route::middleware('auth')->group(function () {
-        // Store
-        Route::post('', [App\Http\Controllers\GameController::class, 'store'])
-            ->middleware('can:create,App\Models\Game')
-            ->name('game.store');
-        // Update
-        Route::put('{game}', [App\Http\Controllers\GameController::class, 'update'])
-            ->middleware('can:update,game')
-            ->name('game.update');
-        // Destroy
-        // Route::delete('{game}', [App\Http\Controllers\GameController::class, 'destroy'])
-        //     ->middleware('can:delete,game')
-        //     ->name('game.destroy');
-        // allow discount code
-        Route::post('allow-discount-code/{game}/{discountCode}', [App\Http\Controllers\GameController::class, 'allowDiscountCode'])
-            ->middleware('can:allowDiscountCode,game,discountCode')
-            ->name('game.allow-discount-code');
-    });
-});
 
 /**
  * --------------------------------

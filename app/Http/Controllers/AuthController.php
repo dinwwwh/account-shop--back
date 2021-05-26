@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterAuthRequest;
 use App\Http\Requests\LoginAuthRequest;
+use App\Http\Resources\UserResource;
 
 class AuthController extends Controller
 {
@@ -47,5 +48,15 @@ class AuthController extends Controller
         return response([
             'message' => 'Logout success!!'
         ]);
+    }
+
+    /**
+     * Display the auth profile.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function profile()
+    {
+        return new UserResource(auth()->user());
     }
 }

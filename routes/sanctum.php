@@ -22,10 +22,6 @@ use App\Http\Controllers\UserController;
 Route::post('register', [UserController::class, 'register'])
     ->middleware('guest')
     ->name('register');
-// Show profile
-Route::get('profile', [UserController::class, 'show'])
-    ->middleware('auth')
-    ->name('profile.show');
 // Verify email
 Route::get('verify/{id}/{hash}', [UserController::class, 'verify'])
     ->middleware(['auth', 'signed'])
@@ -62,3 +58,38 @@ Route::post('login', [AuthController::class, 'login'])
 Route::post('logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+// Show profile
+Route::get('profile', [AuthController::class, 'show'])
+    ->middleware('auth')
+    ->name('profile.show');
+
+// ====================================================
+// Game routes
+// ====================================================
+Route::prefix('game')->group(function () {
+    // Index
+    Route::get('', [App\Http\Controllers\GameController::class, 'index'])
+        ->name('game.index');
+    // Show
+    Route::get('{game}', [App\Http\Controllers\GameController::class, 'show'])
+        ->name('game.show');
+
+    Route::middleware('auth')->group(function () {
+        // Store
+        Route::post('', [App\Http\Controllers\GameController::class, 'store'])
+            ->middleware('can:create,App\Models\Game')
+            ->name('game.store');
+        // Update
+        Route::put('{game}', [App\Http\Controllers\GameController::class, 'update'])
+            ->middleware('can:update,game')
+            ->name('game.update');
+        // Destroy
+        // Route::delete('{game}', [App\Http\Controllers\GameController::class, 'destroy'])
+        //     ->middleware('can:delete,game')
+        //     ->name('game.destroy');
+        // allow discount code
+        Route::post('allow-discount-code/{game}/{discountCode}', [App\Http\Controllers\GameController::class, 'allowDiscountCode'])
+            ->middleware('can:allowDiscountCode,game,discountCode')
+            ->name('game.allow-discount-code');
+    });
+});

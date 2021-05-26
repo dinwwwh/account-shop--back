@@ -35,16 +35,6 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show()
-    {
-        return new UserResource(auth()->user());
-    }
-
-    /**
      * Verify user email
      *
      * @param \Illuminate\Foundation\Auth\EmailVerificationRequest $request
