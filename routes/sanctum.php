@@ -20,9 +20,11 @@ use App\Http\Controllers\UserController;
 
 // Register
 Route::post('register', [UserController::class, 'register'])
+    ->middleware('guest')
     ->name('register');
 // Show profile
 Route::get('profile', [UserController::class, 'show'])
+    ->middleware('auth')
     ->name('profile.show');
 // Verify email
 Route::get('verify/{id}/{hash}', [UserController::class, 'verify'])
