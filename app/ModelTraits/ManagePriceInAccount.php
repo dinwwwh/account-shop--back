@@ -25,7 +25,7 @@ trait ManagePriceInAccount
      * @param string $discountCode
      * @return int or array
      */
-    public function calculatePrice($discountCode = null, $detail = false): int
+    public function calculatePrice($discountCode = null, $detail = false)
     {
         $discountCode = DiscountCode::mustBeDiscountCode($discountCode);
         if (
@@ -50,6 +50,6 @@ trait ManagePriceInAccount
             ];
         }
 
-        return $this->cost + $fee;
+        return (int)($this->cost + $fee);
     }
 }
