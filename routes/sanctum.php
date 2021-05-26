@@ -61,7 +61,7 @@ Route::post('logout', [AuthController::class, 'logout'])
 // Show profile
 Route::get('profile', [AuthController::class, 'show'])
     ->middleware('auth')
-    ->name('profile.show');
+    ->name('auth.profile');
 
 // ====================================================
 // Game routes
