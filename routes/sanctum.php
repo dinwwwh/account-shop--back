@@ -59,7 +59,7 @@ Route::post('logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 // Show profile
-Route::get('profile', [AuthController::class, 'show'])
+Route::get('profile', [AuthController::class, 'profile'])
     ->middleware('auth')
     ->name('auth.profile');
 
