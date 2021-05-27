@@ -184,14 +184,6 @@ class GameInfoTest extends TestCase
         $user->refresh();
 
         /**
-         * No Auth
-         * -----------
-         */
-
-        $this->json('post', $route)
-            ->assertStatus(401);
-
-        /**
          * Auth
          * -----------
          * update game - create game info
@@ -235,14 +227,6 @@ class GameInfoTest extends TestCase
         $user->refresh();
 
         /**
-         * No Auth
-         * -----------
-         */
-
-        $this->json('put', $route)
-            ->assertStatus(401);
-
-        /**
          * Auth
          * -----------
          * update game - update game info
@@ -280,14 +264,6 @@ class GameInfoTest extends TestCase
     {
         $gameInfo = GameInfo::inRandomOrder()->first();
         $route = route('game-info.destroy', ['gameInfo' => $gameInfo]);
-
-        /**
-         * No Auth
-         * -----------
-         */
-
-        $this->json('delete', $route)
-            ->assertStatus(401);
 
         /**
          * Auth

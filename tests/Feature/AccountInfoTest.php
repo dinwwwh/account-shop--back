@@ -129,13 +129,6 @@ class AccountInfoTest extends TestCase
         $user->refresh();
 
         /**
-         * Not auth
-         * ----------
-         */
-        $res = $this->json('post', $route);
-        $res->assertStatus(401);
-
-        /**
          * Auth
          * ----------
          * Create
@@ -168,18 +161,10 @@ class AccountInfoTest extends TestCase
         $user->refresh();
 
         /**
-         * Not auth
-         * ----------
-         */
-        $res = $this->json('put', $route);
-        $res->assertStatus(401);
-
-        /**
          * Auth
          * ----------
          * Update - Manage
          */
-
 
         # Case: 0 0 (as user)
         $res = $this->actingAs($user)

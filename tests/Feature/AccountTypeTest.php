@@ -25,10 +25,6 @@ class AccountTypeTest extends TestCase
         $user->refresh();
         $route = route('account-type.store', ['game' => Game::inRandomOrder()->first()]);
 
-        # Case: 0 0
-        $res = $this->json('post', $route);
-        $res->assertStatus(401);
-
         # Case: 1 0
         $res = $this->actingAs($user)
             ->json('post', $route);
@@ -58,10 +54,6 @@ class AccountTypeTest extends TestCase
         $user->syncPermissions();
         $user->syncRoles();
         $user->refresh();
-
-        # Case: 0 0 0
-        $res = $this->json('put', route('account-type.update', ['accountType' => $accountType]));
-        $res->assertStatus(401);
 
         # Case: 1 0 0 (as user)
         $res = $this->actingAs($user)

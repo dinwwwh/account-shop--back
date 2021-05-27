@@ -9,7 +9,7 @@ class A0RunFirstTest extends TestCase
 {
     public function testMigrateDatabaseForTest()
     {
-        $user = User::inRandomOrder()->first();
+        $user = User::first();
         $this->actingAs($user);
         $this->seed(\Database\Seeders\ForTestSeeder::class);
 

@@ -74,12 +74,6 @@ class DiscountCodeTest extends TestCase
     public function testStoreRouteMiddleware()
     {
         $route = route('discount-code.store');
-        /**
-         * Not auth
-         * --------------------
-         */
-        $this->json('post', $route)
-            ->assertStatus(401);
 
         /**
          * Auth
@@ -192,13 +186,6 @@ class DiscountCodeTest extends TestCase
     {
         $discountCode = DiscountCode::inRandomOrder()->first();
         $route = route('discount-code.update', ['discountCode' => $discountCode]);
-
-        /**
-         * Not auth
-         * --------------------
-         */
-        $this->json('put', $route)
-            ->assertStatus(401);
 
         /**
          * Auth

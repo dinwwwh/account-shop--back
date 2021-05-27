@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -22,6 +23,7 @@ class AuthSeeder extends Seeder
         ], [
             'name' => 'Lê Định',
             'password' => Hash::make('12345678'),
+            'email_verified_at' => Carbon::now(),
         ]);
         $admin->assignRole('administrator');
 
@@ -30,6 +32,7 @@ class AuthSeeder extends Seeder
         ], [
             'name' => 'Lê Định Tester',
             'password' => Hash::make('12345678'),
+            'email_verified_at' => Carbon::now(),
         ]);
     }
 }

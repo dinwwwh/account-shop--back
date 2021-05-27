@@ -190,13 +190,6 @@ class AccountActionTest extends TestCase
         $user->refresh();
 
         /**
-         * Not auth
-         * ----------
-         */
-        $res = $this->json('post', $route);
-        $res->assertStatus(401);
-
-        /**
          * Auth
          * ----------
          * Create
@@ -227,13 +220,6 @@ class AccountActionTest extends TestCase
         $user->syncPermissions();
         $user->syncRoles();
         $user->refresh();
-
-        /**
-         * Not auth
-         * ----------
-         */
-        $res = $this->json('put', $route);
-        $res->assertStatus(401);
 
         /**
          * Auth

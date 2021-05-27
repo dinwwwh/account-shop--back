@@ -23,7 +23,7 @@ class AuthTest extends TestCase
             'password' => '12345678',
         ]);
         $res->assertStatus(200);
-        $this->json('post', route('test.auth'))->assertStatus(403);
+        $this->json('post', route('test.auth'))->assertStatus(200);
         // Logout success
         $this->json('post', $logoutRoute)->assertStatus(200);
         $this->json('post', route('test.auth'))->assertStatus(401);

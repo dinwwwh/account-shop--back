@@ -61,13 +61,6 @@ class AccountTradingTest extends TestCase
             ->first();
 
         /**
-         * Not auth
-         * ------------
-         */
-        $this->json('post', route('account-trading.buy', ['account' => $validAccount]))
-            ->assertStatus(401);
-
-        /**
          * Auth as creator
          * -------------
          */

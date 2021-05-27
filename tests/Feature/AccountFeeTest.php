@@ -73,13 +73,6 @@ class AccountFeeTest extends TestCase
         $route = route('account-fee.update', ['accountFee' => $accountFee]);
 
         /**
-         * Not Auth
-         * -------------------------
-         */
-        $this->json('put', $route)
-            ->assertStatus(401);
-
-        /**
          * Auth
          * -------------------------
          * can update correspond account type
@@ -124,13 +117,6 @@ class AccountFeeTest extends TestCase
     {
         $accountType = AccountType::inRandomOrder()->first();
         $route = route('account-fee.store', ['accountType' => $accountType]);
-
-        /**
-         * Not Auth
-         * -------------------------
-         */
-        $this->json('post', $route)
-            ->assertStatus(401);
 
         /**
          * Auth

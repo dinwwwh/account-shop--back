@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class UserFactory extends Factory
 {
@@ -26,6 +27,7 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail . Str::random(40),
+            'email_verified_at' => Carbon::now(),
             'password' => Hash::make('12345678'), // password
             'gold_coin' => rand(1, 99999),
             'silver_coin' => rand(1, 99999)

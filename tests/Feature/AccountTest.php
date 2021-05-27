@@ -480,13 +480,6 @@ class AccountTest extends TestCase
         $route = route('account.store', ['accountType' => $accountType]);
 
         /**
-         * Not auth
-         * -------------------
-         */
-        $res = $this->json('post', $route);
-        $res->assertStatus(401);
-
-        /**
          * Is auth
          * ---------------------
          * create - can use account type
@@ -535,13 +528,6 @@ class AccountTest extends TestCase
             ->first();
         $route = route('account.approve', ['account' => $account]);
         $invalidRoute = route('account.approve', ['account' => $invalidAccount]);
-
-        /**
-         * Not auth
-         * -------------------
-         */
-        $res = $this->json('post', $route);
-        $res->assertStatus(401);
 
         /**
          * Is auth
@@ -602,23 +588,6 @@ class AccountTest extends TestCase
         $invalidAccount->creator->syncRoles();
         $invalidAccount->creator->refresh();
         $invalidRoute = route('account.update', ['account' => $invalidAccount]);
-
-        /**
-         * Not Auth
-         * ---------------------------
-         */
-
-        # Valid route
-        $this->json('put', $validRoute)
-            ->assertStatus(401);
-
-        # Valid pro route
-        $this->json('put', $validProRoute)
-            ->assertStatus(401);
-
-        # Invalid route
-        $this->json('put', $invalidRoute)
-            ->assertStatus(401);
 
         /**
          * Regular user can't update

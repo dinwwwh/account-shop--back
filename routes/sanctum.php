@@ -76,7 +76,7 @@ Route::prefix('game')->group(function () {
     Route::get('{game}', [GameController::class, 'show'])
         ->name('game.show');
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('verified')->group(function () {
         // Store
         Route::post('', [GameController::class, 'store'])
             ->middleware('can:create,App\Models\Game')
@@ -109,7 +109,7 @@ Route::prefix('game-info')->group(function () {
     Route::get('show/{gameInfo}', [GameInfoController::class, 'show'])
         ->name('game-info.show');
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('verified')->group(function () {
         // Store
         Route::post('{game}', [GameInfoController::class, 'store'])
             ->middleware('can:create,App\Models\GameInfo,game')
@@ -138,7 +138,7 @@ Route::prefix('account-type')->group(function () {
     Route::get('{accountType}', [AccountTypeController::class, 'show'])
         ->name('account-type.show');
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('verified')->group(function () {
         // Store
         Route::post('{game}', [AccountTypeController::class, 'store'])
             ->middleware('can:create,App\Models\AccountType,game')
@@ -167,7 +167,7 @@ Route::prefix('account-info')->group(function () {
     Route::get('{accountInfo}', [AccountInfoController::class, 'show'])
         ->name('account-info.show');
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('verified')->group(function () {
         // Store
         Route::post('{accountType}', [AccountInfoController::class, 'store'])
             ->middleware('can:create,App\Models\AccountInfo,accountType')
@@ -195,7 +195,7 @@ Route::prefix('account-action')->group(function () {
     Route::get('{accountAction}', [AccountActionController::class, 'show'])
         ->name('account-action.show');
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('verified')->group(function () {
         // Store
         Route::post('{accountType}', [AccountActionController::class, 'store'])
             ->middleware('can:create,App\Models\AccountAction,accountType')
@@ -223,7 +223,7 @@ Route::prefix('account')->group(function () {
     Route::get('{account}', [AccountController::class, 'show'])
         ->name('account.show');
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('verified')->group(function () {
         // Store
         Route::post('{accountType}', [AccountController::class, 'store'])
             ->middleware('can:create,App\Models\Account,accountType')
@@ -249,7 +249,7 @@ use App\Http\Controllers\AccountFeeController;
 
 Route::prefix('account-fee')->group(function () {
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('verified')->group(function () {
         // Store
         Route::post('{accountType}', [AccountFeeController::class, 'store'])
             ->middleware('can:create,App\Models\AccountFee,accountType')
@@ -275,7 +275,7 @@ Route::prefix('account-trading')->group(function () {
     Route::get('detail-price/{account}', [AccountTradingController::class, 'calculateDetailPrice'])
         ->name('account-trading.calculate-detail-price');
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('verified')->group(function () {
         // buy
         Route::post('buy/{account}', [AccountTradingController::class, 'buy'])
             ->middleware('can:buy,account')
@@ -293,7 +293,7 @@ Route::prefix('discount-code')->group(function () {
     Route::get('{discountCode}', [DiscountCodeController::class, 'show'])
         ->name('discount-code.show');
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware('verified')->group(function () {
         // store
         Route::post('', [DiscountCodeController::class, 'store'])
             ->middleware('can:create,App\Models\DiscountCode')
@@ -315,7 +315,7 @@ Route::prefix('discount-code')->group(function () {
 use App\Http\Controllers\DiscountCodeTradingController;
 
 Route::prefix('discount-code-trading')->group(function () {
-    Route::middleware('auth')->group(function () {
+    Route::middleware('verified')->group(function () {
         // buy
         Route::post('{discountCode}', [DiscountCodeTradingController::class, 'buy'])
             ->middleware('can:buy,discountCode')

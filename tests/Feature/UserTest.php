@@ -36,4 +36,13 @@ class UserTest extends TestCase
             'email' => $data['email']
         ]);
     }
+
+    public function test_refreshDatabase()
+    {
+        $user = User::first();
+        $this->actingAs($user);
+        $this->seed(\Database\Seeders\ForTestSeeder::class);
+
+        $this->assertTrue(true);
+    }
 }
