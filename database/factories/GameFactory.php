@@ -27,7 +27,7 @@ class GameFactory extends Factory
             'name' => $name,
             'slug' => Str::slug($name),
             'publisher_name' => $this->faker->name,
-            'image_path' => 'this is a test image!!!',
+            'image_path' => 'this-is-test-images.png',
             'last_updated_editor_id' => 2,
             'creator_id' => 2,
         ];
