@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class AccountImageResource extends JsonResource
 {
@@ -17,7 +18,7 @@ class AccountImageResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'path' => Storage::url($this->path),
+            'path' => URL::asset(Storage::url($this->path)),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

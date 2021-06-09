@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class GameResource extends JsonResource
 {
@@ -21,7 +22,7 @@ class GameResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'publisherName' => $this->publisher_name,
-            'imagePath' => Storage::url($this->image_path),
+            'imagePath' => URL::asset(Storage::url($this->image_path)),
             'accountTypesThatCurrentUserCanUse' => AccountTypeResource::collection($this->getAccountTypesThatCurrentUserCanUse()),
             'accountTypes' => AccountTypeResource::collection($this->accountTypes),
             'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),

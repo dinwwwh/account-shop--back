@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\URL;
 
 class AccountResource extends JsonResource
 {
@@ -23,7 +24,7 @@ class AccountResource extends JsonResource
             'price' => $this->calculateTemporaryPrice(),
             'statusCode' => $this->status_code,
             'description' => $this->description,
-            'representativeImagePath' => Storage::url($this->representative_image_path),
+            'representativeImagePath' => URL::asset(Storage::url($this->representative_image_path)),
             'lastRoleKeyCreatorUsed' => $this->last_role_key_editor_used,
 
             // Relationship
