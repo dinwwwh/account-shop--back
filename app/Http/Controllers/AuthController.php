@@ -21,9 +21,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (auth()->attempt($credentials, $request->remember)) {
-            return response([
-                'message' => 'Login success!!'
-            ]);
+            return new UserResource(auth()->user());
         }
 
         return response([
