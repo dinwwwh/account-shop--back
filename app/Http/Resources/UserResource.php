@@ -20,7 +20,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'goldCoin' => $this->gold_coin,
             'silverCoin' => $this->silver_coin,
-            'permissions' => PermissionResource::collection($this->getAllPermissions()),
+            // 'permissions' => PermissionResource::collection($this->getAllPermissions()),
         ];
     }
 }
