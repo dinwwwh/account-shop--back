@@ -26,7 +26,7 @@ trait ManagePermissionInUser
             return false;
         }
 
-        $userPermissions = $this->_getAllUserPermissions();
+        $userPermissions = $this->getAllPermissions();
 
         return $userPermissions->contains($permission);
     }
@@ -114,7 +114,7 @@ trait ManagePermissionInUser
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function _getAllUserPermissions()
+    public function getAllPermissions()
     {
         $userPermissions = $this->permissions;
         $userRoles = $this->roles;
