@@ -62,6 +62,9 @@ Route::post('logout', [AuthController::class, 'logout'])
 Route::get('profile', [AuthController::class, 'profile'])
     ->middleware('auth')
     ->name('auth.profile');
+Route::get('can/{ability}', [AuthController::class, 'can'])
+    ->middleware('auth')
+    ->name('auth.can');
 
 // ====================================================
 // Game routes

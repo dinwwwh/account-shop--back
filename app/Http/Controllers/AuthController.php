@@ -57,4 +57,34 @@ class AuthController extends Controller
     {
         return new UserResource(auth()->user());
     }
+
+    /**
+     * Answer a question about current auth has abilities do something.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function can(Request $request, $ability)
+    {
+        $request->validate(['params' => 'required|string']);
+
+        $params = explode(',', (string)$request->params);
+        $arguments = [];
+
+        foreach ($params as $param) {
+            if (str_contains($param, ':')) {
+                $query = explode(':', $param);
+                $model = "App\Models\\{$query[0]}";
+                $arguments[] = $model::find($query[1]);
+            } else {
+                $arguments[] = "App\Models\\{$param}";
+            }
+        }
+
+        // dd($ability, $arguments);
+        if (auth()->user()->can($ability, $arguments)) {
+            return response(['message' => 'Wow, you can do it!']);
+        }
+
+        return response(['message' => 'Opp, you can not do it!'], 403);
+    }
 }
