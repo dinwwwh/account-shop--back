@@ -22,6 +22,7 @@ class GameResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'publisherName' => $this->publisher_name,
+            'description' => $this->description,
             'imagePath' => URL::asset(Storage::url($this->image_path)),
             'accountTypesThatCurrentUserCanUse' => AccountTypeResource::collection($this->getAccountTypesThatCurrentUserCanUse()),
             'accountTypes' => AccountTypeResource::collection($this->accountTypes),

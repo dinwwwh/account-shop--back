@@ -67,6 +67,16 @@ Route::get('can/{ability}', [AuthController::class, 'can'])
     ->name('auth.can');
 
 // ====================================================
+// Role routes
+// ====================================================
+use App\Http\Controllers\RoleController;
+
+Route::prefix('role')->group(function () {
+    Route::get('', [RoleController::class, 'index'])
+        ->name('role.index');
+});
+
+// ====================================================
 // Game routes
 // ====================================================
 use App\Http\Controllers\GameController;
