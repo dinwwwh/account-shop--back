@@ -101,7 +101,7 @@ class GameController extends Controller
         // Initialize data
         $gameData = [];
         foreach ([
-            'order', 'publisherName', 'name'
+            'order', 'publisherName', 'name', 'description'
         ] as $key) {
             if ($request->filled($key)) {
                 $gameData[Str::snake($key)] = $request->$key;

@@ -27,6 +27,7 @@ class UpdateGameRequest extends FormRequest
             'order' => 'nullable|integer',
             'name' => 'nullable|string',
             'publisherName' => 'nullable|string',
+            'description' => 'nullable|string',
             'image' => 'nullable|image',
             'roleKeysCanCreatedGame' => 'nullable|array',
             'roleKeysCanCreatedGame.*' => 'string',
