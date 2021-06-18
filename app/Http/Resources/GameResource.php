@@ -33,6 +33,7 @@ class GameResource extends JsonResource
 
             // Relationship
             'rolesCanCreatedGame' => RoleResource::collection($this->rolesCanCreatedGame),
+            'gameInfos' => GameInfoResource::collection($this->gameInfos),
         ];
     }
 }
