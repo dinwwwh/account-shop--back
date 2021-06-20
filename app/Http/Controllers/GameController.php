@@ -13,6 +13,8 @@ use App\Http\Requests\UpdateGameRequest;
 use App\Models\DiscountCode;
 use App\Http\Requests\Request;
 use App\Http\Requests\AllowDiscountCodeInGameRequest;
+use Illuminate\Database\Eloquent\Collection;
+
 
 class GameController extends Controller
 {
@@ -87,6 +89,25 @@ class GameController extends Controller
     public function show(Game $game)
     {
         return new GameResource($game);
+    }
+
+    /**
+     * Return all usable game that auth can use it to create an game
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getUsableGame()
+    {
+        $roles = auth()->user()->roles;
+        $games = new Collection;
+        foreach ($roles as $role) {
+            foreach ($role->accountTypes as $accountType) {
+                if (!$games->contains($accountType->game)) {
+                    $games->push($accountType->game);
+                }
+            }
+        }
+        return GameResource::collection($games);
     }
 
     /**
