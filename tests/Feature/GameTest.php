@@ -86,6 +86,7 @@ class GameTest extends TestCase
                     ->where('name', $game->name)
                     ->where('slug', $game->slug)
                     ->where('publisherName', $game->publisher_name)
+                    ->where('description', $game->description)
                     ->has('imagePath')
                     ->has('accountTypesThatCurrentUserCanUse')
                     ->has('accountTypes')
@@ -94,6 +95,7 @@ class GameTest extends TestCase
                     ->has('updatedAt')
                     ->has('createdAt')
                     ->has('rolesCanCreatedGame')
+                    ->has('gameInfos')
             )
         );
     }
