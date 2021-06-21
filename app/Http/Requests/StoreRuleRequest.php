@@ -25,7 +25,6 @@ class StoreRuleRequest extends FormRequest
     public function rules()
     {
         return [
-            'type' => 'required|string',
             'datatype' => 'required|string',
             'placeholder' => 'nullable|string',
             'required' => 'nullable|boolean',
@@ -34,7 +33,7 @@ class StoreRuleRequest extends FormRequest
             'minlength' => 'nullable|integer',
             'max' => 'nullable|integer',
             'maxlength' => 'nullable|integer',
-            'values' => 'nullable|string',
+            'values' => 'nullable|array',
         ];
     }
 

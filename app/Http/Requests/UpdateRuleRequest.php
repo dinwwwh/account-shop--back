@@ -24,7 +24,6 @@ class UpdateRuleRequest extends FormRequest
     public function rules()
     {
         return [
-            'type' => 'nullable|string',
             'datatype' => 'nullable|string',
             'placeholder' => 'nullable|string',
             'required' => 'nullable|boolean',
@@ -33,7 +32,7 @@ class UpdateRuleRequest extends FormRequest
             'minlength' => 'nullable|integer',
             'max' => 'nullable|integer',
             'maxlength' => 'nullable|integer',
-            'values' => 'nullable|string',
+            'values' => 'nullable|array',
         ];
     }
 }
