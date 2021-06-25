@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use App\ModelTraits\ManageRoleInAccountType;
 use App\ModelTraits\ManageAccountInfoInAccountType;
 use App\ModelTraits\ManageAccountActionInAccountType;
+use App\ModelTraits\ManageAccountFeeInAccountType;
 
 
 class AccountType extends Model
@@ -16,6 +17,7 @@ class AccountType extends Model
     use ManageRoleInAccountType,
         ManageAccountInfoInAccountType,
         ManageAccountActionInAccountType,
+        ManageAccountFeeInAccountType,
         HasFactory,
         SoftDeletes;
 
