@@ -27,7 +27,7 @@ class ManageAccountFeeInAccountTest extends TestCase
         foreach ($account->accountType->accountFees as $accountFee) {
             if (
                 is_null($accountFee->maximum_cost) || $account->cost <= $accountFee->maximum_cost
-                && is_null($accountFee->minimum_cost) || $account->cost >= $accountFee->minimum_fee
+                && is_null($accountFee->minimum_cost) || $account->cost >= $accountFee->minimum_cost
             ) {
                 $temporaryFee = $account->cost * $accountFee->percentage_cost / 100;
                 $temporaryFee += $accountFee->direct_fee;
@@ -41,7 +41,7 @@ class ManageAccountFeeInAccountTest extends TestCase
             }
         }
 
-        $this->assertTrue($fee1 === (int)$fee2);
+        $this->assertEquals($fee1, (int)$fee2);
     }
 
     public function testCarefully()

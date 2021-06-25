@@ -41,7 +41,9 @@ class AccountTypeController extends Controller
         ]);
 
         return response([
-            'result' => $accountType->calculateFee($request->cost),
+            'data' => [
+                'result' => $accountType->calculateFee($request->cost),
+            ]
         ]);
     }
 

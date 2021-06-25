@@ -259,7 +259,19 @@ class AccountTypeTest extends TestCase
         );
     }
 
-    // public function testDelete()
-    // {
-    // }
+    public function test_calculateFee()
+    {
+        $accountType = AccountType::inRandomOrder()->first();
+        $data = [
+            'cost' => rand(0, 999999),
+        ];
+        $fee = $accountType->calculateFee($data['cost']);
+        $res = $this
+            ->json('get', route('account-type.calculate-fee', ['accountType' => $accountType]), $data);
+        $res->assertStatus(200);
+        $res->assertJson(
+            fn ($json) => $json
+                ->where('data.result', $fee)
+        );
+    }
 }

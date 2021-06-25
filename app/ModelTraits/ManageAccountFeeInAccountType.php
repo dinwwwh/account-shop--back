@@ -9,7 +9,7 @@ trait ManageAccountFeeInAccountType
         $accountFees = $this->accountFees;
         $fee = 0;
 
-        foreach ($accountFees ?? [] as $accountFee) {
+        foreach ($accountFees  as $accountFee) {
             if (
                 (is_null($accountFee->maximum_cost) || $cost <= $accountFee->maximum_cost)
                 && (is_null($accountFee->minimum_cost) || $cost >= $accountFee->minimum_cost)
