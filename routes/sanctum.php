@@ -12,6 +12,14 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "web" middleware group. Enjoy building your API!
 |
 */
+use App\Http\Requests\Request;
+
+Route::post('test-images', function (Request $request) {
+    return response([
+        'result' => $request->hasFile('images'),
+        'images' => $request->images
+    ]);
+});
 
 // ====================================================
 // User routes
@@ -153,6 +161,9 @@ Route::prefix('account-type')->group(function () {
     // Show
     Route::get('{accountType}', [AccountTypeController::class, 'show'])
         ->name('account-type.show');
+    // Calculate fee for an cost
+    Route::get('{accountType}/calculate-fee', [AccountTypeController::class, 'calculateFee'])
+        ->name('account-type.calculate-fee');
 
     Route::middleware('verified')->group(function () {
         // Store

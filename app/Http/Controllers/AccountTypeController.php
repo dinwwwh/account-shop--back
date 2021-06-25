@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Request;
 use App\Models\AccountType;
 use App\Models\Role;
 use App\Http\Requests\StoreAccountTypeRequest;
@@ -11,6 +12,8 @@ use App\Models\Game;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+
 
 class AccountTypeController extends Controller
 {
@@ -22,6 +25,24 @@ class AccountTypeController extends Controller
     public function index()
     {
         return AccountTypeResource::collection(AccountType::all());
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\AccountType  $accountType
+     * @return \Illuminate\Http\Response
+     */
+    public function calculateFee(Request $request, AccountType  $accountType)
+    {
+        $request->validate([
+            'cost' => 'required|integer',
+        ]);
+
+        return response([
+            'result' => $accountType->calculateFee($request->cost),
+        ]);
     }
 
     /**
