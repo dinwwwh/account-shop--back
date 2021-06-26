@@ -250,6 +250,7 @@ Route::prefix('account')->group(function () {
     Route::get('{account}', [AccountController::class, 'show'])
         ->name('account.show');
 
+    // Routes required verified auth
     Route::middleware('verified')->group(function () {
         // Store
         Route::post('{accountType}', [AccountController::class, 'store'])
@@ -266,6 +267,13 @@ Route::prefix('account')->group(function () {
         // Destroy
         // Route::delete('{account}', [AccountController::class, 'destroy'])
         //     ->name('account.destroy');
+
+        // Routes used to manage accounts
+        Route::prefix('manage')->group(function () {
+            // Get full accounts can manage
+            Route::get('index', [AccountController::class, 'manage'])
+                ->name('account.manage.index');
+        });
     });
 });
 

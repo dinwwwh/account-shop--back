@@ -46,6 +46,40 @@ class AccountController extends Controller
     }
 
     /**
+     * Display a listing of the resource to manage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function manage(Request  $request)
+    {
+        $search = $request->search;
+        $isManager = auth()->user()->can('manage', 'App\Models\Account');
+        $selectedColumns = ['*'];
+
+        if ($isManager) {
+            $accounts = Account::where('username', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+                ->orWhere('id', $search)
+                ->orWhere('cost', $search)
+                ->orWhere('status_code', $search)
+                ->orderBy('id', 'desc')
+                ->paginate(15, $selectedColumns);
+        } else {
+            $accounts = auth()->user()->accounts
+                ->where('username', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+                ->orWhere('id', $search)
+                ->orWhere('cost', $search)
+                ->orWhere('status_code', $search)
+                ->orderBy('id', 'desc')
+                ->paginate(15, $selectedColumns);
+        };
+
+        return AccountResource::collection($accounts);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

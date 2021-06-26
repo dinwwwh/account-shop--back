@@ -87,4 +87,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $this->notify(new ResetPasswordNotification($token));
     }
+
+    /**
+     * Relationship many-many with \Models\Account
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function accounts()
+    {
+        return $this->hasMany(Account::class, 'creator_id');
+    }
 }
