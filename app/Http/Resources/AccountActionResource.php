@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Helpers\ArrayHelper;
 
 class AccountActionResource extends JsonResource
 {
@@ -21,22 +22,16 @@ class AccountActionResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'order' => $this->order,
-            'name' => $this->name,
-            'slug' => $this->slug,
-            'description' => $this->description,
-            'videoPath' => $this->video_path,
-            'required' => $this->required,
-            'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
-            'creator' => new UserResource($this->creator),
-            'updatedAt' => $this->updated_at,
-            'createdAt' => $this->created_at,
-            'pivot' => $this->pivot,
+        $baseProperties = ArrayHelper::convertToCamelKey(parent::toArray($request), 2);
 
-            // Relationship
-            'requiredRoles' => RoleResource::collection($this->requiredRoles),
-        ];
+        return array_merge($baseProperties, [
+
+            // Relationships
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'accountType' => new UserResource($this->whenLoaded('accountType')),
+            'requiredRoles' => RoleResource::collection($this->whenLoaded('requiredRoles')),
+            'accounts' => RoleResource::collection($this->whenLoaded('accounts')),
+        ]);
     }
 }

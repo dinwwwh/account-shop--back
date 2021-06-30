@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ModelTraits\HelperForAccountAction;
+use App\PivotModels\AccountAccountAction;
 
 class AccountAction extends Model
 {
@@ -89,5 +90,28 @@ class AccountAction extends Model
     public function requiredRoles()
     {
         return $this->belongsToMany(Role::class, 'account_action_required_roles');
+    }
+
+    /**
+     * Relationship many-on with App\Models\AccountType
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function accountType()
+    {
+        return $this->belongsTo(AccountType::class);
+    }
+
+    /**
+     * Relationship many-many with App\Models\Account
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function accounts()
+    {
+        return $this->belongsToMany(Account::class, 'account_account_action')
+            ->using(AccountAccountAction::class)
+            ->withPivot('is_done')
+            ->withTimestamps();
     }
 }
