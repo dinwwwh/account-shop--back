@@ -128,7 +128,7 @@ use App\Http\Controllers\GameInfoController;
 
 Route::prefix('game-info')->group(function () {
     // Index
-    Route::get('{game}', [GameInfoController::class, 'index'])
+    Route::get('', [GameInfoController::class, 'index'])
         ->name('game-info.index');
     // Show
     Route::get('show/{gameInfo}', [GameInfoController::class, 'show'])
