@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Resources\DiscountCodeResource;
 use App\Http\Requests\StoreDiscountCodeRequest;
 use App\Http\Requests\UpdateDiscountCodeRequest;
+use Illuminate\Http\Request;
 
 class DiscountCodeController extends Controller
 {
@@ -69,6 +70,8 @@ class DiscountCodeController extends Controller
      */
     public function show(DiscountCode $discountCode)
     {
+        $_with = $this->_with;
+        $discountCode->loadMissing($_with);
         return new DiscountCodeResource($discountCode);
     }
 

@@ -28,6 +28,8 @@ use App\Hooks\BuyingAccountHook;
 use App\Hooks\BoughtAccountHook;
 use App\Models\GameInfo;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+
 
 class AccountController extends Controller
 {
@@ -42,39 +44,37 @@ class AccountController extends Controller
      */
     public function index()
     {
-        return AccountResource::collection(Account::all());
+        $_with = $this->_with;
+        $accounts = Account::with($_with)->paginate(15);
+        return AccountResource::collection($accounts);
     }
 
     /**
      * Display a listing of the resource to manage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function manage(Request  $request)
+    public function manage()
     {
-        $search = $request->search;
+        $search = $this->_search;
+        $_with = $this->_with;
         $isManager = auth()->user()->can('manage', 'App\Models\Account');
-        $selectedColumns = ['*'];
 
         if ($isManager) {
-            $accounts = Account::where('username', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
-                ->orWhere('id', $search)
-                ->orWhere('cost', $search)
-                ->orWhere('status_code', $search)
-                ->orderBy('id', 'desc')
-                ->paginate(15, $selectedColumns);
+            $baseQuery = new Account;
         } else {
-            $accounts = auth()->user()->accounts
-                ->where('username', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
+            $baseQuery = auth()->user()->accounts();
+        };
+
+        $accounts = $baseQuery->where(
+            fn ($query) =>  $query
+                ->where('username', 'LIKE', "%{$search}%")
+                ->orWhere('description', 'LIKE', "%{$search}%")
                 ->orWhere('id', $search)
                 ->orWhere('cost', $search)
-                ->orWhere('status_code', $search)
-                ->orderBy('id', 'desc')
-                ->paginate(15, $selectedColumns);
-        };
+        )
+            ->with($_with)
+            ->paginate(15);
 
         return AccountResource::collection($accounts);
     }
@@ -281,6 +281,8 @@ class AccountController extends Controller
      */
     public function show(Account $account)
     {
+        $_with = $this->_with;
+        $account->loadMissing($_with);
         return new AccountResource($account);
     }
 

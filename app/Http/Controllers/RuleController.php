@@ -18,7 +18,8 @@ class RuleController extends Controller
      */
     public function index()
     {
-        return RuleResource::collection(Rule::all());
+        $rules = Rule::with($this->_with)->paginate(15);
+        return RuleResource::collection($rules);
     }
 
     /**
@@ -63,6 +64,8 @@ class RuleController extends Controller
      */
     public function show(Rule $rule)
     {
+        $_with = $this->_with;
+        $rule->loadMissing($_with);
         return new RuleResource($rule);
     }
 

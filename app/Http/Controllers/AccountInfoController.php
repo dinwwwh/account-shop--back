@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Http\Resources\AccountInfoResource;
 use App\Http\Requests\StoreAccountInfoRequest;
 use App\Http\Requests\UpdateAccountInfoRequest;
+use Illuminate\Http\Request;
 
 class AccountInfoController extends Controller
 {
@@ -21,7 +22,9 @@ class AccountInfoController extends Controller
      */
     public function index()
     {
-        return AccountInfoResource::collection(AccountInfo::all());
+        $_with = $this->_with;
+        $accountInfos = AccountInfo::with($_with)->paginate(15);
+        return AccountInfoResource::collection($accountInfos);
     }
 
     /**
@@ -77,6 +80,8 @@ class AccountInfoController extends Controller
      */
     public function show(AccountInfo $accountInfo)
     {
+        $_with = $this->_with;
+        $accountInfo->loadMissing($_with);
         return new AccountInfoResource($accountInfo);
     }
 

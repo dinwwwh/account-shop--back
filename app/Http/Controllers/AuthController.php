@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterAuthRequest;
 use App\Http\Requests\LoginAuthRequest;
-use App\Http\Resources\UserDetailResource;
+use App\Http\Resources\UserResource;
 
 class AuthController extends Controller
 {
@@ -21,7 +21,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (auth()->attempt($credentials, $request->remember)) {
-            return new UserDetailResource(auth()->user());
+            return new UserResource(auth()->user());
         }
 
         return response([
@@ -55,7 +55,8 @@ class AuthController extends Controller
      */
     public function profile()
     {
-        return new UserDetailResource(auth()->user());
+        $_with = $this->_with;
+        return new UserResource(auth()->user()->loadMissing($_with));
     }
 
     /**

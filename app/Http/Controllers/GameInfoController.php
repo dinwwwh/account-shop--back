@@ -18,12 +18,13 @@ class GameInfoController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param \App\Models\Game $game
      * @return \Illuminate\Http\Response
      */
-    public function index(Game $game)
+    public function index()
     {
-        return GameInfoResource::collection($game->gameInfos);
+        $_with = $this->_with;
+        $gameInfos = GameInfo::with($_with)->paginate(15);
+        return GameInfoResource::collection($gameInfos);
     }
 
     /**
@@ -81,7 +82,8 @@ class GameInfoController extends Controller
      */
     public function show(GameInfo $gameInfo)
     {
-        return new GameInfoResource($gameInfo);
+        $_with = $this->_with;
+        return new GameInfoResource($gameInfo->loadMissing($_with));
     }
 
     /**

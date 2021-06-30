@@ -24,7 +24,9 @@ class AccountTypeController extends Controller
      */
     public function index()
     {
-        return AccountTypeResource::collection(AccountType::all());
+        $_with = $this->_with;
+        $accountTypes = AccountType::with($_with)->paginate(15);
+        return AccountTypeResource::collection($accountTypes);
     }
 
     /**
@@ -116,7 +118,8 @@ class AccountTypeController extends Controller
      */
     public function show(AccountType $accountType)
     {
-        return new AccountTypeResource($accountType);
+        $_with = $this->_with;
+        return new AccountTypeResource($accountType->loadMissing($_with));
     }
 
     /**

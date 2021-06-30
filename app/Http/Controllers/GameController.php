@@ -26,7 +26,7 @@ class GameController extends Controller
      */
     public function index()
     {
-        $games = Game::paginate(5);
+        $games = Game::with($this->_with)->paginate(5);
         return GameResource::collection($games);
     }
 
@@ -88,6 +88,8 @@ class GameController extends Controller
      */
     public function show(Game $game)
     {
+        $_with = $this->_with;
+        $game->loadMissing($_with);
         return new GameResource($game);
     }
 

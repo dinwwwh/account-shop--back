@@ -15,7 +15,8 @@ class RoleController extends Controller
      */
     public function index()
     {
-        return RoleResource::collection(Role::all());
+        $roles = Role::with($this->_with)->paginate(15);
+        return RoleResource::collection($roles);
     }
 
     /**
@@ -47,7 +48,9 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        //
+        $_with = $this->_with;
+        $role->loadMissing($_with);
+        return new RoleResource($role);
     }
 
     /**

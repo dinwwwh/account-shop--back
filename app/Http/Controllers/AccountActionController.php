@@ -21,7 +21,9 @@ class AccountActionController extends Controller
      */
     public function index()
     {
-        return AccountActionResource::collection(AccountAction::all());
+        $_with = $this->_with;
+        $accountActions = AccountAction::with($_with)->paginate(15);
+        return AccountActionResource::collection($accountActions);
     }
 
     /**
@@ -75,6 +77,8 @@ class AccountActionController extends Controller
      */
     public function show(AccountAction $accountAction)
     {
+        $_with = $this->_with;
+        $accountAction->loadMissing($_with);
         return new AccountActionResource($accountAction);
     }
 
