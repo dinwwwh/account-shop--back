@@ -133,4 +133,14 @@ class AccountType extends Model
     {
         return $this->hasMany(AccountFee::class);
     }
+
+    /**
+     * Relationship one-many with \App\Models\Account
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function accounts()
+    {
+        return $this->hasMany(Account::class);
+    }
 }

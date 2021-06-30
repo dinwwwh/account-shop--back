@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Helpers\ArrayHelper;
 
 class AccountTypeResource extends JsonResource
 {
@@ -14,23 +15,19 @@ class AccountTypeResource extends JsonResource
      */
     public function toArray($request)
     {
-        // Need to middleware ware in here
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'slug' => $this->slug,
-            'description' => $this->description,
+        $baseProperties = ArrayHelper::convertToCamelKey(parent::toArray($request), 2);
+
+        return array_merge($baseProperties, [
 
             // Relationship
-            'accountInfos' => AccountInfoResource::collection($this->accountInfos),
-            'accountActions' => AccountActionResource::collection($this->accountActions),
-            'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
-            'creator' => new UserResource($this->creator),
-            'rolesCanUsedAccountType' => RoleResource::collection($this->rolesCanUsedAccountType),
-
-            // Time
-            'updatedAt' => $this->updated_at,
-            'createdAt' => $this->created_at,
-        ];
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'accountInfos' => AccountInfoResource::collection($this->whenLoaded('accountInfos')),
+            'accountActions' => AccountActionResource::collection($this->whenLoaded('accountActions')),
+            'accountFees' => AccountFeeResource::collection($this->whenLoaded('accountFees')),
+            'rolesCanUsedAccountType' => RoleResource::collection($this->whenLoaded('rolesCanUsedAccountType')),
+            'game' => new GameResource($this->whenLoaded('game')),
+            'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
+        ]);
     }
 }
