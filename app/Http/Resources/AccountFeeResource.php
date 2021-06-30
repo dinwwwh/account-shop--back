@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Helpers\ArrayHelper;
 
 class AccountFeeResource extends JsonResource
 {
@@ -14,15 +15,14 @@ class AccountFeeResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'maximumCost' => $this->maximum_cost,
-            'minimumCost' => $this->minimum_cost,
-            'maximumFee' => $this->maximum_fee,
-            'minimumFee' => $this->minimum_fee,
-            'percentageCost' => $this->percentage_cost,
-            'directFee' => $this->direct_fee,
-            'accountTypeId' => $this->account_type_id,
-        ];
+        $baseProperties = ArrayHelper::convertToCamelKey(parent::toArray($request), 2);
+
+        return array_merge($baseProperties, [
+
+            // Relationships
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+            'accountType' => new UserResource($this->whenLoaded('accountType')),
+        ]);
     }
 }
