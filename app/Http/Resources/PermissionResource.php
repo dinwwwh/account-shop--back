@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Helpers\ArrayHelper;
 
 class PermissionResource extends JsonResource
 {
@@ -14,11 +15,13 @@ class PermissionResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'key' => $this->key,
-            'name' => $this->name,
-            'description' => $this->description,
-            'parentKey' => $this->parent_key,
-        ];
+        $baseProperties = ArrayHelper::convertToCamelKey(parent::toArray($request), 2);
+
+        return array_merge($baseProperties, [
+
+            // Relationships
+            'users' => UserResource::collection($this->whenLoaded('users')),
+            'roles' => RoleResource::collection($this->whenLoaded('roles')),
+        ]);
     }
 }

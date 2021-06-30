@@ -30,4 +30,24 @@ class Permission extends Model
         'description' => 'string',
         'parent_key' => 'string',
     ];
+
+    /**
+     * Get all users have directly this permission
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_has_permission');
+    }
+
+    /**
+     * Get all roles have directly this permission
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'role_permission');
+    }
 }
