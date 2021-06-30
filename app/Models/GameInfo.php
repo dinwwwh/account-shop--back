@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\PivotModels\AccountHasGameInfos;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -90,5 +91,18 @@ class GameInfo extends Model
     public function game()
     {
         return $this->belongsTo(Game::class);
+    }
+
+    /**
+     * Get all accounts have this game info
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function accounts()
+    {
+        return $this->belongsToMany(Account::class, 'account_has_game_infos')
+            ->using(AccountHasGameInfos::class)
+            ->withPivot('value')
+            ->withTimestamps();
     }
 }
