@@ -3,8 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
+use App\Helpers\ArrayHelper;
 
 class AccountImageResource extends JsonResource
 {
@@ -16,11 +15,12 @@ class AccountImageResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'path' => URL::asset(Storage::url($this->path)),
-            'createdAt' => $this->created_at,
-            'updatedAt' => $this->updated_at,
-        ];
+        $baseProperties = ArrayHelper::convertToCamelKey(parent::toArray($request), 2);
+
+        return array_merge($baseProperties, [
+
+            // Relationships
+            'account' => new AccountResource($this->whenLoaded('account'))
+        ]);
     }
 }
