@@ -21,7 +21,6 @@ class CreateAccountsTable extends Migration
             $table->integer('status_code');
             $table->string('description')->nullable();
             $table->string('representative_image_path')->nullable();
-            $table->integer('game_id');
             $table->integer('account_type_id');
             $table->bigInteger('censor_id')->nullable();
             $table->bigInteger('buyer_id')->nullable();
