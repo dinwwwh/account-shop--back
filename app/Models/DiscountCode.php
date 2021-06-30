@@ -106,7 +106,9 @@ class DiscountCode extends Model
             Game::class,
             'model',
             'discount_code_supported_models',
-        )->withPivot('type_code');
+        )
+            ->withPivot('type_code')
+            ->withTimestamps();
     }
 
     /**
