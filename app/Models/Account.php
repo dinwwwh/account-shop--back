@@ -31,7 +31,6 @@ class Account extends Model
         'status_code',
         'description',
         'representative_image_path',
-        'game_id',
         'account_type_id',
         'censor_id',
         'buyer_id',
@@ -55,7 +54,6 @@ class Account extends Model
         'status_code' => 'integer',
         'description' => 'string',
         'representative_image_path' => StorageFile::class,
-        'game_id' => 'integer',
         'account_type_id' => 'integer',
         'censor_id' => 'integer',
         'buyer_id' => 'integer',
@@ -102,16 +100,6 @@ class Account extends Model
     public function images()
     {
         return $this->hasMany(AccountImage::class);
-    }
-
-    /**
-     * Relationship many-one with Models\Game
-     *
-     * @return Illuminate\Database\Eloquent\Factories\Relationship
-     */
-    public function game()
-    {
-        return $this->belongsTo(Game::class);
     }
 
     /**

@@ -30,7 +30,6 @@ class AccountResource extends JsonResource
             'censor' => new UserResource($this->whenLoaded('censor')),
             'accountType' => new AccountTypeResource($this->whenLoaded('accountType')),
             'images' => AccountImageResource::collection($this->whenLoaded('images')),
-            'game' => new GameResource($this->whenLoaded('game')),
 
             // Relationships contain pivot property
             'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),
