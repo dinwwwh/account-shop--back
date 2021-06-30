@@ -57,16 +57,6 @@ class GameController extends Controller
             $imagePath = $request->image->store('/public/game-images');
             $gameData['image_path'] = $imagePath;
             $game = Game::create($gameData); // Save rule to database
-
-            // Relationship many-many with Models\Role
-            $role = Role::all();
-            $syncRoleKeys = [];
-            foreach ($request->roleKeysCanCreatedGame ?? [] as $roleKey) {
-                if ($role->contains($roleKey)) {
-                    $syncRoleKeys[] = $roleKey;
-                }
-            }
-            $game->rolesCanCreatedGame()->sync($syncRoleKeys);
             DB::commit();
         } catch (\Throwable $th) {
             return $th;
@@ -109,7 +99,7 @@ class GameController extends Controller
                 }
             }
         }
-        return GameResource::collection($games);
+        return GameResource::collection($games->loadMissing($this->_with));
     }
 
     /**
@@ -146,16 +136,6 @@ class GameController extends Controller
             }
             // Save rule to database
             $game->update($gameData);
-
-            // Relationship many-many with Models\Role
-            $role = Role::all();
-            $syncRoleKeys = [];
-            foreach ($request->roleKeysCanCreatedGame ?? [] as $roleKey) {
-                if ($role->contains($roleKey)) {
-                    $syncRoleKeys[] = $roleKey;
-                }
-            }
-            $game->rolesCanCreatedGame()->sync($syncRoleKeys);
             DB::commit();
             // handle when success
             Storage::delete($imagePathMustDeleteWhenSuccess ?? null);
@@ -183,10 +163,6 @@ class GameController extends Controller
         try {
             DB::beginTransaction();
             $imagePath = $game->image_path;
-
-            // Delete relationship with Models\Role
-            $game->rolesCanCreatedGame()->sync([]);
-
             $game->delete();
             DB::commit();
             // When success

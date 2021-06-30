@@ -39,7 +39,6 @@ class ModuleGameSeeder extends Seeder
             ->create();
 
         foreach ($games as $game) {
-            $game->rolesCanCreatedGame()->sync('tester');
 
             foreach ($game->accountTypes as $accountType) {
                 $accountType->allowRole('tester', rand(1, 100) < 70 ? 0 : 440);

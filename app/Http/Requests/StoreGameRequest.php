@@ -28,8 +28,6 @@ class StoreGameRequest extends FormRequest
             'publisherName' => 'required|string',
             'name' => 'required|string',
             'image' => 'required|image',
-            'roleKeysCanCreatedGame' => 'nullable|array',
-            'roleKeysCanCreatedGame.*' => 'string',
         ];
     }
 }

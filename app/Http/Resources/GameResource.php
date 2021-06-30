@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use App\Helpers\ArrayHelper;
 
 class GameResource extends JsonResource
 {
@@ -16,24 +17,16 @@ class GameResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'order' => $this->order,
-            'name' => $this->name,
-            'slug' => $this->slug,
-            'publisherName' => $this->publisher_name,
-            'description' => $this->description,
-            'imagePath' => URL::asset(Storage::url($this->image_path)),
-            'accountTypesThatCurrentUserCanUse' => AccountTypeResource::collection($this->getAccountTypesThatCurrentUserCanUse()),
-            'accountTypes' => AccountTypeResource::collection($this->accountTypes),
-            'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
-            'creator' => new UserResource($this->creator),
-            'updatedAt' => $this->updated_at,
-            'createdAt' => $this->created_at,
+        $baseProperties = ArrayHelper::convertToCamelKey(parent::toArray($request));
+
+        return array_merge($baseProperties, [
 
             // Relationship
-            'rolesCanCreatedGame' => RoleResource::collection($this->rolesCanCreatedGame),
-            'gameInfos' => GameInfoResource::collection($this->gameInfos),
-        ];
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'accountTypes' => AccountTypeResource::collection($this->whenLoaded('accountTypes')),
+            'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),
+            'usableDiscountCodes' => DiscountCodeResource::collection($this->whenLoaded('usableDiscountCodes')),
+        ]);
     }
 }

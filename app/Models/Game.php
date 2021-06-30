@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ModelTraits\ManageAccountTypeInGame;
+use App\Casts\StorageFile;
 
 class Game extends Model
 {
@@ -28,7 +29,7 @@ class Game extends Model
         'name' => 'string',
         'slug' => 'string',
         'description' => 'string',
-        'image_path' => 'string',
+        'image_path' => StorageFile::class,
         'last_updated_editor_id' => 'integer',
         'creator_id' => 'integer',
     ];
@@ -76,16 +77,6 @@ class Game extends Model
     }
 
     /**
-     * Relationship many-many with Models\Role
-     *
-     * @return Illuminate\Database\Eloquent\Factories\Relationship
-     */
-    public function rolesCanCreatedGame()
-    {
-        return $this->belongsToMany(Role::class, 'role_can_created_game');
-    }
-
-    /**
      * Relationship one-many with AccountType.
      * Include account types this model has.
      *
@@ -97,14 +88,19 @@ class Game extends Model
     }
 
     /**
-     * Relationship many-many with DiscountCode
+     * Get all discount codes that it can use in this game
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
-    public function supportedDiscountCodes()
+    public function usableDiscountCodes()
     {
-        return $this->belongsToMany(DiscountCode::class, 'discount_code_supports_game', null, 'discount_code')
-            ->withPivot('type_code');
+        return $this->morphToMany(
+            DiscountCode::class,
+            'model',
+            'discount_code_supported_models',
+        )
+            ->withPivot('type_code')
+            ->withTimestamps();
     }
 
     /**
