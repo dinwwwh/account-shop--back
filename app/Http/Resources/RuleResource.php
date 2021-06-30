@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Helpers\ArrayHelper;
 
 class RuleResource extends JsonResource
 {
@@ -14,20 +15,12 @@ class RuleResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'placeholder' => $this->placeholder,
-            'datatype' => $this->datatype,
-            'required' => $this->required,
-            'multiple' => $this->multiple,
-            'min' => $this->min,
-            'max' => $this->max,
-            'values' => $this->values,
-            'updatedAt' => $this->updated_at,
-            'createdAt' => $this->created_at,
+        $baseProperties = ArrayHelper::convertToCamelKey(parent::toArray($request), 2);
+
+        return array_merge($baseProperties, [
 
             // relationship
-            'requiredRoles' => RoleResource::collection($this->requiredRoles),
-        ];
+            'requiredRoles' => RoleResource::collection($this->whenLoaded('requiredRoles')),
+        ]);
     }
 }

@@ -152,7 +152,6 @@ class AccountController extends Controller
             }
 
             // Process other account info
-            $account->game_id = $game->getKey();
             $account->account_type_id = $accountType->getKey();
             $account->last_role_key_editor_used = $roleThatUsing->getKey();
 
@@ -182,27 +181,27 @@ class AccountController extends Controller
                 foreach ($request->accountInfos ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
                     if ($accountType->accountInfos->contains($id)) {
-                        $syncInfos[$id] =  ['value' => json_encode($value)];
+                        $syncInfos[$id] =  ['value' => $value];
                     }
                 }
-                $account->infos()->sync($syncInfos);
+                $account->accountInfos()->sync($syncInfos);
 
                 // Account action
                 $syncActions = [];
                 foreach ($request->accountActions ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
                     if ($accountType->accountActions->contains($id)) {
-                        $syncActions[$id] = ['value' => json_encode($value)];
+                        $syncActions[$id] = ['is_done' => $value];
                     }
                 }
-                $account->actions()->sync($syncActions);
+                $account->accountActions()->sync($syncActions);
 
                 // game info
                 $syncGameInfos = [];
                 foreach ($request->gameInfos ?? [] as $key => $value) {
                     $id = (int)trim($key, $this->config['key']);
                     if ($game->gameInfos->contains($id)) {
-                        $syncGameInfos[$id] = ['value' => json_encode($value)];
+                        $syncGameInfos[$id] = ['value' => $value];
                     }
                 }
                 $account->gameInfos()->sync($syncGameInfos);
@@ -219,20 +218,16 @@ class AccountController extends Controller
 
             DB::commit();
         } catch (\Throwable $th) {
-            //throw $th;
             DB::rollback();
             // Handle delete images
             foreach ($imagePathsNeedDeleteWhenFail as $imagePath) {
                 Storage::delete($imagePath);
             }
-            return $th;
-            return response()->json([
-                'message' => 'Thêm tài khoản vào hệ thống thất bại.'
-            ], 500);
+            throw $th;
         }
 
         StoredAccountHook::execute($account);
-        return new AccountResource($account->refresh());
+        return new AccountResource($account->refresh()->loadMissing($this->_with));
     }
 
     /**
@@ -398,10 +393,10 @@ class AccountController extends Controller
                     foreach ($request->accountInfos ?? [] as $key => $value) {
                         $id = (int)trim($key, $this->config['key']);
                         if ($accountType->accountInfos->contains($id)) {
-                            $syncInfos[$id] =  ['value' => json_encode($value)];
+                            $syncInfos[$id] =  ['value' => $value];
                         }
                     }
-                    $account->infos()->sync($syncInfos);
+                    $account->accountInfos()->sync($syncInfos);
                 }
 
 
@@ -411,10 +406,10 @@ class AccountController extends Controller
                     foreach ($request->accountActions ?? [] as $key => $value) {
                         $id = (int)trim($key, $this->config['key']);
                         if ($accountType->accountActions->contains($id)) {
-                            $syncActions[$id] = ['value' => json_encode($value)];
+                            $syncActions[$id] = ['is_done' => $value];
                         }
                     }
-                    $account->actions()->sync($syncActions);
+                    $account->accountActions()->sync($syncActions);
                 }
 
                 // game info
@@ -423,7 +418,7 @@ class AccountController extends Controller
                     foreach ($request->gameInfos ?? [] as $key => $value) {
                         $id = (int)trim($key, $this->config['key']);
                         if ($game->gameInfos->contains($id)) {
-                            $syncGameInfos[$id] = ['value' => json_encode($value)];
+                            $syncGameInfos[$id] = ['value' => $value];
                         }
                     }
                     $account->gameInfos()->sync($syncGameInfos);

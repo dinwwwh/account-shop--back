@@ -31,6 +31,13 @@ class Rule extends Model
     ];
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['requiredRoles'];
+
+    /**
      * To set default
      *
      * @return void

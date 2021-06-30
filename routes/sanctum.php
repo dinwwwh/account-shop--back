@@ -13,13 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 use App\Http\Requests\Request;
-use App\Models\Role;
-use App\Http\Resources\RoleResource;
+use App\Models\Account;
+use App\Http\Resources\AccountResource;
 
 Route::get('test', function (Request $request) {
-    $game = Role::first();
+    $game = Account::last();
     $game->accountTypes;
-    return new RoleResource($game);
+    return new AccountResource($game);
 });
 
 // ====================================================

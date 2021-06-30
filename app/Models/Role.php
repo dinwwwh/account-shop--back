@@ -34,18 +34,6 @@ class Role extends Model
     ];
 
     /**
-     * Include games that role can created
-     *
-     * @return void
-     */
-    public function canCreatedGame()
-    {
-        $result = $this->belongsToMany(Game::class, 'role_can_created_game')
-            ->get();
-        return $result;
-    }
-
-    /**
      * Relationship one-one with User
      * Include infos of model creator
      *
@@ -88,5 +76,15 @@ class Role extends Model
     {
         return $this->belongsToMany(AccountType::class, 'role_can_used_account_type')
             ->withPivot('status_code');
+    }
+
+    /**
+     * Get all users had directly this roles
+     *
+     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_has_role');
     }
 }
