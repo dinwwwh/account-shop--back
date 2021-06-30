@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\URL;
+use App\Helpers\ArrayHelper;
 
 class AccountResource extends JsonResource
 {
@@ -17,39 +18,32 @@ class AccountResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'username' => $this->username,
-            'cost' => $this->cost,
+        $baseProperties = ArrayHelper::convertToCamelKey(parent::toArray($request), 2);
+
+        return array_merge($baseProperties, [
+            // Special attributes
             'price' => $this->calculateTemporaryPrice(),
-            'statusCode' => $this->status_code,
-            'description' => $this->description,
-            'representativeImagePath' => URL::asset(Storage::url($this->representative_image_path)),
-            'lastRoleKeyCreatorUsed' => $this->last_role_key_editor_used,
 
             // Relationship
-            'images' => AccountImageResource::collection($this->images),
-            'game' => new GameResource($this->game),
-            'accountType' => new AccountTypeResource($this->accountType),
-            'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
-            'creator' => new UserResource($this->creator),
-            'censor' => new UserResource($this->censor),
-            'type' => new AccountTypeResource($this->accountType),
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'censor' => new UserResource($this->whenLoaded('censor')),
+            'accountType' => new AccountTypeResource($this->whenLoaded('accountType')),
+            'images' => AccountImageResource::collection($this->whenLoaded('images')),
+            'game' => new GameResource($this->whenLoaded('game')),
 
-            // Relationship contain pivot
-            'gameInfos' => GameInfoResource::collection($this->gameInfos),
+            // Relationships contain pivot property
+            'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),
 
-            // Time
-            'approvedAt' => $this->approved_at,
-            'updatedAt' => $this->updated_at,
-            'createdAt' => $this->created_at,
-
-            // Conditional merge
-            $this->mergeWhen(auth()->check() && auth()->user()->can('viewSensitiveInfo', $this->resource), [
-                'actions' => AccountActionResource::collection($this->actions),
-                'infos' => AccountInfoResource::collection($this->infos),
-                'password' => $this->password,
-            ])
-        ];
+            // Merge when auth an view sensitive infos
+            $this->mergeWhen(
+                auth()->check() && auth()->user()->can('viewSensitiveInfo', $this->resource),
+                fn () => [
+                    'accountActions' => AccountActionResource::collection($this->whenLoaded('accountActions')),
+                    'accountInfos' => AccountInfoResource::collection($this->whenLoaded('accountInfos')),
+                    'password' => $this->password,
+                ]
+            ),
+        ]);
     }
 }

@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ModelTraits\ManageAccountFeeInAccount;
 use App\ModelTraits\ManagePriceInAccount;
+use App\Casts\StorageFile;
+use App\PivotModels\AccountAccountAction;
+use App\PivotModels\AccountAccountInfo;
+use App\PivotModels\AccountHasGameInfos;
 
 class Account extends Model
 {
@@ -15,6 +19,11 @@ class Account extends Model
         ManageAccountFeeInAccount,
         ManagePriceInAccount;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'username',
         'password',
@@ -34,13 +43,18 @@ class Account extends Model
         'approved_at',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
     protected $casts = [
         'username' => 'string',
         'password' => 'string',
         'cost' => 'integer',
         'status_code' => 'integer',
         'description' => 'string',
-        'representative_image_path' => 'string',
+        'representative_image_path' => StorageFile::class,
         'game_id' => 'integer',
         'account_type_id' => 'integer',
         'censor_id' => 'integer',
@@ -51,11 +65,14 @@ class Account extends Model
         'creator_id' => 'integer',
         'last_role_key_editor_used' => 'string',
         'approved_at' => 'datetime',
-
-        // Pivot can't work
-        // 'value' => 'array',
-        'account_actions.pivot.value' => 'array',
     ];
+
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['password'];
 
     /**
      * To set default
@@ -88,7 +105,7 @@ class Account extends Model
     }
 
     /**
-     * Relationship one-one with Models\Game
+     * Relationship many-one with Models\Game
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
@@ -98,7 +115,7 @@ class Account extends Model
     }
 
     /**
-     * Relationship one-one with Models\AccountType
+     * Relationship many-one with Models\AccountType
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
@@ -156,10 +173,12 @@ class Account extends Model
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
-    public function infos()
+    public function accountInfos()
     {
         return $this->belongsToMany(AccountInfo::class, 'account_account_info')
-            ->withPivot('value');
+            ->using(AccountAccountInfo::class)
+            ->withPivot('value')
+            ->withTimestamps();
     }
 
     /**
@@ -167,10 +186,12 @@ class Account extends Model
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
-    public function actions()
+    public function accountActions()
     {
         return $this->belongsToMany(AccountAction::class, 'account_account_action')
-            ->withPivot('value');
+            ->using(AccountAccountAction::class)
+            ->withPivot('is_done')
+            ->withTimestamps();
     }
 
     /**
@@ -181,6 +202,8 @@ class Account extends Model
     public function gameInfos()
     {
         return $this->belongsToMany(GameInfo::class, 'account_has_game_infos')
-            ->withPivot('value');
+            ->using(AccountHasGameInfos::class)
+            ->withPivot('value')
+            ->withTimestamps();
     }
 }
