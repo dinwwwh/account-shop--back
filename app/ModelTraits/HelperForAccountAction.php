@@ -16,7 +16,7 @@ trait HelperForAccountAction
     public function generateRule(Role $role): string
     {
         return $this->isRequired($role)
-            ? 'required|' . RuleHelper::in(true)
+            ? 'required|boolean|' . RuleHelper::in(true)
             : 'nullable|boolean';
     }
 
