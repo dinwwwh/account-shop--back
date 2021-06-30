@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Helpers\ArrayHelper;
 
 class DiscountCodeResource extends JsonResource
 {
@@ -14,32 +15,15 @@ class DiscountCodeResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'discountCode' => $this->discount_code,
-            'price' => $this->price,
-            'buyable' => $this->buyable,
-            'name' => $this->name,
-            'description' => $this->description,
+        $baseProperties = ArrayHelper::convertToCamelKey(parent::toArray($request), 2);
 
-            'maximumPrice' => $this->maximum_price,
-            'minimumPrice' => $this->minimum_price,
-            'maximumDiscount' => $this->maximum_discount,
-            'minimumDiscount' => $this->minimum_discount,
-            'percentageDiscount' => $this->percentage_discount,
-            'directDiscount' => $this->direct_discount,
-            'usableAt' => $this->usable_at,
-            'usableClosedAt' => $this->usable_closed_at,
-            'offeredAt' => $this->offered_at,
-            'offerClosedAt' => $this->offer_closed_at,
-
-            'lastUpdatedEditor' => new UserResource($this->lastUpdatedEditor),
-            'creator' => new UserResource($this->Creator),
-            'updatedAt' => $this->updated_at,
-            'createdAt' => $this->created_at,
-            'pivot' => $this->pivot,
+        return array_merge($baseProperties, [
 
             // Relationship
-            'buyers' => UserResource::collection($this->buyers),
-        ];
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'buyers' => UserResource::collection($this->whenLoaded('buyers')),
+            'supportedGames' => GameResource::collection($this->whenLoaded('supportedGames')),
+        ]);
     }
 }

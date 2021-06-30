@@ -96,14 +96,17 @@ class DiscountCode extends Model
     }
 
     /**
-     * Relationship many-many with Game
+     * Polymorphic relationship many-many to \App\Models\Game
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
     public function supportedGames()
     {
-        return $this->belongsToMany(Game::class, 'discount_code_supports_game', 'discount_code')
-            ->withPivot('type_code');
+        return $this->morphedByMany(
+            Game::class,
+            'model',
+            'discount_code_supported_models',
+        )->withPivot('type_code');
     }
 
     /**
