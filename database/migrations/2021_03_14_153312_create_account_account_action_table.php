@@ -16,7 +16,8 @@ class CreateAccountAccountActionTable extends Migration
         Schema::create('account_account_action', function (Blueprint $table) {
             $table->bigInteger('account_id');
             $table->integer('account_action_id');
-            $table->json('value');
+            $table->boolean('is_done');
+            $table->timestamps();
         });
     }
 
