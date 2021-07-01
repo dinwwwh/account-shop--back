@@ -4,11 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Support\Facades\Storage;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\URL;
-use App\Helpers\ArrayHelper;
-
-class AccountResource extends JsonResource
+class AccountResource extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -18,9 +14,7 @@ class AccountResource extends JsonResource
      */
     public function toArray($request)
     {
-        $baseProperties = ArrayHelper::convertToCamelKey(parent::toArray($request), 2);
-
-        return array_merge($baseProperties, [
+        return array_merge(parent::toArray($request), [
             // Special attributes
             'price' => $this->calculateTemporaryPrice(),
 

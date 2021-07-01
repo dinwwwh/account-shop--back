@@ -2,10 +2,7 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-use App\Helpers\ArrayHelper;
-
-class RoleResource extends JsonResource
+class RoleResource extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -15,9 +12,7 @@ class RoleResource extends JsonResource
      */
     public function toArray($request)
     {
-        $baseProperties = ArrayHelper::convertToCamelKey(parent::toArray($request), 2);
-
-        return array_merge($baseProperties, [
+        return array_merge(parent::toArray($request), [
 
             // Relationships
             'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),

@@ -14,15 +14,10 @@ use Illuminate\Support\Facades\Route;
 */
 use App\Http\Requests\Request;
 use App\Models\Account;
-use App\Http\Resources\AccountResource;
+use App\Http\Resources\Resource;
 
 Route::get('test', function (Request $request) {
-    $game = Account::first()->loadMissing('accountType');
-    $game->password = '3453454543565ddd6ddddsf';
-    dd($game->relationsToArray(),  $game->getRawOriginal());
-    $game->save();
-    dd($game->getChanges(), $game->getRawOriginal());
-    return new AccountResource($game);
+    return Resource::withLoadRelationships(Account::first(), $request);
 });
 
 // ====================================================

@@ -45,14 +45,11 @@ class AccountFeeController extends Controller
 
             DB::commit();
         } catch (\Throwable $th) {
-            //throw $th;
             DB::rollback();
-            return response()->json([
-                'message' => 'Thêm mới lệ phí tài khoản thất bại, vui lòng thử lại sau.'
-            ], 500);
+            throw $th;
         }
 
-        return new AccountFeeResource($accountFee);
+        return AccountFeeResource::withLoadRelationships($accountFee);
     }
 
     /**
@@ -86,14 +83,11 @@ class AccountFeeController extends Controller
 
             DB::commit();
         } catch (\Throwable $th) {
-            //throw $th;
             DB::rollback();
-            return response()->json([
-                'message' => 'Thêm mới lệ phí tài khoản thất bại, vui lòng thử lại sau.'
-            ], 500);
+            throw $th;
         }
 
-        return new AccountFeeResource($accountFee);
+        return AccountFeeResource::withLoadRelationships($accountFee);
     }
 
     /**
@@ -109,12 +103,8 @@ class AccountFeeController extends Controller
             $accountFee->delete();
             DB::commit();
         } catch (\Throwable $th) {
-            //throw $th;
             DB::rollback();
-
-            return response()->json([
-                'message' => 'Xoá lệ phí tài khoản thất bại, vui lòng thử lại sau.'
-            ], 500);
+            throw $th;
         }
 
         return response()->json([

@@ -64,14 +64,11 @@ class GameInfoController extends Controller
 
             DB::commit();
         } catch (\Throwable $th) {
-            throw $th;
             DB::rollBack();
-            return response()->json([
-                'message' => 'Thêm mới thông tin game thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
-        return new GameInfoResource($gameInfo->refresh()->loadMissing($this->_with));
+        return GameInfoResource::withLoadRelationships($gameInfo->refresh());
     }
 
     /**
@@ -82,8 +79,7 @@ class GameInfoController extends Controller
      */
     public function show(GameInfo $gameInfo)
     {
-        $_with = $this->_with;
-        return new GameInfoResource($gameInfo->loadMissing($_with));
+        return GameInfoResource::withLoadRelationships($gameInfo);
     }
 
     /**
@@ -126,14 +122,11 @@ class GameInfoController extends Controller
 
             DB::commit();
         } catch (\Throwable $th) {
-            throw $th;
             DB::rollBack();
-            return response()->json([
-                'message' => 'Cập nhật thông tin game thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
-        return new GameInfoResource($gameInfo->load($this->_with));
+        return GameInfoResource::withLoadRelationships($gameInfo);
     }
 
     /**
@@ -154,11 +147,8 @@ class GameInfoController extends Controller
 
             DB::commit();
         } catch (\Throwable $th) {
-            //throw $th;
             DB::rollBack();
-            return response()->json([
-                'message' => 'Xoá thông tin game thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
         return response()->json([

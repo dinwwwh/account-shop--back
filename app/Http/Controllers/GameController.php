@@ -59,15 +59,12 @@ class GameController extends Controller
             $game = Game::create($gameData); // Save rule to database
             DB::commit();
         } catch (\Throwable $th) {
-            return $th;
             DB::rollback();
             Storage::delete($imagePath);
-            return response()->json([
-                'message' => 'Thêm game thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
-        return new GameResource($game->refresh()->loadMissing($this->_with));
+        return GameResource::withLoadRelationships($game->refresh());
     }
 
     /**
@@ -78,9 +75,7 @@ class GameController extends Controller
      */
     public function show(Game $game)
     {
-        $_with = $this->_with;
-        $game->loadMissing($_with);
-        return new GameResource($game);
+        return GameResource::withLoadRelationships($game);
     }
 
     /**
@@ -90,7 +85,7 @@ class GameController extends Controller
      */
     public function getUsableGame()
     {
-        $roles = auth()->user()->roles;
+        $roles = auth()->user()->roles()->with('accountType.game')->get();
         $games = new Collection;
         foreach ($roles as $role) {
             foreach ($role->accountTypes as $accountType) {
@@ -99,7 +94,7 @@ class GameController extends Controller
                 }
             }
         }
-        return GameResource::collection($games->loadMissing($this->_with));
+        return GameResource::collection($games);
     }
 
     /**
@@ -145,7 +140,7 @@ class GameController extends Controller
             throw $th;
         }
 
-        return new GameResource($game->load($this->_with));
+        return GameResource::withLoadRelationships($game);
     }
 
     /**
@@ -166,9 +161,7 @@ class GameController extends Controller
             Storage::delete($imagePath);
         } catch (\Throwable $th) {
             DB::rollback();
-            return response()->json([
-                'message' => 'Xoá game thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
         return response()->json([
@@ -194,10 +187,7 @@ class GameController extends Controller
         } catch (\Throwable $th) {
             throw $th;
             DB::rollBack();
-            return response()->json([
-                'message' => 'Cho phép phiếu giảm giá được phép sử dụng trong '
-                    . $game->name . ' thất bại, vui lòng thử lại sau!',
-            ], 500);
+            throw $th;
         }
 
         return response()->json([

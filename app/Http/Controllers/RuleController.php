@@ -48,12 +48,10 @@ class RuleController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
-            return response()->json([
-                'message' => 'Tạo rule thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
-        return new RuleResource($rule->refresh());
+        return RuleResource::withLoadRelationships($rule->refresh());
     }
 
     /**
@@ -64,9 +62,7 @@ class RuleController extends Controller
      */
     public function show(Rule $rule)
     {
-        $_with = $this->_with;
-        $rule->loadMissing($_with);
-        return new RuleResource($rule);
+        return RuleResource::withLoadRelationships($rule);
     }
 
     /**
@@ -96,12 +92,10 @@ class RuleController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
-            return response()->json([
-                'message' => 'Cập nhật rule thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
-        return new RuleResource($rule);
+        return RuleResource::withLoadRelationships($rule);
     }
 
     /**
@@ -119,9 +113,7 @@ class RuleController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
-            return response()->json([
-                'message' => 'Xoá rule thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
         return response()->json([

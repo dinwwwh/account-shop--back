@@ -60,11 +60,8 @@ class AccountTradingController extends Controller
             // When Success
             DB::commit();
         } catch (\Throwable $th) {
-            //throw $th;
             DB::rollback();
-            return response()->json([
-                'message' => 'Lỗi nội bộ sever, vui lòng thử lại sau',
-            ], 500);
+            throw $th;
         }
 
         return response()->json([
@@ -81,8 +78,6 @@ class AccountTradingController extends Controller
      */
     public function calculateDetailPrice(Request $request, Account $account)
     {
-        return [
-            'data' => $account->calculatePrice($request->discountCode, true),
-        ];
+        return response(['data' => $account->calculatePrice($request->discountCode, true),]);
     }
 }

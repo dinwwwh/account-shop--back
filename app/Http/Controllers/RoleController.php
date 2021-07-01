@@ -48,9 +48,7 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        $_with = $this->_with;
-        $role->loadMissing($_with);
-        return new RoleResource($role);
+        return RoleResource::withLoadRelationships($role);
     }
 
     /**

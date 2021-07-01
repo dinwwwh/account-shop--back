@@ -12,7 +12,6 @@ use App\Models\Game;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
 
 class AccountTypeController extends Controller
@@ -104,8 +103,7 @@ class AccountTypeController extends Controller
             throw $th;
         }
 
-        $accountType->load($this->_with);
-        return new AccountTypeResource($accountType);
+        return AccountTypeResource::withLoadRelationships($accountType);
     }
 
     /**
@@ -116,8 +114,7 @@ class AccountTypeController extends Controller
      */
     public function show(AccountType $accountType)
     {
-        $_with = $this->_with;
-        return new AccountTypeResource($accountType->loadMissing($_with));
+        return AccountTypeResource::withLoadRelationships($accountType);
     }
 
     /**
@@ -173,12 +170,10 @@ class AccountTypeController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
-            return response()->json([
-                'message' => 'Cập nhật kiểu tài khoản thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
-        return new AccountTypeResource($accountType->loadMissing($this->_with));
+        return AccountTypeResource::withLoadRelationships($accountType);
     }
 
     /**
@@ -197,9 +192,7 @@ class AccountTypeController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
-            return response()->json([
-                'message' => 'Xoá kiểu tài khoản thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
         return response()->json([

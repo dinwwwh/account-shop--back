@@ -61,12 +61,10 @@ class AccountActionController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
-            return response()->json([
-                'message' => 'Thêm mới công việc cần thiết để đăng tài khoản thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
-        return new AccountActionResource($accountAction->refresh()->loadMissing($this->_with));
+        return AccountActionResource::withLoadRelationships($accountAction->refresh());
     }
 
     /**
@@ -77,9 +75,7 @@ class AccountActionController extends Controller
      */
     public function show(AccountAction $accountAction)
     {
-        $_with = $this->_with;
-        $accountAction->loadMissing($_with);
-        return new AccountActionResource($accountAction);
+        return AccountActionResource::withLoadRelationships($accountAction);
     }
 
     /**
@@ -121,12 +117,10 @@ class AccountActionController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
-            return response()->json([
-                'message' => 'Cập nhật công việc cần thiết để đăng tài khoản thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
-        return new AccountActionResource($accountAction->loadMissing($this->_with));
+        return AccountActionResource::withLoadRelationships($accountAction);
     }
 
     /**
@@ -145,9 +139,7 @@ class AccountActionController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
-            return response()->json([
-                'message' => 'Xoá công việc cần thiết để đăng tài khoản thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
         return response()->json([

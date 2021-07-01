@@ -4,10 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use App\Models\AccountType;
-use App\Models\Game;
-use App\Models\Rule;
-use App\Models\DeleteFile;
-use App\Models\User;
 use App\Models\Role;
 use App\Http\Requests\StoreAccountRequest;
 use App\Http\Requests\UpdateAccountRequest;
@@ -17,19 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Request;
-use Illuminate\Validation\Rule as RuleHelper;
-use App\Hooks\StoringAccountHook;
-use App\Hooks\StoredAccountHook;
-use App\Hooks\UpdatingAccountHook;
-use App\Hooks\UpdatedAccountHook;
-use App\Hooks\ApprovingAccountHook;
-use App\Hooks\ApprovedAccountHook;
-use App\Hooks\BuyingAccountHook;
-use App\Hooks\BoughtAccountHook;
-use App\Models\GameInfo;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
-
 
 class AccountController extends Controller
 {
@@ -171,7 +155,6 @@ class AccountController extends Controller
             }
 
             // Save account in database
-            StoringAccountHook::execute($account); #Hook
             $account->save();
 
             // Handle relationship
@@ -226,8 +209,7 @@ class AccountController extends Controller
             throw $th;
         }
 
-        StoredAccountHook::execute($account);
-        return new AccountResource($account->refresh()->loadMissing($this->_with));
+        return AccountResource::withLoadRelationships($account->refresh());
     }
 
     /**
@@ -240,7 +222,6 @@ class AccountController extends Controller
     public function approve(Request $request, Account $account)
     {
         try {
-            ApprovingAccountHook::execute($account);
 
             switch ($account->status_code) {
                 case 0:
@@ -257,15 +238,12 @@ class AccountController extends Controller
             // When success
             $account->approved_at = Carbon::now();
             $account->save();
-            ApprovedAccountHook::execute($account);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Lỗi nội bộ sever, vui lòng thử lại sau.',
-            ], 500);
+            throw $th;
         }
 
         // Done
-        return new AccountResource($account);
+        return AccountResource::withLoadRelationships($account);
     }
 
     /**
@@ -276,9 +254,7 @@ class AccountController extends Controller
      */
     public function show(Account $account)
     {
-        $_with = $this->_with;
-        $account->loadMissing($_with);
-        return new AccountResource($account);
+        return AccountResource::withLoadRelationships($account);
     }
 
     /**
@@ -382,7 +358,6 @@ class AccountController extends Controller
             }
 
             // Save account in database
-            UpdatingAccountHook::execute($account);
             $account->save();
 
             // Handle relationship
@@ -440,20 +415,15 @@ class AccountController extends Controller
             }
             DB::commit();
         } catch (\Throwable $th) {
-            //throw $th;
             DB::rollback();
             // Handle delete images
             foreach ($imagePathsNeedDeleteWhenFail as $imagePath) {
                 Storage::delete($imagePath);
             }
-            return $th;
-            return response()->json([
-                'message' => 'Chỉnh sửa tài khoản vào hệ thống thất bại.'
-            ], 500);
+            throw $th;
         }
 
-        UpdatedAccountHook::execute($account);
-        return new AccountResource($account->loadMissing($this->_with));
+        return AccountResource::withLoadRelationships($account);
     }
 
     /**
@@ -487,9 +457,7 @@ class AccountController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
-            return response()->json([
-                'message' => 'Xoá tài khoản thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
         return response()->json([

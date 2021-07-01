@@ -31,19 +31,16 @@ class DiscountCodeTradingController extends Controller
 
             DB::commit();
         } catch (\Throwable $th) {
-            //throw $th;
             DB::rollBack();
-            return response()->json([
-                'message' => 'Lỗi không xác định.',
-            ], 500);
+            throw $th;
         }
 
         if ($result) {
-            return new DiscountCodeResource($discountCode);
+            return DiscountCodeResource::withLoadRelationships($discountCode);
         } else {
             return response()->json([
-                'message' => 'Mua phiếu giảm giá thất bại.',
-            ], 500);
+                'message' => 'Bạn không đủ tiền hoặc sao đó.',
+            ], 422);
         }
     }
 }

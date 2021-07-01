@@ -52,14 +52,11 @@ class DiscountCodeController extends Controller
 
             DB::commit();
         } catch (\Throwable $th) {
-            // throw $th;
             DB::rollBack();
-            return response()->json([
-                'message' => 'Thêm mới phiếu giảm giá thất bại, vui lòng thử lại sau!',
-            ], 500);
+            throw $th;
         }
 
-        return new DiscountCodeResource($discountCode->refresh());
+        return DiscountCodeResource::withLoadRelationships($discountCode->refresh());
     }
 
     /**
@@ -70,9 +67,7 @@ class DiscountCodeController extends Controller
      */
     public function show(DiscountCode $discountCode)
     {
-        $_with = $this->_with;
-        $discountCode->loadMissing($_with);
-        return new DiscountCodeResource($discountCode);
+        return DiscountCodeResource::withLoadRelationships($discountCode);
     }
 
     /**
@@ -104,14 +99,11 @@ class DiscountCodeController extends Controller
 
             DB::commit();
         } catch (\Throwable $th) {
-            // throw $th;
             DB::rollBack();
-            return response()->json([
-                'message' => 'Thêm mới phiếu giảm giá thất bại, vui lòng thử lại sau!',
-            ], 500);
+            throw $th;
         }
 
-        return new DiscountCodeResource($discountCode->refresh());
+        return DiscountCodeResource::withLoadRelationships($discountCode);
     }
 
     /**
@@ -131,11 +123,8 @@ class DiscountCodeController extends Controller
 
             DB::commit();
         } catch (\Throwable $th) {
-            throw $th;
             DB::rollBack();
-            return response()->json([
-                'message' => 'Xoá phiếu giảm giá thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
         return response()->json([

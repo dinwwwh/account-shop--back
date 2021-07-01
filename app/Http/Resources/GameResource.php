@@ -2,12 +2,7 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
-use App\Helpers\ArrayHelper;
-
-class GameResource extends JsonResource
+class GameResource extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -17,9 +12,7 @@ class GameResource extends JsonResource
      */
     public function toArray($request)
     {
-        $baseProperties = ArrayHelper::convertToCamelKey(parent::toArray($request));
-
-        return array_merge($baseProperties, [
+        return array_merge(parent::toArray($request), [
 
             // Relationship
             'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),

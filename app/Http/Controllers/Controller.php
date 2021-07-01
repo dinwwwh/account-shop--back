@@ -7,7 +7,6 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
-use App\Helpers\RequestHelper;
 
 class Controller extends BaseController
 {
@@ -30,7 +29,7 @@ class Controller extends BaseController
 
     function  __construct(Request $request)
     {
-        $this->_with = RequestHelper::handleWithAttribute($request);
+        $this->_with = config('request.requiredModelRelationships', []);
         $this->_search = (string)$request->_search;
     }
 }
