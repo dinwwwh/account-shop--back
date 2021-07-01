@@ -47,9 +47,6 @@ class AccountFactory extends Factory
             'description' => $this->faker->title,
             'representative_image_path' => '404 not found',
             'last_role_key_editor_used' => 'tester',
-            'game_id' => function (array $attributes) {
-                return AccountType::find($attributes['account_type_id']())->game->getKey();
-            }
         ];
     }
 

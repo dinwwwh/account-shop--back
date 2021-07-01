@@ -23,11 +23,12 @@ class Controller extends BaseController
     /**
      * It's word used to search query
      *
+     * @param \Illuminate\Http\Request $request
      * @var string
      */
     public string $_search;
 
-    function __construct(Request $request)
+    function  __construct(Request $request)
     {
         $this->_with = RequestHelper::handleWithAttribute($request);
         $this->_search = (string)$request->_search;

@@ -66,7 +66,7 @@ class AccountActionController extends Controller
             ], 500);
         }
 
-        return new AccountActionResource($accountAction);
+        return new AccountActionResource($accountAction->refresh()->loadMissing($this->_with));
     }
 
     /**
@@ -126,7 +126,7 @@ class AccountActionController extends Controller
             ], 500);
         }
 
-        return new AccountActionResource($accountAction);
+        return new AccountActionResource($accountAction->loadMissing($this->_with));
     }
 
     /**

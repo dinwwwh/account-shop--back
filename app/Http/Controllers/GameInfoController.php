@@ -71,7 +71,7 @@ class GameInfoController extends Controller
             ], 500);
         }
 
-        return new GameInfoResource($gameInfo->refresh());
+        return new GameInfoResource($gameInfo->refresh()->loadMissing($this->_with));
     }
 
     /**
@@ -133,7 +133,7 @@ class GameInfoController extends Controller
             ], 500);
         }
 
-        return new GameInfoResource($gameInfo->refresh());
+        return new GameInfoResource($gameInfo->load($this->_with));
     }
 
     /**

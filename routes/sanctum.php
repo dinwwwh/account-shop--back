@@ -17,8 +17,11 @@ use App\Models\Account;
 use App\Http\Resources\AccountResource;
 
 Route::get('test', function (Request $request) {
-    $game = Account::last();
-    $game->accountTypes;
+    $game = Account::first()->loadMissing('accountType');
+    $game->password = '3453454543565ddd6ddddsf';
+    dd($game->relationsToArray(),  $game->getRawOriginal());
+    $game->save();
+    dd($game->getChanges(), $game->getRawOriginal());
     return new AccountResource($game);
 });
 

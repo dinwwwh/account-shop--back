@@ -67,7 +67,7 @@ class GameController extends Controller
             ], 500);
         }
 
-        return new GameResource($game->refresh());
+        return new GameResource($game->refresh()->loadMissing($this->_with));
     }
 
     /**
@@ -140,15 +140,12 @@ class GameController extends Controller
             // handle when success
             Storage::delete($imagePathMustDeleteWhenSuccess ?? null);
         } catch (\Throwable $th) {
-            return $th;
             DB::rollback();
             Storage::delete($imagePath ?? null);
-            return response()->json([
-                'message' => 'Chỉnh sửa game thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
-        return new GameResource($game);
+        return new GameResource($game->load($this->_with));
     }
 
     /**

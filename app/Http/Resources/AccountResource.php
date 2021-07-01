@@ -34,14 +34,16 @@ class AccountResource extends JsonResource
             // Relationships contain pivot property
             'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),
 
-            // Merge when auth an view sensitive infos
+            // Merge when auth can view sensitive infos
             $this->mergeWhen(
                 auth()->check() && auth()->user()->can('viewSensitiveInfo', $this->resource),
-                fn () => [
-                    'accountActions' => AccountActionResource::collection($this->whenLoaded('accountActions')),
-                    'accountInfos' => AccountInfoResource::collection($this->whenLoaded('accountInfos')),
-                    'password' => $this->password,
-                ]
+                function () {
+                    return [
+                        'accountActions' => AccountActionResource::collection($this->whenLoaded('accountActions')),
+                        'accountInfos' => AccountInfoResource::collection($this->whenLoaded('accountInfos')),
+                        'password' => $this->password,
+                    ];
+                }
             ),
         ]);
     }

@@ -453,7 +453,7 @@ class AccountController extends Controller
         }
 
         UpdatedAccountHook::execute($account);
-        return new AccountResource($account);
+        return new AccountResource($account->loadMissing($this->_with));
     }
 
     /**

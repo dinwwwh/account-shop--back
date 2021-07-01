@@ -66,11 +66,11 @@ class Account extends Model
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
+     * The attributes & relationships that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = ['password'];
+    protected $hidden = ['password', 'accountActions', 'accountInfos'];
 
     /**
      * To set default

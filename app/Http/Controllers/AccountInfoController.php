@@ -69,7 +69,7 @@ class AccountInfoController extends Controller
             ], 500);
         }
 
-        return new AccountInfoResource($accountInfo->refresh());
+        return new AccountInfoResource($accountInfo->refresh()->load($this->_with));
     }
 
     /**

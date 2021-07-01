@@ -100,14 +100,12 @@ class AccountTypeController extends Controller
             // When success
             DB::commit();
         } catch (\Throwable $th) {
-            return $th;
             DB::rollback();
-            return response()->json([
-                'message' => 'Thêm mới kiểu tài khoản thất bại, vui lòng thừ lại sau.',
-            ], 500);
+            throw $th;
         }
 
-        return new AccountTypeResource($accountType->refresh());
+        $accountType->load($this->_with);
+        return new AccountTypeResource($accountType);
     }
 
     /**
@@ -180,7 +178,7 @@ class AccountTypeController extends Controller
             ], 500);
         }
 
-        return new AccountTypeResource($accountType);
+        return new AccountTypeResource($accountType->loadMissing($this->_with));
     }
 
     /**
