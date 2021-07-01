@@ -23,4 +23,24 @@ class ArrayHelper
         }
         return $result;
     }
+
+    /**
+     * Convert an array with key is snackCase to camelCase
+     * Notice this method diff array_diff function
+     * And just compare values of keys that it's key existed
+     *
+     * @param array $arr
+     * @param array $comparedArr
+     * @return array
+     */
+    static public function diff(array $arr, array $comparedArr): array
+    {
+        $difference = [];
+        foreach ($arr as $key => $value) {
+            if (array_key_exists($key, $comparedArr) && $value != $comparedArr[$key]) {
+                $difference[$key] = $value;
+            }
+        }
+        return $difference;
+    }
 }
