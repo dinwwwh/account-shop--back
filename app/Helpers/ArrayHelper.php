@@ -18,7 +18,7 @@ class ArrayHelper
         $result = [];
         foreach ($arr as $key => $value) {
             $result[Str::camel($key)] = is_array($value)
-                ? static::convertToCamelKey($value, $depth - 1)
+                ? static::convertArrayKeyToCamelCase($value, $depth - 1)
                 : $value;
         }
         return $result;
