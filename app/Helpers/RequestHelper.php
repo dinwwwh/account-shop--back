@@ -10,7 +10,7 @@ class RequestHelper
      * @param $request
      * @return array
      */
-    static function handleWithAttribute($request): array
+    static function generateRequiredModelRelationships($request): array
     {
         $_with = $request->_with;
         if (is_string($_with)) {
