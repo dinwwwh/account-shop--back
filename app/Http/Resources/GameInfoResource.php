@@ -17,11 +17,7 @@ class GameInfoResource extends Resource
     {
         return array_merge(parent::toArray($request), [
 
-            // Relationships
-            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
-            'creator' => new UserResource($this->whenLoaded('creator')),
-            'rule' => new RuleResource($this->whenLoaded('rule')),
-            'game' => new GameResource($this->whenLoaded('game')),
+            // Relationships (exclude one-one & one-many-inverse relationships)
             'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
         ]);
     }

@@ -14,8 +14,8 @@ class AccountImageResource extends Resource
     {
         return array_merge(parent::toArray($request), [
 
-            // Relationships
-            'account' => new AccountResource($this->whenLoaded('account'))
+            // Relationships (exclude one-one & one-many-inverse relationships)
+
         ]);
     }
 }

@@ -21,10 +21,7 @@ class AccountActionResource extends Resource
     {
         return array_merge(parent::toArray($request), [
 
-            // Relationships
-            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
-            'creator' => new UserResource($this->whenLoaded('creator')),
-            'accountType' => new UserResource($this->whenLoaded('accountType')),
+            // Relationships (exclude one-one & one-many-inverse relationships)
             'requiredRoles' => RoleResource::collection($this->whenLoaded('requiredRoles')),
             'accounts' => RoleResource::collection($this->whenLoaded('accounts')),
         ]);

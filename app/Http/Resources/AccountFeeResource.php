@@ -14,10 +14,8 @@ class AccountFeeResource extends Resource
     {
         return array_merge(parent::toArray($request), [
 
-            // Relationships
-            'creator' => new UserResource($this->whenLoaded('creator')),
-            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
-            'accountType' => new UserResource($this->whenLoaded('accountType')),
+            // Relationships (exclude one-one & one-many-inverse relationships)
+
         ]);
     }
 }

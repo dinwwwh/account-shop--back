@@ -21,11 +21,7 @@ class AccountInfoResource extends Resource
     {
         return array_merge(parent::toArray($request), [
 
-            // Relationships
-            'creator' => new UserResource($this->whenLoaded('creator')),
-            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
-            'rule' => new RuleResource($this->whenLoaded('rule')),
-            'accountType' => new RuleResource($this->whenLoaded('accountType')),
+            // Relationships (exclude one-one & one-many-inverse relationships)
             'accounts' => new RuleResource($this->whenLoaded('accounts')),
         ]);
     }

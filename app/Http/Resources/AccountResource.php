@@ -18,17 +18,11 @@ class AccountResource extends Resource
             // Special attributes
             'price' => $this->calculateTemporaryPrice(),
 
-            // Relationship
-            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
-            'creator' => new UserResource($this->whenLoaded('creator')),
-            'censor' => new UserResource($this->whenLoaded('censor')),
-            'accountType' => new AccountTypeResource($this->whenLoaded('accountType')),
+            // Relationships (exclude one-one & one-many-inverse relationships)
             'images' => AccountImageResource::collection($this->whenLoaded('images')),
-
-            // Relationships contain pivot property
             'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),
 
-            // Merge when auth can view sensitive infos
+            // Just merge when auth can view sensitive infos
             $this->mergeWhen(
                 auth()->check() && auth()->user()->can('viewSensitiveInfo', $this->resource),
                 function () {

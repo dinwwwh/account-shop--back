@@ -16,6 +16,10 @@ class Resource extends JsonResource
     public function toArray($request)
     {
         // Convert keys of all-layers to camel case
+        // Especially parent::toArray() method used toArray method in model
+        // This method generate unhidden attributes and loaded relationship one-one, one-many-inverse
+        // Therefore all-resources don't need declare relationship one-one and one-many-inverse
+        // Unless you want to show hidden attributes in that relationships
         return  ArrayHelper::convertArrayKeyToCamelCase(parent::toArray($request), -1);
     }
 

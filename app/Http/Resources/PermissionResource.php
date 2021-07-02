@@ -14,7 +14,7 @@ class PermissionResource extends Resource
     {
         return array_merge(parent::toArray($request), [
 
-            // Relationships
+            // Relationships (exclude one-one & one-many-inverse relationships)
             'users' => UserResource::collection($this->whenLoaded('users')),
             'roles' => RoleResource::collection($this->whenLoaded('roles')),
         ]);

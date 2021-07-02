@@ -14,9 +14,7 @@ class GameResource extends Resource
     {
         return array_merge(parent::toArray($request), [
 
-            // Relationship
-            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
-            'creator' => new UserResource($this->whenLoaded('creator')),
+            // Relationships (exclude one-one & one-many-inverse relationships)
             'accountTypes' => AccountTypeResource::collection($this->whenLoaded('accountTypes')),
             'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),
             'usableDiscountCodes' => DiscountCodeResource::collection($this->whenLoaded('usableDiscountCodes')),
