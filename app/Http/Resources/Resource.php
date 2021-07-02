@@ -27,8 +27,18 @@ class Resource extends JsonResource
     {
         // Get required model relationships form config
         $requiredRelationships = config('request.requiredModelRelationships', []);
-        // Load missing required relationships
-        $resource->loadMissing($requiredRelationships);
+        // Load all required relationships
+        $resource->load($requiredRelationships);
+
+        return new static($resource);
+    }
+
+    static function withLoadMissingRelationships($resource)
+    {
+        // Get required model relationships form config
+        $requiredRelationships = config('request.requiredModelRelationships', []);
+        // Just load missing required relationships
+        $resource->load($requiredRelationships);
 
         return new static($resource);
     }
