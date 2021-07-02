@@ -12,7 +12,7 @@ class RequestHelper
      */
     static function generateRequiredModelRelationships($request): array
     {
-        $_with = $request->_with;
+        $_with = $request->_requiredModelRelationships;
         if (is_string($_with)) {
             $_with = explode('|', $_with);
         }

@@ -18,7 +18,7 @@ class RuleController extends Controller
      */
     public function index()
     {
-        $rules = Rule::with($this->_with)->paginate(15);
+        $rules = Rule::with($this->requiredModelRelationships)->paginate(15);
         return RuleResource::collection($rules);
     }
 

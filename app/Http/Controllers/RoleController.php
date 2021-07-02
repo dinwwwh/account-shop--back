@@ -15,7 +15,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::with($this->_with)->paginate(15);
+        $roles = Role::with($this->requiredModelRelationships)->paginate(15);
         return RoleResource::collection($roles);
     }
 

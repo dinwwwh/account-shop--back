@@ -23,7 +23,7 @@ class AccountTypeController extends Controller
      */
     public function index()
     {
-        $_with = $this->_with;
+        $_with = $this->requiredModelRelationships;
         $accountTypes = AccountType::with($_with)->paginate(15);
         return AccountTypeResource::collection($accountTypes);
     }

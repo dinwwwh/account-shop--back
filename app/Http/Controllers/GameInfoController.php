@@ -22,7 +22,7 @@ class GameInfoController extends Controller
      */
     public function index()
     {
-        $_with = $this->_with;
+        $_with = $this->requiredModelRelationships;
         $gameInfos = GameInfo::with($_with)->paginate(15);
         return GameInfoResource::collection($gameInfos);
     }

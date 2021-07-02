@@ -28,7 +28,7 @@ class AccountController extends Controller
      */
     public function index()
     {
-        $_with = $this->_with;
+        $_with = $this->requiredModelRelationships;
         $accounts = Account::with($_with)->paginate(15);
         return AccountResource::collection($accounts);
     }
@@ -40,8 +40,8 @@ class AccountController extends Controller
      */
     public function manage()
     {
-        $search = $this->_search;
-        $_with = $this->_with;
+        $search = $this->searchedKeyword;
+        $_with = $this->requiredModelRelationships;
         $isManager = auth()->user()->can('manage', 'App\Models\Account');
 
         if ($isManager) {

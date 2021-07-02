@@ -17,7 +17,7 @@ class Controller extends BaseController
      *
      * @var array
      */
-    public array $_with;
+    public array $requiredModelRelationships;
 
     /**
      * It's word used to search query
@@ -25,11 +25,11 @@ class Controller extends BaseController
      * @param \Illuminate\Http\Request $request
      * @var string
      */
-    public string $_search;
+    public string $searchedKeyword;
 
     function  __construct(Request $request)
     {
-        $this->_with = config('request.requiredModelRelationships', []);
-        $this->_search = (string)$request->_search;
+        $this->requiredModelRelationships = config('request.requiredModelRelationships', []);
+        $this->searchedKeyword = (string)$request->_searchedKeyword;
     }
 }

@@ -54,7 +54,6 @@ class AuthController extends Controller
      */
     public function profile()
     {
-        $_with = $this->_with;
         return UserResource::withLoadRelationships(auth()->user());
     }
 

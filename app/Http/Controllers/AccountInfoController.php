@@ -22,7 +22,7 @@ class AccountInfoController extends Controller
      */
     public function index()
     {
-        $_with = $this->_with;
+        $_with = $this->requiredModelRelationships;
         $accountInfos = AccountInfo::with($_with)->paginate(15);
         return AccountInfoResource::collection($accountInfos);
     }

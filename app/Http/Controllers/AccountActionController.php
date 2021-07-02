@@ -21,7 +21,7 @@ class AccountActionController extends Controller
      */
     public function index()
     {
-        $_with = $this->_with;
+        $_with = $this->requiredModelRelationships;
         $accountActions = AccountAction::with($_with)->paginate(15);
         return AccountActionResource::collection($accountActions);
     }
