@@ -26,7 +26,7 @@ class AccountInfoTest extends TestCase
             'order' => rand(1, 100),
             'name' => Str::random(10),
             'description' => Str::random(30),
-            '_with' => ['rule']
+            '_requiredModelRelationships' => ['rule']
         ];
 
         $res = $this->json('post', $route, $data);

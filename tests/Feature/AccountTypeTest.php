@@ -119,7 +119,7 @@ class AccountTypeTest extends TestCase
         $game = Game::inRandomOrder()->first();
         $route = route('account-type.store', ['game' => $game]);
         $data = [
-            '_with' => ['rolesCanUsedAccountType']
+            '_requiredModelRelationships' => ['rolesCanUsedAccountType']
         ];
 
         # Case: validate error
@@ -236,7 +236,7 @@ class AccountTypeTest extends TestCase
                     'statusCode' => 200
                 ]
             ],
-            '_with' => ['rolesCanUsedAccountType']
+            '_requiredModelRelationships' => ['rolesCanUsedAccountType']
         ];
         $res = $this->actingAs($creator)
             ->json('put', route('account-type.update', ['accountType' => $accountType]), $data);

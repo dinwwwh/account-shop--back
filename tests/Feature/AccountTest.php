@@ -101,7 +101,7 @@ class AccountTest extends TestCase
             'accountInfos' => $dataOfAccountInfos,
             'accountActions' => $dataOfAccountActions,
             'gameInfos' => $dataOfGameInfos,
-            '_with' => ['images']
+            '_requiredModelRelationships' => ['images']
         ];
 
         $res = $this->actingAs($user)
@@ -216,7 +216,7 @@ class AccountTest extends TestCase
             'accountInfos' =>  $this->makeDataForAccountInfos($accountType),
             'accountActions' => $this->makeDataForAccountActions($accountType),
             'gameInfos' => $this->makeDataForGameInfos($account->accountType->game),
-            '_with' => ['images']
+            '_requiredModelRelationships' => ['images']
         ];
         $res = $this->actingAs($creator)
             ->json('put', $route, $data);
@@ -341,7 +341,7 @@ class AccountTest extends TestCase
         $user->syncRoles();
         $user->refresh();
         $data = [
-            '_with' => ['accountActions', 'accountInfos'],
+            '_requiredModelRelationships' => ['accountActions', 'accountInfos'],
         ];
 
         # case as a manager

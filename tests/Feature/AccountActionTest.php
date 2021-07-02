@@ -31,7 +31,7 @@ class AccountActionTest extends TestCase
             'videoPath' => Str::random(10),
             'required' => null,
             'requiredRoleKeys' => ['administrator', 'customer'],
-            '_with' => ['requiredRoles']
+            '_requiredModelRelationships' => ['requiredRoles']
         ];
 
         $res = $this->json('post', $route, $data);
@@ -73,7 +73,7 @@ class AccountActionTest extends TestCase
             'description' => Str::random(10),
             'videoPath' => Str::random(10),
             'required' => Arr::random([true, false]),
-            '_with' => ['requiredRoles'],
+            '_requiredModelRelationships' => ['requiredRoles'],
         ];
 
         $res = $this->json('post', $route, $data);
@@ -137,7 +137,7 @@ class AccountActionTest extends TestCase
             'videoPath' => Str::random(10),
             'required' => null,
             'requiredRoleKeys' => ['administrator', 'customer', 'tester'],
-            '_with' => ['requiredRoles'],
+            '_requiredModelRelationships' => ['requiredRoles'],
         ];
 
         $res = $this->json('put', $route, $data);
@@ -164,7 +164,7 @@ class AccountActionTest extends TestCase
             'description' => Str::random(10),
             'videoPath' => Str::random(10),
             'required' => Arr::random([true, false]),
-            '_with' => ['requiredRoles'],
+            '_requiredModelRelationships' => ['requiredRoles'],
         ];
 
         $res = $this->json('put', $route, $data);

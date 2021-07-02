@@ -22,10 +22,9 @@ abstract class TestCase extends BaseTestCase
                 $XSRF_TOKEN = $cookie->getValue();
             }
         }
-        $headers = [
+        $headers = array_merge($headers, [
             'X-XSRF-TOKEN' => $XSRF_TOKEN,
-            ...$headers
-        ];
+        ]);
         return parent::json($method, $uri, $data, $headers);
     }
 }

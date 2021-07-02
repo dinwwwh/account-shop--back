@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Game;
 use App\Models\GameInfo;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -30,7 +31,7 @@ class GameInfoTest extends TestCase
                 'required' => null,
                 'requiredRoleKeys' => ['tester'],
             ],
-            '_with' => ['rule']
+            '_requiredModelRelationships' => ['rule']
         ];
         $res = $this->actingAs($user)
             ->json('post', $route, $data);
@@ -52,7 +53,7 @@ class GameInfoTest extends TestCase
             'rule' => [
                 'required' => Arr::random([true, false]),
             ],
-            '_with' => ['rule'],
+            '_requiredModelRelationships' => ['rule'],
         ];
         $res = $this->actingAs($user)
             ->json('post', $route, $data);
@@ -110,12 +111,13 @@ class GameInfoTest extends TestCase
             'description' => Str::random(80),
             'rule' => [
                 'required' => null,
-                'requiredRoleKeys' => ['tester'],
+                'requiredRoleKeys' => [Role::inRandomOrder()->first()->key],
             ],
-            '_with' => ['rule.requiredRoles']
+            '_requiredModelRelationships' => ['rule.requiredRoles']
         ];
         $res = $this->actingAs($user)
             ->json('put', $route, $data);
+        // dd($res->getData(), $data);
         $res->assertStatus(200);
         $res->assertJson(
             fn ($j) => $j
@@ -135,7 +137,7 @@ class GameInfoTest extends TestCase
         //         'required' => Arr::random([true, false]),
         //         'requiredRoleKeys' => ['tester'],
         //     ],
-        //     '_with' => ['rule.requiredRoles']
+        //     '_requiredModelRelationships' => ['rule.requiredRoles']
         // ];
         // $res = $this->actingAs($user)
         //     ->json('put', $route, $data);
