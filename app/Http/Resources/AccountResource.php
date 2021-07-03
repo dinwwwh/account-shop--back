@@ -19,8 +19,8 @@ class AccountResource extends Resource
             'price' => $this->calculateTemporaryPrice(),
 
             // Relationships (exclude one-one & one-many-inverse relationships)
-            'images' => AccountImageResource::collection($this->whenLoaded('images')),
-            'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),
+            // 'images' => AccountImageResource::collection($this->whenLoaded('images')),
+            // 'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),
 
             // Just merge when auth can view sensitive infos
             $this->mergeWhen(

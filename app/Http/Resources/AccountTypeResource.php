@@ -15,11 +15,11 @@ class AccountTypeResource extends Resource
         return array_merge(parent::toArray($request), [
 
             // Relationships (exclude one-one & one-many-inverse relationships)
-            'accountInfos' => AccountInfoResource::collection($this->whenLoaded('accountInfos')),
-            'accountActions' => AccountActionResource::collection($this->whenLoaded('accountActions')),
-            'accountFees' => AccountFeeResource::collection($this->whenLoaded('accountFees')),
-            'rolesCanUsedAccountType' => RoleResource::collection($this->whenLoaded('rolesCanUsedAccountType')),
-            'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
+            // 'accountInfos' => AccountInfoResource::collection($this->whenLoaded('accountInfos')),
+            // 'accountActions' => AccountActionResource::collection($this->whenLoaded('accountActions')),
+            // 'accountFees' => AccountFeeResource::collection($this->whenLoaded('accountFees')),
+            // 'rolesCanUsedAccountType' => RoleResource::collection($this->whenLoaded('rolesCanUsedAccountType')),
+            // 'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
         ]);
     }
 }

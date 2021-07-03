@@ -15,7 +15,7 @@ class RuleResource extends Resource
         return array_merge(parent::toArray($request), [
 
             // Relationships (exclude one-one & one-many-inverse relationships)
-            'requiredRoles' => RoleResource::collection($this->whenLoaded('requiredRoles')),
+            // 'requiredRoles' => RoleResource::collection($this->whenLoaded('requiredRoles')),
         ]);
     }
 }

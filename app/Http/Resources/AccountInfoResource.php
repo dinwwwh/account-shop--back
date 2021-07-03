@@ -22,7 +22,7 @@ class AccountInfoResource extends Resource
         return array_merge(parent::toArray($request), [
 
             // Relationships (exclude one-one & one-many-inverse relationships)
-            'accounts' => new RuleResource($this->whenLoaded('accounts')),
+            // 'accounts' => new RuleResource($this->whenLoaded('accounts')),
         ]);
     }
 }

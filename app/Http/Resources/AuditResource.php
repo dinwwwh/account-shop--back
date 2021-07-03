@@ -2,10 +2,7 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-use App\Helpers\ArrayHelper;
-
-class GameInfoResource extends Resource
+class AuditResource extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -18,7 +15,6 @@ class GameInfoResource extends Resource
         return array_merge(parent::toArray($request), [
 
             // Relationships (exclude one-one & one-many-inverse relationships)
-            // 'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
         ]);
     }
 }

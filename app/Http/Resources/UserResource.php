@@ -15,8 +15,8 @@ class UserResource extends Resource
         return array_merge(parent::toArray($request), [
 
             // Relationships (exclude one-one & one-many-inverse relationships)
-            'roles' => RoleResource::collection($this->whenLoaded('roles')),
-            'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),
+            // 'roles' => RoleResource::collection($this->whenLoaded('roles')),
+            // 'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),
         ]);
     }
 }

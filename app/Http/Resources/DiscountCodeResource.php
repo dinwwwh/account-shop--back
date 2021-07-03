@@ -15,8 +15,8 @@ class DiscountCodeResource extends Resource
         return array_merge(parent::toArray($request), [
 
             // Relationships (exclude one-one & one-many-inverse relationships)
-            'buyers' => UserResource::collection($this->whenLoaded('buyers')),
-            'supportedGames' => GameResource::collection($this->whenLoaded('supportedGames')),
+            // 'buyers' => UserResource::collection($this->whenLoaded('buyers')),
+            // 'supportedGames' => GameResource::collection($this->whenLoaded('supportedGames')),
         ]);
     }
 }
