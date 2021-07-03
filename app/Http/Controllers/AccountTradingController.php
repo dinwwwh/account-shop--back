@@ -25,7 +25,7 @@ class AccountTradingController extends Controller
         if (!auth()->user()->checkEnoughGoldCoin($bestPrice)) {
             return response()->json([
                 'message' => 'Bạn không đủ số lượng đồng vàng để mua tài khoản này.',
-            ], 501);
+            ], 422);
         }
 
         try {

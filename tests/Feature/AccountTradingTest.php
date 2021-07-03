@@ -39,14 +39,14 @@ class AccountTradingTest extends TestCase
             ->where('status_code', '>=', 400)
             ->where('status_code', '<=', 499)
             ->first();
-        $user = User::inRandomOrder()->first();
+        $user = User::where('id', '!=', $account->creator->id)->inRandomOrder()->first();
         $route = route('account-trading.buy', ['account' => $account]);
         # Case: don't enough gold coin to buy account
         $user->gold_coin = rand(1, $account->cost - 1);
         $user->save();
         $res = $this->actingAs($user)
             ->json('post', $route);
-        $res->assertStatus(501);
+        $res->assertStatus(422);
     }
 
     public function testBuyRouteMiddleware()
