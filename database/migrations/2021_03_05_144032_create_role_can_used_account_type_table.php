@@ -14,9 +14,11 @@ class CreateRoleCanUsedAccountTypeTable extends Migration
     public function up()
     {
         Schema::create('role_can_used_account_type', function (Blueprint $table) {
+            $table->id();
             $table->string('role_key');
             $table->integer('account_type_id');
             $table->integer('status_code')->default(0);
+            $table->timestamps();
         });
     }
 

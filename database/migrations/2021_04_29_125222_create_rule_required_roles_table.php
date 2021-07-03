@@ -14,8 +14,10 @@ class CreateRuleRequiredRolesTable extends Migration
     public function up()
     {
         Schema::create('rule_required_roles', function (Blueprint $table) {
+            $table->id();
             $table->bigInteger('rule_id');
             $table->string('role_key');
+            $table->timestamps();
         });
     }
 

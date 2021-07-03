@@ -14,6 +14,7 @@ class CreateDiscountCodeSupportedModelsTable extends Migration
     public function up()
     {
         Schema::create('discount_code_supported_models', function (Blueprint $table) {
+            $table->id();
             $table->string('discount_code_discount_code');
             $table->integer('model_id');
             $table->string('model_type');

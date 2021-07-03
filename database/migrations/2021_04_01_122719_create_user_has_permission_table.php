@@ -14,8 +14,10 @@ class CreateUserHasPermissionTable extends Migration
     public function up()
     {
         Schema::create('user_has_permission', function (Blueprint $table) {
+            $table->id();
             $table->bigInteger('user_id');
             $table->string('permission_key');
+            $table->timestamps();
         });
     }
 

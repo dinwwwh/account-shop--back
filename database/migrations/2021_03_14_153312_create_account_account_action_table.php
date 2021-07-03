@@ -14,6 +14,7 @@ class CreateAccountAccountActionTable extends Migration
     public function up()
     {
         Schema::create('account_account_action', function (Blueprint $table) {
+            $table->id();
             $table->bigInteger('account_id');
             $table->integer('account_action_id');
             $table->boolean('is_done');

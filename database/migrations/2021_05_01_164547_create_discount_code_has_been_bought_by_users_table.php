@@ -14,8 +14,10 @@ class CreateDiscountCodeHasBeenBoughtByUsersTable extends Migration
     public function up()
     {
         Schema::create('discount_code_has_been_bought_by_users', function (Blueprint $table) {
+            $table->id();
             $table->bigInteger('user_id');
             $table->string('discount_code');
+            $table->timestamps();
         });
     }
 

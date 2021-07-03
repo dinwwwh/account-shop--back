@@ -14,6 +14,7 @@ class CreateAccountAccountInfoTable extends Migration
     public function up()
     {
         Schema::create('account_account_info', function (Blueprint $table) {
+            $table->id();
             $table->bigInteger('account_id');
             $table->integer('account_info_id');
             $table->json('value');

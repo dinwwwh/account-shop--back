@@ -14,6 +14,7 @@ class CreateAccountHasGameInfosTable extends Migration
     public function up()
     {
         Schema::create('account_has_game_infos', function (Blueprint $table) {
+            $table->id();
             $table->integer('account_id');
             $table->integer('game_info_id');
             $table->json('value');
