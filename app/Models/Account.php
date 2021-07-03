@@ -11,13 +11,16 @@ use App\Casts\StorageFile;
 use App\PivotModels\AccountAccountAction;
 use App\PivotModels\AccountAccountInfo;
 use App\PivotModels\AccountHasGameInfos;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Account extends Model
+
+class Account extends Model implements Auditable
 {
     use HasFactory,
         SoftDeletes,
         ManageAccountFeeInAccount,
-        ManagePriceInAccount;
+        ManagePriceInAccount,
+        \OwenIt\Auditing\Auditable;
 
     /**
      * The attributes that are mass assignable.

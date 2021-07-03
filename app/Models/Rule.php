@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\ModelTraits\HelperForRule;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Rule extends Model
+class Rule extends Model implements Auditable
 {
-    use HasFactory, HelperForRule;
+    use HasFactory,
+        HelperForRule,
+        \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'placeholder',

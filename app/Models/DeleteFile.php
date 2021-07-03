@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class DeleteFile extends Model
+class DeleteFile extends Model implements Auditable
 {
-    use HasFactory;
+    use HasFactory,
+        \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'path',

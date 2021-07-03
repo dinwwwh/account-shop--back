@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ModelTraits\HelperForAccountAction;
 use App\PivotModels\AccountAccountAction;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class AccountAction extends Model
+class AccountAction extends Model implements Auditable
 {
     use HasFactory,
         SoftDeletes,
-        HelperForAccountAction;
+        HelperForAccountAction,
+        \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'order',

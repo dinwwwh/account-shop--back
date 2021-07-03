@@ -6,12 +6,14 @@ use App\ModelTraits\HelperForPermission;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Permission extends Model
+class Permission extends Model implements Auditable
 {
     use HasFactory,
         SoftDeletes,
-        HelperForPermission;
+        HelperForPermission,
+        \OwenIt\Auditing\Auditable;
 
     protected $primaryKey = 'key';
     public $incrementing = false;

@@ -7,10 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ModelTraits\ManageAccountTypeInGame;
 use App\Casts\StorageFile;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Game extends Model
+class Game extends Model implements Auditable
 {
-    use HasFactory, SoftDeletes, ManageAccountTypeInGame;
+    use HasFactory,
+        SoftDeletes,
+        ManageAccountTypeInGame,
+        \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'order', // nullable

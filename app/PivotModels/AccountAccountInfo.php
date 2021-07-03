@@ -3,9 +3,12 @@
 namespace App\PivotModels;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class AccountAccountInfo extends Pivot
+class AccountAccountInfo extends Pivot implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+
     /**
      * The attributes should be cast
      *

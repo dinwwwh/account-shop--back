@@ -10,15 +10,17 @@ use App\ModelTraits\ManagePermissionInUser;
 use App\ModelTraits\ManageRoleInUser;
 use App\ModelTraits\ManageCoinInUser;
 use App\Notifications\ResetPasswordNotification;
+use OwenIt\Auditing\Contracts\Auditable;
 
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, Auditable
 {
     use HasFactory,
         Notifiable,
         ManagePermissionInUser,
         ManageRoleInUser,
-        ManageCoinInUser;
+        ManageCoinInUser,
+        \OwenIt\Auditing\Auditable;
 
     /**
      * The attributes that are mass assignable.

@@ -7,14 +7,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ModelTraits\ManagePermissionInRole;
+use OwenIt\Auditing\Contracts\Auditable;
 
 
-class Role extends Model
+class Role extends Model implements Auditable
 {
     use HasFactory,
         SoftDeletes,
         ManagePermissionInRole,
-        HelperForRole;
+        HelperForRole,
+        \OwenIt\Auditing\Auditable;
 
 
     protected $primaryKey = 'key';

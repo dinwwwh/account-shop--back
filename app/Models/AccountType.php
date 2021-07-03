@@ -10,16 +10,18 @@ use App\ModelTraits\ManageRoleInAccountType;
 use App\ModelTraits\ManageAccountInfoInAccountType;
 use App\ModelTraits\ManageAccountActionInAccountType;
 use App\ModelTraits\ManageAccountFeeInAccountType;
+use OwenIt\Auditing\Contracts\Auditable;
 
 
-class AccountType extends Model
+class AccountType extends Model implements Auditable
 {
     use ManageRoleInAccountType,
         ManageAccountInfoInAccountType,
         ManageAccountActionInAccountType,
         ManageAccountFeeInAccountType,
         HasFactory,
-        SoftDeletes;
+        SoftDeletes,
+        \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'order',

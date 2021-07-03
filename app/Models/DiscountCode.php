@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\ModelTraits\HelperForDiscountCode;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class DiscountCode extends Model
+class DiscountCode extends Model implements Auditable
 {
     use HasFactory,
-        HelperForDiscountCode;
+        HelperForDiscountCode,
+        \OwenIt\Auditing\Auditable;
 
     protected $primaryKey = 'discount_code';
     public $incrementing = false;
