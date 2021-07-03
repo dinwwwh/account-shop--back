@@ -11,6 +11,7 @@ use App\ModelTraits\ManageRoleInUser;
 use App\ModelTraits\ManageCoinInUser;
 use App\Notifications\ResetPasswordNotification;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Redactors\RightRedactor;
 
 
 class User extends Authenticatable implements MustVerifyEmail, Auditable
@@ -21,6 +22,28 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
         ManageRoleInUser,
         ManageCoinInUser,
         \OwenIt\Auditing\Auditable;
+
+    /**
+     * The attributes & relationships that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password',
+        'remember_token', #Token remember user in client
+        'audits', #Contain history changes of this model
+    ];
+
+    /**
+     * Modify before store data changes in audit
+     * Should add attributes in $hidden property above
+     *
+     * @var array
+     * */
+    protected $attributeModifiers = [
+        'password' => RightRedactor::class,
+        'remember_token' => RightRedactor::class,
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -34,16 +57,6 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
         'password',
         'gold_coin',
         'silver_coin',
-    ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
     ];
 
     /**

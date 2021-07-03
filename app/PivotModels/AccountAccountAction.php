@@ -4,19 +4,30 @@ namespace App\PivotModels;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use OwenIt\Auditing\Contracts\Auditable;
-use OwenIt\Auditing\Redactors\LeftRedactor;
+use OwenIt\Auditing\Redactors\RightRedactor;
 
 class AccountAccountAction extends Pivot implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
 
     /**
-     * Modify before store in audit
+     * The attributes & relationships that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'is_done',
+        'audits', #Contain history changes of this model
+    ];
+
+    /**
+     * Modify before store data changes in audit
+     * Should add attributes in $hidden property above
      *
      * @var array
      * */
     protected $attributeModifiers = [
-        'is_done' => LeftRedactor::class,
+        'is_done' => RightRedactor::class,
     ];
 
     /**

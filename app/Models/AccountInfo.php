@@ -15,6 +15,23 @@ class AccountInfo extends Model implements Auditable
         SoftDeletes,
         \OwenIt\Auditing\Auditable;
 
+    /**
+     * The attributes & relationships that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'audits', #Contain history changes of this model
+    ];
+
+    /**
+     * Modify before store data changes in audit
+     * Should add attributes in $hidden property above
+     *
+     * @var array
+     * */
+    protected $attributeModifiers = [];
+
     protected $fillable = [
         'order',
         'name',

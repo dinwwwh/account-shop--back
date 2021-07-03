@@ -16,6 +16,23 @@ class Game extends Model implements Auditable
         ManageAccountTypeInGame,
         \OwenIt\Auditing\Auditable;
 
+    /**
+     * The attributes & relationships that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'audits', #Contain history changes of this model
+    ];
+
+    /**
+     * Modify before store data changes in audit
+     * Should add attributes in $hidden property above
+     *
+     * @var array
+     * */
+    protected $attributeModifiers = [];
+
     protected $fillable = [
         'order', // nullable
         'publisher_name',

@@ -12,6 +12,7 @@ use App\PivotModels\AccountAccountAction;
 use App\PivotModels\AccountAccountInfo;
 use App\PivotModels\AccountHasGameInfos;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Redactors\RightRedactor;
 
 
 class Account extends Model implements Auditable
@@ -21,6 +22,28 @@ class Account extends Model implements Auditable
         ManageAccountFeeInAccount,
         ManagePriceInAccount,
         \OwenIt\Auditing\Auditable;
+
+    /**
+     * The attributes & relationships that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password',
+        'accountActions', #Contain all info account actions of this model
+        'accountInfos', #Contain all account infos of this model
+        'audits', #Contain history changes of this model
+    ];
+
+    /**
+     * Modify before store data changes in audit
+     * Should add attributes in $hidden property above
+     *
+     * @var array
+     * */
+    protected $attributeModifiers = [
+        'password' => RightRedactor::class,
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -67,13 +90,6 @@ class Account extends Model implements Auditable
         'last_role_key_editor_used' => 'string',
         'approved_at' => 'datetime',
     ];
-
-    /**
-     * The attributes & relationships that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = ['password', 'accountActions', 'accountInfos'];
 
     /**
      * To set default
