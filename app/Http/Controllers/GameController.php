@@ -85,7 +85,7 @@ class GameController extends Controller
      */
     public function getUsableGame()
     {
-        $roles = auth()->user()->roles()->with('accountType.game')->get();
+        $roles = auth()->user()->roles()->with('accountTypes.game')->get();
         $games = new Collection;
         foreach ($roles as $role) {
             foreach ($role->accountTypes as $accountType) {
@@ -94,7 +94,7 @@ class GameController extends Controller
                 }
             }
         }
-        return GameResource::collection($games);
+        return GameResource::withLoadMissingRelationships($games);
     }
 
     /**
