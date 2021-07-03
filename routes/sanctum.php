@@ -14,10 +14,11 @@ use Illuminate\Support\Facades\Route;
 */
 use App\Http\Requests\Request;
 use App\Models\Account;
-use App\Http\Resources\Resource;
+use App\Http\Resources\AuditResource;
+use App\Http\Resources\AccountResource;
 
 Route::get('test', function (Request $request) {
-    return Resource::withLoadRelationships(Account::first(), $request);
+    return response(Account::with(config('request.requiredModelRelationships'))->first()->toArray());
 });
 
 // ====================================================
