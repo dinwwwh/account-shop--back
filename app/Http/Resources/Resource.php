@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Helpers\ArrayHelper;
+use Illuminate\Database\Eloquent\Collection;
 
 class Resource extends JsonResource
 {
@@ -30,7 +31,9 @@ class Resource extends JsonResource
         // Load all required relationships
         $resource->load($requiredRelationships);
 
-        return new static($resource);
+        return $resource instanceof Collection
+            ? static::collection($resource)
+            : new static($resource);
     }
 
     static function withLoadMissingRelationships($resource)
@@ -38,8 +41,10 @@ class Resource extends JsonResource
         // Get required model relationships form config
         $requiredRelationships = config('request.requiredModelRelationships', []);
         // Just load missing required relationships
-        $resource->load($requiredRelationships);
+        $resource->loadMissing($requiredRelationships);
 
-        return new static($resource);
+        return $resource instanceof Collection
+            ? static::collection($resource)
+            : new static($resource);
     }
 }
