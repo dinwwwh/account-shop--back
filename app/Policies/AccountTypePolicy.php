@@ -65,11 +65,6 @@ class AccountTypePolicy
      */
     public function update(User $user, AccountType $accountType)
     {
-        // dd(
-        //     $user->hasPermissionTo('update_account_type'),
-        //     $accountType->creator->is($user),
-        //     $this->manage($user)
-        // );
         return $user->hasPermissionTo('update_account_type')
             && ($accountType->creator->is($user) || $this->manage($user));
     }

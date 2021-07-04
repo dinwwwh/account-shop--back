@@ -45,7 +45,6 @@ class AccountFactory extends Factory
             'password' => Str::random(40),
             'cost' => rand(10000, 99999),
             'description' => $this->faker->title,
-            'representative_image_path' => '404 not found',
             'last_role_key_editor_used' => 'tester',
         ];
     }

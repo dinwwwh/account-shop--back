@@ -79,7 +79,6 @@ class AuthController extends Controller
             }
         }
 
-        // dd($ability, $arguments);
         if (auth()->user()->can($ability, $arguments)) {
             return response(['message' => 'Wow, you can do it!']);
         }

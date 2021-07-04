@@ -13,7 +13,6 @@ class GameResource extends Resource
     public function toArray($request)
     {
         return array_merge(parent::toArray($request), [
-
             // Relationships (exclude one-one & one-many-inverse relationships)
             // 'accountTypes' => AccountTypeResource::collection($this->whenLoaded('accountTypes')),
             // 'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),

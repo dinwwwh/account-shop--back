@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Request;
+use App\Models\File;
 use Carbon\Carbon;
 
 class AccountController extends Controller
@@ -147,15 +148,20 @@ class AccountController extends Controller
             DB::beginTransaction();
             $imagePathsNeedDeleteWhenFail = [];
 
-            // handle representative
-            if ($request->hasFile('representativeImage')) {
-                $account->representative_image_path
-                    = $request->representativeImage->store('public/account-images');
-                $imagePathsNeedDeleteWhenFail[] = $account->representative_image_path;
-            }
-
             // Save account in database
             $account->save();
+
+            // handle representative
+            if ($request->hasFile('representativeImage')) {
+                $path
+                    = $request->representativeImage->store('public/account-images');
+                $imagePathsNeedDeleteWhenFail[] = $path;
+                $account->representativeImage()->create([
+                    'path' => $path,
+                    'type' => File::IMAGE_TYPE,
+                    'short_description' => Account::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE,
+                ]);
+            }
 
             // Handle relationship
             {
@@ -195,7 +201,10 @@ class AccountController extends Controller
                 foreach ($request->images as $image) {
                     $imagePath = $image->store('public/account-images');
                     $imagePathsNeedDeleteWhenFail[] = $imagePath;
-                    $account->images()->create(['path' => $imagePath]);
+                    $account->otherImages()->create([
+                        'path' => $imagePath,
+                        'type' => File::IMAGE_TYPE,
+                    ]);
                 }
             }
 
@@ -348,13 +357,17 @@ class AccountController extends Controller
 
             // handle representative
             if ($request->hasFile('representativeImage')) {
-                $imagePathsNeedDeleteWhenSuccess[]
-                    = $account->representative_image_path;
-                $account->representative_image_path
-                    = $request->representativeImage
+                // delete old representative image file
+                optional($account->representativeImage)->forceDelete();
+                $newPath = $request->representativeImage
                     ->store('public/account-images');
+                $account->representativeImage()->create([
+                    'path' => $newPath,
+                    'type' => File::IMAGE_TYPE,
+                    'short_description' => Account::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE,
+                ]);
                 $imagePathsNeedDeleteWhenFail[]
-                    = $account->representative_image_path;
+                    = $newPath;
             }
 
             // Save account in database
@@ -401,10 +414,15 @@ class AccountController extends Controller
 
                 // sub account images
                 if ($request->hasFile('images')) {
+                    // delete all sub image files of account
+                    $account->otherImages->each(fn ($file) => $file->forceDelete());
                     foreach ($request->images as $image) {
                         $imagePath = $image->store('public/account-images');
                         $imagePathsNeedDeleteWhenFail[] = $imagePath;
-                        $account->images()->create(['path' => $imagePath]);
+                        $account->otherImages()->create([
+                            'path' => $imagePath,
+                            'type' => File::IMAGE_TYPE,
+                        ]);
                     }
                 }
             }

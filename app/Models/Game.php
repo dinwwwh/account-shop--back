@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ModelTraits\ManageAccountTypeInGame;
-use App\Casts\StorageFile;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class Game extends Model implements Auditable
@@ -50,7 +49,7 @@ class Game extends Model implements Auditable
         'name' => 'string',
         'slug' => 'string',
         'description' => 'string',
-        'image_path' => StorageFile::class,
+        'image_path' => 'string',
         'last_updated_editor_id' => 'integer',
         'creator_id' => 'integer',
     ];

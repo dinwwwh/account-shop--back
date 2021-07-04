@@ -5,7 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Casts\StorageFile;
+use App\Casts\StoragePublicFile;
+use App\Observers\FileObserver;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class File extends Model implements Auditable
@@ -13,6 +14,19 @@ class File extends Model implements Auditable
     use HasFactory,
         SoftDeletes,
         \OwenIt\Auditing\Auditable;
+
+    /**
+     * Group of type file
+     * IMAGE = jpg, jpeg, png, bmp, gif, svg, or webp
+     * AUDIO = audio files about music ...
+     * ...
+     *
+     * @var string
+     */
+    public const IMAGE_TYPE = 'image';
+    public const AUDIO_TYPE = 'audio';
+    public const VIDEO_TYPE = 'video';
+    public const APPLICATION_TYPE = 'application';
 
     /**
      * The attributes & relationships that should be hidden for arrays.
@@ -44,9 +58,7 @@ class File extends Model implements Auditable
      * @var array
      */
     protected $casts = [
-        'path' => StorageFile::class,
-        'type' => 'string',
-        'short_description' => 'string',
+        'path' => StoragePublicFile::class,
     ];
 
     /**
@@ -57,10 +69,11 @@ class File extends Model implements Auditable
     protected static function boot()
     {
         parent::boot();
+        static::observe(FileObserver::class);
 
         // before model created
         static::creating(function ($query) {
-            $query->creator_id = optional(auth()->user())->id;
+            $query->user_id = optional(auth()->user())->id;
         });
     }
 

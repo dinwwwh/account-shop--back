@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
-class AccountImageResource extends Resource
+use URL;
+
+class FileResource extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -14,8 +16,8 @@ class AccountImageResource extends Resource
     {
         return array_merge(parent::toArray($request), [
 
-            // Relationships (exclude one-one & one-many-inverse relationships)
-
+            // special attributes
+            'path' => URL::asset($this->path),
         ]);
     }
 }

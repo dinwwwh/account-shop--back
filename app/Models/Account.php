@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ModelTraits\ManageAccountFeeInAccount;
 use App\ModelTraits\ManagePriceInAccount;
-use App\Casts\StorageFile;
 use App\PivotModels\AccountAccountAction;
 use App\PivotModels\AccountAccountInfo;
 use App\PivotModels\AccountHasGameInfos;
@@ -22,6 +21,13 @@ class Account extends Model implements Auditable
         ManageAccountFeeInAccount,
         ManagePriceInAccount,
         \OwenIt\Auditing\Auditable;
+
+    /**
+     * Used as a hint to differentiate representative image and other images
+     *
+     * @var string
+     */
+    public const SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE = 'REPRESENTATIVE_IMAGE';
 
     /**
      * The attributes & relationships that should be hidden for arrays.
@@ -46,27 +52,11 @@ class Account extends Model implements Auditable
     ];
 
     /**
-     * The attributes that are mass assignable.
+     * Attributes should guarded
      *
      * @var array
      */
-    protected $fillable = [
-        'username',
-        'password',
-        'cost',
-        'status_code',
-        'description',
-        'representative_image_path',
-        'account_type_id',
-        'censor_id',
-        'buyer_id',
-        'sold_at_price',
-        'sold_at',
-        'last_updated_editor_id',
-        'creator_id',
-        'last_role_key_editor_used',
-        'approved_at',
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be cast.
@@ -79,7 +69,6 @@ class Account extends Model implements Auditable
         'cost' => 'integer',
         'status_code' => 'integer',
         'description' => 'string',
-        'representative_image_path' => StorageFile::class,
         'account_type_id' => 'integer',
         'censor_id' => 'integer',
         'buyer_id' => 'integer',
@@ -112,13 +101,36 @@ class Account extends Model implements Auditable
     }
 
     /**
-     * Relationship one-many with Models\AccountImage
+     * Get  representative image of this account
      *
-     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    public function representativeImage()
+    {
+        return $this->morphOne(File::class, 'fileable')
+            ->where('type', File::IMAGE_TYPE)
+            ->where('short_description', static::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE);
+    }
+
+    /**
+     * Get images of this account (exclude representative image)
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function otherImages()
+    {
+        return $this->images()->where('short_description', null);
+    }
+
+    /**
+     * Get all-images of this account (include representative image)
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function images()
     {
-        return $this->hasMany(AccountImage::class);
+        return $this->morphMany(File::class, 'fileable')
+            ->where('type', File::IMAGE_TYPE);
     }
 
     /**
