@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ModelTraits\ManageAccountTypeInGame;
+use App\Observers\GameObserver;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class Game extends Model implements Auditable
@@ -32,16 +33,12 @@ class Game extends Model implements Auditable
      * */
     protected $attributeModifiers = [];
 
-    protected $fillable = [
-        'order', // nullable
-        'publisher_name',
-        'name',
-        'slug',
-        'description',
-        'image_path',
-        'last_updated_editor_id',
-        'creator_id',
-    ];
+    /**
+     * Attributes should guarded
+     *
+     * @var array
+     */
+    protected $guarded = [];
 
     protected $casts = [
         'order' => 'integer',
@@ -49,7 +46,6 @@ class Game extends Model implements Auditable
         'name' => 'string',
         'slug' => 'string',
         'description' => 'string',
-        'image_path' => 'string',
         'last_updated_editor_id' => 'integer',
         'creator_id' => 'integer',
     ];
@@ -62,6 +58,7 @@ class Game extends Model implements Auditable
     protected static function boot()
     {
         parent::boot();
+        static::observe(GameObserver::class);
 
         // Custom
         static::creating(function ($query) {
@@ -94,6 +91,18 @@ class Game extends Model implements Auditable
     public function lastUpdatedEditor()
     {
         return $this->belongsTo(User::class, 'last_updated_editor_id');
+    }
+
+    /**
+     * Get  representative image of this account
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    public function representativeImage()
+    {
+        return $this->morphOne(File::class, 'fileable')
+            ->where('type', File::IMAGE_TYPE)
+            ->where('short_description', File::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE);
     }
 
     /**

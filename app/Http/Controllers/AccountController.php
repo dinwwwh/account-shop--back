@@ -159,7 +159,7 @@ class AccountController extends Controller
                 $account->representativeImage()->create([
                     'path' => $path,
                     'type' => File::IMAGE_TYPE,
-                    'short_description' => Account::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE,
+                    'short_description' => File::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE,
                 ]);
             }
 
@@ -364,7 +364,7 @@ class AccountController extends Controller
                 $account->representativeImage()->create([
                     'path' => $newPath,
                     'type' => File::IMAGE_TYPE,
-                    'short_description' => Account::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE,
+                    'short_description' => File::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE,
                 ]);
                 $imagePathsNeedDeleteWhenFail[]
                     = $newPath;
@@ -457,21 +457,7 @@ class AccountController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $imagePathsNeedDeleteWhenSuccess = [];
-
-            // Get image must delete
-            $imagePathsNeedDeleteWhenSuccess[] = $account->representative_image_path;
-            foreach ($account->images as $image) {
-                $imagePathsNeedDeleteWhenSuccess[] = $image->path;
-            }
-
-            $account->images()->delete(); // Delete account images
             $account->delete(); // Delete account
-
-            // When success
-            foreach ($imagePathsNeedDeleteWhenSuccess as $imagePath) {
-                Storage::delete($imagePath);
-            }
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();

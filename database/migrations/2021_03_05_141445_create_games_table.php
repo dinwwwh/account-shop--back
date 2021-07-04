@@ -20,7 +20,6 @@ class CreateGamesTable extends Migration
             $table->string('slug');
             $table->string('description')->nullable();
             $table->string('publisher_name');
-            $table->string('image_path');
             $table->bigInteger('last_updated_editor_id');
             $table->bigInteger('creator_id');
             $table->timestamps();

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ModelTraits\ManageAccountFeeInAccount;
 use App\ModelTraits\ManagePriceInAccount;
+use App\Observers\AccountObserver;
 use App\PivotModels\AccountAccountAction;
 use App\PivotModels\AccountAccountInfo;
 use App\PivotModels\AccountHasGameInfos;
@@ -21,13 +22,6 @@ class Account extends Model implements Auditable
         ManageAccountFeeInAccount,
         ManagePriceInAccount,
         \OwenIt\Auditing\Auditable;
-
-    /**
-     * Used as a hint to differentiate representative image and other images
-     *
-     * @var string
-     */
-    public const SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE = 'REPRESENTATIVE_IMAGE';
 
     /**
      * The attributes & relationships that should be hidden for arrays.
@@ -88,6 +82,7 @@ class Account extends Model implements Auditable
     protected static function boot()
     {
         parent::boot();
+        static::observe(AccountObserver::class);
 
         // Custom
         static::creating(function ($query) {
@@ -109,7 +104,7 @@ class Account extends Model implements Auditable
     {
         return $this->morphOne(File::class, 'fileable')
             ->where('type', File::IMAGE_TYPE)
-            ->where('short_description', static::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE);
+            ->where('short_description', File::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE);
     }
 
     /**

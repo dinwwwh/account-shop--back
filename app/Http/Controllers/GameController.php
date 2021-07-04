@@ -13,6 +13,7 @@ use App\Http\Requests\UpdateGameRequest;
 use App\Models\DiscountCode;
 use App\Http\Requests\Request;
 use App\Http\Requests\AllowDiscountCodeInGameRequest;
+use App\Models\File;
 use Illuminate\Database\Eloquent\Collection;
 
 
@@ -54,9 +55,15 @@ class GameController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $imagePath = $request->image->store('/public/game-images');
-            $gameData['image_path'] = $imagePath;
             $game = Game::create($gameData); // Save rule to database
+            // Handle representativeImage
+            $imagePath = $request->image->store('/public/game-images');
+            $game->representativeImage()->create([
+                'type' => File::IMAGE_TYPE,
+                'path' => $imagePath,
+                'short_description' => File::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE,
+            ]);
+
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
@@ -126,14 +133,16 @@ class GameController extends Controller
             // Handle image
             if ($request->hasFile('image')) {
                 $imagePath = $request->image->store('/public/game-images');
-                $gameData['image_path'] = $imagePath;
-                $imagePathMustDeleteWhenSuccess = $game->image_path;
+                optional($game->representativeImage)->forceDelete();
+                $game->representativeImage()->create([
+                    'type' => File::IMAGE_TYPE,
+                    'path' => $imagePath,
+                    'short_description' => File::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE,
+                ]);
             }
             // Save rule to database
             $game->update($gameData);
             DB::commit();
-            // handle when success
-            Storage::delete($imagePathMustDeleteWhenSuccess ?? null);
         } catch (\Throwable $th) {
             DB::rollback();
             Storage::delete($imagePath ?? null);
@@ -154,11 +163,8 @@ class GameController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $imagePath = $game->image_path;
             $game->delete();
             DB::commit();
-            // When success
-            Storage::delete($imagePath);
         } catch (\Throwable $th) {
             DB::rollback();
             throw $th;

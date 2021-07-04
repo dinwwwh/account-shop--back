@@ -29,6 +29,13 @@ class File extends Model implements Auditable
     public const APPLICATION_TYPE = 'application';
 
     /**
+     * Used as a hint to differentiate representative image and other images
+     *
+     * @var string
+     */
+    public const SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE = 'REPRESENTATIVE_IMAGE';
+
+    /**
      * The attributes & relationships that should be hidden for arrays.
      *
      * @var array
