@@ -17,6 +17,9 @@ class GameResource extends Resource
             // 'accountTypes' => AccountTypeResource::collection($this->whenLoaded('accountTypes')),
             // 'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),
             // 'usableDiscountCodes' => DiscountCodeResource::collection($this->whenLoaded('usableDiscountCodes')),
+
+            // Special relationship need override
+            'representativeImage' => new FileResource($this->whenLoaded('representativeImage')),
         ]);
     }
 }

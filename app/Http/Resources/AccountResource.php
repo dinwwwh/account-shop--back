@@ -15,8 +15,14 @@ class AccountResource extends Resource
     public function toArray($request)
     {
         return array_merge(parent::toArray($request), [
+
             // Special attributes
             'price' => $this->calculateTemporaryPrice(),
+
+            // Special relationship need override
+            'images' => FileResource::collection($this->whenLoaded('images')),
+            'representativeImage' => new FileResource($this->whenLoaded('representativeImage')),
+            'otherImages' => FileResource::collection($this->whenLoaded('otherImages')),
 
             // Relationships (exclude one-one & one-many-inverse relationships)
             // 'images' => AccountImageResource::collection($this->whenLoaded('images')),
