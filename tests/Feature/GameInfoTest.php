@@ -117,7 +117,7 @@ class GameInfoTest extends TestCase
         ];
         $res = $this->actingAs($user)
             ->json('put', $route, $data);
-        // dd($res->getData(), $data);
+
         $res->assertStatus(200);
         $res->assertJson(
             fn ($j) => $j

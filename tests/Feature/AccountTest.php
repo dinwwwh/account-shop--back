@@ -101,7 +101,7 @@ class AccountTest extends TestCase
             'accountInfos' => $dataOfAccountInfos,
             'accountActions' => $dataOfAccountActions,
             'gameInfos' => $dataOfGameInfos,
-            '_requiredModelRelationships' => ['images']
+            '_requiredModelRelationships' => ['representativeImage', 'otherImages']
         ];
 
         $res = $this->actingAs($user)
@@ -116,8 +116,8 @@ class AccountTest extends TestCase
                         ->where('password', $data['password'])
                         ->where('cost', $data['cost'])
                         ->where('description', $data['description'])
-                        ->has('representativeImagePath')
-                        ->has('images.' . array_key_last($data['images']))
+                        ->has('representativeImage.path')
+                        ->has('otherImages.' . array_key_last($data['images']))
                         ->etc()
                 )
         );
@@ -216,7 +216,7 @@ class AccountTest extends TestCase
             'accountInfos' =>  $this->makeDataForAccountInfos($accountType),
             'accountActions' => $this->makeDataForAccountActions($accountType),
             'gameInfos' => $this->makeDataForGameInfos($account->accountType->game),
-            '_requiredModelRelationships' => ['images']
+            '_requiredModelRelationships' => ['representativeImage', 'otherImages']
         ];
         $res = $this->actingAs($creator)
             ->json('put', $route, $data);
@@ -230,8 +230,8 @@ class AccountTest extends TestCase
                         ->where('password', $data['password'])
                         ->where('cost', $data['cost'])
                         ->where('description', $data['description'])
-                        ->has('representativeImagePath')
-                        ->has('images.' . array_key_last($data['images']))
+                        ->has('representativeImage.path')
+                        ->has('otherImages.' . array_key_last($data['images']))
                         ->etc()
                 )
         );
