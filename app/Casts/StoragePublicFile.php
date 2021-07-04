@@ -6,7 +6,7 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 
-class StorageFile implements CastsAttributes
+class StoragePublicFile implements CastsAttributes
 {
     /**
      * Cast the given value.
@@ -20,7 +20,7 @@ class StorageFile implements CastsAttributes
      */
     public function get($model, $key, $value, $attributes)
     {
-        return URL::asset(Storage::url($value));
+        return Storage::url($value);
     }
 
     /**
