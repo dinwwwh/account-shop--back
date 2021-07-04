@@ -25,6 +25,7 @@ class GameTest extends TestCase
             'publisherName' => Str::random(10),
             'name' => Str::random(10),
             'image' => UploadedFile::fake()->image('avatar.jpg'),
+            '_requiredModelRelationships' => ['representativeImage'],
         ];
 
         $res = $this->actingAs($user)
@@ -38,7 +39,7 @@ class GameTest extends TestCase
                     ->where('order', $data['order'])
                     ->where('publisherName', $data['publisherName'])
                     ->where('name', $data['name'])
-                    ->has('imagePath')
+                    ->has('representativeImage.path')
                     ->etc()
             )
         );
@@ -87,6 +88,7 @@ class GameTest extends TestCase
             'publisherName' => Str::random(10),
             'name' => Str::random(10),
             'image' => UploadedFile::fake()->image('avatar.jpg'),
+            '_requiredModelRelationships' => ['representativeImage'],
         ];
 
         $creator->givePermissionTo('update_game');
@@ -102,7 +104,7 @@ class GameTest extends TestCase
                     ->where('publisherName', $data['publisherName'])
                     ->where('order', $data['order'])
                     ->where('name', $data['name'])
-                    ->has('imagePath')
+                    ->has('representativeImage.path')
                     ->etc()
             )
         );
