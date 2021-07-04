@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\RequestHelper;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -29,7 +30,7 @@ class Controller extends BaseController
 
     function  __construct(Request $request)
     {
-        $this->requiredModelRelationships = config('request.requiredModelRelationships', []);
+        $this->requiredModelRelationships = RequestHelper::generateRequiredModelRelationships($request);
         $this->searchedKeyword = (string)$request->_searchedKeyword;
     }
 }
