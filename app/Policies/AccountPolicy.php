@@ -54,7 +54,7 @@ class AccountPolicy
 
         # user is buyer
         if (
-            optional($account->buyer)->is($user)
+            $user->is($account->buyer)
             && in_array($account->status_code, [840, 880])
         ) {
             return true;
@@ -69,7 +69,7 @@ class AccountPolicy
 
         # user is creator
         if (
-            $account->creator->is($user)
+            $user->is($account->creator)
             && in_array($account->status_code, [440, 0])
         ) {
             return true;
@@ -123,7 +123,7 @@ class AccountPolicy
      */
     public function buy(User $user, Account $account)
     {
-        return !$account->creator->is($user)
+        return !$user->is($account->creator)
             && $account->status_code >= 400
             && $account->status_code <= 499
             && is_null($account->buyer_id);
@@ -144,7 +144,7 @@ class AccountPolicy
 
         # Case: $user is creator
         if (
-            $account->creator->is($user)
+            $user->is($account->creator)
             && in_array($account->status_code, [0, 440])
         ) {
             return true;

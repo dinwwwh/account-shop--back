@@ -66,7 +66,7 @@ class AccountActionPolicy
     public function update(User $user, AccountAction $accountAction)
     {
         return $user->hasPermissionTo('update_account_action')
-            && ($this->manage($user) || $accountAction->creator->is($user));
+            && ($this->manage($user) || $user->is($accountAction->creator));
     }
 
     /**

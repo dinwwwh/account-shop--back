@@ -83,7 +83,7 @@ class DiscountCodePolicy
     public function update(User $user, DiscountCode $discountCode)
     {
         return $user->hasPermissionTo('update_discount_code')
-            && ($discountCode->creator->is($user) || $this->manage($user));
+            && ($user->is($discountCode->creator) || $this->manage($user));
     }
 
     /**
@@ -96,7 +96,7 @@ class DiscountCodePolicy
     public function delete(User $user, DiscountCode $discountCode)
     {
         return $user->hasPermissionTo('delete_discount_code')
-            && ($discountCode->creator->is($user) || $this->manage($user));
+            && ($user->is($discountCode->creator) || $this->manage($user));
     }
 
     /**

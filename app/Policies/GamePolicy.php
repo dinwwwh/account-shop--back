@@ -66,7 +66,7 @@ class GamePolicy
     public function update(User $user, Game $game)
     {
         return $user->hasPermissionTo('update_game')
-            && ($this->manage($user) || $game->creator->is($user));
+            && ($this->manage($user) || $user->is($game->creator));
     }
 
     /**
@@ -79,7 +79,7 @@ class GamePolicy
     public function delete(User $user, Game $game)
     {
         return $user->hasPermissionTo('delete_game')
-            && ($this->manage($user) || $game->creator->is($user));
+            && ($this->manage($user) || $user->is($game->creator));
     }
 
     /**

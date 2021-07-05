@@ -66,7 +66,7 @@ class AccountTypePolicy
     public function update(User $user, AccountType $accountType)
     {
         return $user->hasPermissionTo('update_account_type')
-            && ($accountType->creator->is($user) || $this->manage($user));
+            && ($user->is($accountType->creator) || $this->manage($user));
     }
 
     /**
@@ -79,7 +79,7 @@ class AccountTypePolicy
     public function delete(User $user, AccountType $accountType)
     {
         return  $user->hasPermissionTo('delete_account_type')
-            && ($accountType->creator->is($user) || $this->manage($user));
+            && ($user->is($accountType->creator) || $this->manage($user));
     }
 
     /**

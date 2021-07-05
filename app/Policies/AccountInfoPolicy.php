@@ -66,7 +66,7 @@ class AccountInfoPolicy
     public function update(User $user, AccountInfo $accountInfo)
     {
         return $user->hasPermissionTo('update_account_info')
-            && ($this->manage($user) || $accountInfo->creator->is($user));
+            && ($this->manage($user) || $user->is($accountInfo->creator));
     }
 
     /**
