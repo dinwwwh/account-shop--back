@@ -12,23 +12,18 @@ trait ManagePermissionInUser
      *
      * @return boolean
      */
+    public $_allUserPermissionKeys;
     public function hasPermissionTo($permission)
     {
-        if (!($permission instanceof Permission)) {
-            if (is_string($permission) || is_numeric($permission)) {
-                $permission = Permission::find($permission);
-            } else {
-                return false;
-            }
+        if (!$this->_allUserPermissionKeys) {
+            $this->_allUserPermissionKeys = $this->getAllPermissions()->pluck('key')->toArray();
         }
 
-        if (is_null($permission)) {
-            return false;
+        if ($permission instanceof Permission) {
+            $permission = $permission->getKey();
         }
 
-        $userPermissions = $this->getAllPermissions();
-
-        return $userPermissions->contains($permission);
+        return in_array($permission, $this->_allUserPermissionKeys);
     }
 
     /**
@@ -109,7 +104,6 @@ trait ManagePermissionInUser
         return $this->_syncPermissions($permissions);
     }
 
-    public $_allUserPermissions;
     /**
      * Return list permission user has
      *
@@ -117,7 +111,6 @@ trait ManagePermissionInUser
      */
     public function getAllPermissions()
     {
-        if ($this->_allUserPermissions) return $this->_allUserPermissions;
         $userPermissions = $this->permissions;
         $userRoles = $this->roles()->with('permissions')->get();
 
@@ -129,7 +122,6 @@ trait ManagePermissionInUser
             }
         }
 
-        $this->_allUserPermissions = $userPermissions;
         return $userPermissions;
     }
 
