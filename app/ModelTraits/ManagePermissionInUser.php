@@ -109,6 +109,7 @@ trait ManagePermissionInUser
         return $this->_syncPermissions($permissions);
     }
 
+    public $_allUserPermissions;
     /**
      * Return list permission user has
      *
@@ -116,8 +117,9 @@ trait ManagePermissionInUser
      */
     public function getAllPermissions()
     {
+        if ($this->_allUserPermissions) return $this->_allUserPermissions;
         $userPermissions = $this->permissions;
-        $userRoles = $this->roles;
+        $userRoles = $this->roles()->with('permissions')->get();
 
         foreach ($userRoles as $role) {
             foreach ($role->permissions as $permission) {
@@ -127,6 +129,7 @@ trait ManagePermissionInUser
             }
         }
 
+        $this->_allUserPermissions = $userPermissions;
         return $userPermissions;
     }
 
