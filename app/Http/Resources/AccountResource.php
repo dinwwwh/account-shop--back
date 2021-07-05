@@ -20,8 +20,6 @@ class AccountResource extends Resource
             'price' => $this->calculateTemporaryPrice(),
 
             // Relationships
-            'creator' => new UserResource($this->whenLoaded('creator')),
-            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
             'censor' => new UserResource($this->whenLoaded('censor')),
             'buyer' => new UserResource($this->whenLoaded('buyer')),
 

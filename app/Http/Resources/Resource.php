@@ -47,6 +47,8 @@ class Resource extends JsonResource
             ArrayHelper::convertArrayKeyToCamelCase(array_merge($attributes), -1),
             [
                 'pivot' => new Resource($this->whenLoaded('pivot')),
+                'creator' => new UserResource($this->whenLoaded('creator')),
+                'latestUpdater' => new UserResource($this->whenLoaded('latestUpdater')),
             ]
         );
     }

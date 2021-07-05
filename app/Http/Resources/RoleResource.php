@@ -15,8 +15,6 @@ class RoleResource extends Resource
         return array_merge(parent::getAttributes($request), [
 
             // Relationships
-            'creator' => new UserResource($this->whenLoaded('creator')),
-            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
             'users' => UserResource::collection($this->whenLoaded('users')),
 
             'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),

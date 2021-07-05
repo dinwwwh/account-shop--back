@@ -15,9 +15,6 @@ class AccountFeeResource extends Resource
         return array_merge(parent::getAttributes($request), [
 
             // Relationships
-            'creator' => new UserResource($this->whenLoaded('creator')),
-            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
-
             'accountType' => new AccountTypeResource($this->whenLoaded('accountType')),
 
         ]);

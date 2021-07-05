@@ -22,9 +22,6 @@ class AccountActionResource extends Resource
         return array_merge(parent::getAttributes($request), [
 
             // Relationships
-            'creator' => new UserResource($this->whenLoaded('creator')),
-            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
-
             'requiredRoles' => RoleResource::collection($this->whenLoaded('requiredRoles')),
 
             'accounts' => AccountResource::collection($this->whenLoaded('accounts')),

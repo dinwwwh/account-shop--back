@@ -15,8 +15,6 @@ class DiscountCodeResource extends Resource
         return array_merge(parent::getAttributes($request), [
 
             // Relationships
-            'creator' => new UserResource($this->whenLoaded('creator')),
-            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
             'buyers' => UserResource::collection($this->whenLoaded('buyers')),
 
             'supportedGames' => GameResource::collection($this->whenLoaded('supportedGames')),

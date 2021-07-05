@@ -21,8 +21,6 @@ class FileResource extends Resource
 
             // Relationships
             'fileable' => new Resource($this->whenLoaded('fileable')),
-
-            'user' => new UserResource($this->whenLoaded('user')),
         ]);
     }
 }
