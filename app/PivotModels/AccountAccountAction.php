@@ -2,6 +2,8 @@
 
 namespace App\PivotModels;
 
+use App\Models\Account;
+use App\Models\AccountAction;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Redactors\RightRedactor;
@@ -45,4 +47,24 @@ class AccountAccountAction extends Pivot implements Auditable
     protected $casts = [
         'is_done' => 'boolean',
     ];
+
+    /**
+     * Get account of this model
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
+
+    /**
+     * Get account action of this model
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function accountAction()
+    {
+        return $this->belongsTo(AccountAction::class);
+    }
 }

@@ -2,6 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Pivot\AccountAccountActionResource;
+use App\PivotModels\AccountAccountAction;
+
 class AccountActionResource extends Resource
 {
     /**
@@ -27,6 +30,15 @@ class AccountActionResource extends Resource
             'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
 
             'accountType' => new AccountTypeResource($this->whenLoaded('accountType')),
+
+            'pivot' => $this->when($this->relationLoaded('pivot'), function () {
+                switch (true) {
+                    case $this->pivot instanceof AccountAccountAction:
+                        return new AccountAccountActionResource($this->pivot);
+                    default:
+                        return new Resource($this->pivot);
+                }
+            })
         ]);
     }
 }

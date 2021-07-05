@@ -2,6 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\PivotModels\AccountAccountInfo;
+use App\Http\Resources\Pivot\AccountAccountInfoResource;
+
 class AccountInfoResource extends Resource
 {
     /**
@@ -27,6 +30,15 @@ class AccountInfoResource extends Resource
             'rule' => new RuleResource($this->whenLoaded('rule')),
 
             'accounts' => new AccountResource($this->whenLoaded('accounts')),
+
+            'pivot' => $this->when($this->relationLoaded('pivot'), function () {
+                switch (true) {
+                    case $this->pivot instanceof AccountAccountInfo:
+                        return new AccountAccountInfoResource($this->pivot);
+                    default:
+                        return new Resource($this->pivot);
+                }
+            })
         ]);
     }
 }

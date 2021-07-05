@@ -20,6 +20,14 @@ class RoleResource extends Resource
             'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),
 
             'accountTypes' => AccountTypeResource::collection($this->whenLoaded('accountTypes')),
+
+            'pivot' => $this->when($this->relationLoaded('pivot'), function () {
+                switch (true) {
+                        // case:
+                    default:
+                        return new Resource($this->pivot);
+                }
+            })
         ]);
     }
 }

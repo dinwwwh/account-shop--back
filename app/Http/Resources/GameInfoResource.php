@@ -4,6 +4,8 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Helpers\ArrayHelper;
+use App\Http\Resources\Pivot\AccountHasGameInfosResource;
+use App\PivotModels\AccountHasGameInfos;
 
 class GameInfoResource extends Resource
 {
@@ -23,6 +25,15 @@ class GameInfoResource extends Resource
             'game' => new GameResource($this->whenLoaded('game')),
 
             'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
+
+            'pivot' => $this->when($this->relationLoaded('pivot'), function () {
+                switch (true) {
+                    case $this->pivot instanceof AccountHasGameInfos:
+                        return new AccountHasGameInfosResource($this->pivot);
+                    default:
+                        return new Resource($this->pivot);
+                }
+            })
         ]);
     }
 }
