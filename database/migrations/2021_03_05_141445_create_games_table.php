@@ -20,8 +20,8 @@ class CreateGamesTable extends Migration
             $table->string('slug');
             $table->string('description')->nullable();
             $table->string('publisher_name');
-            $table->bigInteger('last_updated_editor_id');
-            $table->bigInteger('creator_id');
+            $table->unsignedBigInteger('latest_updater_id')->nullable();
+            $table->unsignedBigInteger('creator_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

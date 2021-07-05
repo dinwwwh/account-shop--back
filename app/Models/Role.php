@@ -52,6 +52,26 @@ class Role extends Model implements Auditable
     ];
 
     /**
+     * Boot this model
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Custom
+        static::creating(function ($query) {
+            $query->creator_id = optional(auth()->user())->id;
+            $query->latest_updater_id = optional(auth()->user())->id;
+        });
+
+        static::updating(function ($query) {
+            $query->latest_updater_id = optional(auth()->user())->id;
+        });
+    }
+
+    /**
      * Relationship one-one with User
      * Include infos of model creator
      *
@@ -68,9 +88,9 @@ class Role extends Model implements Auditable
      *
      * @return void
      */
-    public function lastUpdatedEditor()
+    public function latestUpdater()
     {
-        return $this->belongsTo(User::class, 'last_updated_editor_id');
+        return $this->belongsTo(User::class, 'latest_updater_id');
     }
 
     /**

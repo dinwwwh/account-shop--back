@@ -149,7 +149,7 @@ class AccountTypeController extends Controller
         if (array_key_exists('name', $accountTypeData)) {
             $accountTypeData['slug'] = Str::slug($accountTypeData['name']);
         }
-        $accountTypeData['last_updated_editor_id'] = Auth::user()->id;
+        $accountTypeData['latest_updater_id'] = Auth::user()->id;
 
         // DB transaction
         try {

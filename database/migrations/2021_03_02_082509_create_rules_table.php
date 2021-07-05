@@ -22,6 +22,9 @@ class CreateRulesTable extends Migration
             $table->integer('min')->nullable();
             $table->integer('max')->nullable();
             $table->json('values')->nullable();
+
+            $table->unsignedBigInteger('latest_updater_id')->nullable();
+            $table->unsignedBigInteger('creator_id')->nullable();
             $table->timestamps();
         });
     }

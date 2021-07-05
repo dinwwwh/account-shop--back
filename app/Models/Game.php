@@ -46,7 +46,7 @@ class Game extends Model implements Auditable
         'name' => 'string',
         'slug' => 'string',
         'description' => 'string',
-        'last_updated_editor_id' => 'integer',
+        'latest_updater_id' => 'integer',
         'creator_id' => 'integer',
     ];
 
@@ -62,12 +62,12 @@ class Game extends Model implements Auditable
 
         // Custom
         static::creating(function ($query) {
-            $query->creator_id = auth()->user()->id;
-            $query->last_updated_editor_id = auth()->user()->id;
+            $query->creator_id = optional(auth()->user())->id;
+            $query->latest_updater_id = optional(auth()->user())->id;
         });
 
         static::updating(function ($query) {
-            $query->last_updated_editor_id = auth()->user()->id;
+            $query->latest_updater_id = optional(auth()->user())->id;
         });
     }
 
@@ -88,9 +88,9 @@ class Game extends Model implements Auditable
      *
      * @return void
      */
-    public function lastUpdatedEditor()
+    public function latestUpdater()
     {
-        return $this->belongsTo(User::class, 'last_updated_editor_id');
+        return $this->belongsTo(User::class, 'latest_updater_id');
     }
 
     /**

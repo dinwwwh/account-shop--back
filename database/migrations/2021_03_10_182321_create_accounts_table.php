@@ -25,8 +25,8 @@ class CreateAccountsTable extends Migration
             $table->bigInteger('buyer_id')->nullable();
             $table->integer('sold_at_price')->nullable();
             $table->timestamp('sold_at')->nullable();
-            $table->bigInteger('last_updated_editor_id');
-            $table->bigInteger('creator_id');
+            $table->unsignedBigInteger('latest_updater_id')->nullable();
+            $table->unsignedBigInteger('creator_id')->nullable();
             $table->string('last_role_key_editor_used');
             $table->timestamp('approved_at')->nullable();
             $table->timestamps();

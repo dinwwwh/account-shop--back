@@ -46,7 +46,7 @@ class AccountInfoController extends Controller
         }
         $accountInfoData['slug'] = Str::slug($accountInfoData['name']);
         $accountInfoData['account_type_id'] = $accountType->id;
-        $accountInfoData['last_updated_editor_id'] = auth()->user()->id;
+        $accountInfoData['latest_updater_id'] = auth()->user()->id;
         $accountInfoData['creator_id'] = auth()->user()->id;
 
         // DB transaction
@@ -102,7 +102,7 @@ class AccountInfoController extends Controller
         if (array_key_exists('name', $accountInfoData)) {
             $accountInfoData['slug'] = Str::slug($accountInfoData['name']);
         }
-        $accountInfoData['last_updated_editor_id'] = auth()->user()->id;
+        $accountInfoData['latest_updater_id'] = auth()->user()->id;
 
         // DB transaction
         try {

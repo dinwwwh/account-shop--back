@@ -32,8 +32,8 @@ class CreateDiscountCodesTable extends Migration
             $table->timestamp('offered_at')->nullable();
             $table->timestamp('offer_closed_at')->nullable();
 
-            $table->bigInteger('last_updated_editor_id');
-            $table->bigInteger('creator_id');
+            $table->unsignedBigInteger('latest_updater_id')->nullable();
+            $table->unsignedBigInteger('creator_id')->nullable();
             $table->timestamps();
         });
     }

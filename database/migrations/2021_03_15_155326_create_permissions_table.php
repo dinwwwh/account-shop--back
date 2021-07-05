@@ -19,6 +19,9 @@ class CreatePermissionsTable extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->string('parent_key')->nullable();
+
+            $table->unsignedBigInteger('latest_updater_id')->nullable();
+            $table->unsignedBigInteger('creator_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

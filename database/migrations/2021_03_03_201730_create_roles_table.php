@@ -19,6 +19,8 @@ class CreateRolesTable extends Migration
             $table->string('name')->unique();
             $table->string('description')->nullable();
             $table->string('style_classes')->nullable();
+            $table->unsignedBigInteger('latest_updater_id')->nullable();
+            $table->unsignedBigInteger('creator_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

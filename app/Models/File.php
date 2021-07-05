@@ -78,9 +78,13 @@ class File extends Model implements Auditable
         parent::boot();
         static::observe(FileObserver::class);
 
-        // before model created
         static::creating(function ($query) {
-            $query->user_id = optional(auth()->user())->id;
+            $query->creator_id = optional(auth()->user())->id;
+            $query->latest_updater_id = optional(auth()->user())->id;
+        });
+
+        static::updating(function ($query) {
+            $query->latest_updater_id = optional(auth()->user())->id;
         });
     }
 
@@ -99,8 +103,18 @@ class File extends Model implements Auditable
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
-    public function user()
+    public function creator()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'creator_id');
+    }
+
+    /**
+     * Get user was updated latest this model
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function latestUpdater()
+    {
+        return $this->belongsTo(User::class, 'latest_updater_id');
     }
 }

@@ -60,12 +60,12 @@ class GameInfo extends Model implements Auditable
 
         // Custom
         static::creating(function ($query) {
-            $query->creator_id = auth()->user()->id;
-            $query->last_updated_editor_id = auth()->user()->id;
+            $query->creator_id = optional(auth()->user())->id;
+            $query->latest_updater_id = optional(auth()->user())->id;
         });
 
         static::updating(function ($query) {
-            $query->last_updated_editor_id = auth()->user()->id;
+            $query->latest_updater_id = optional(auth()->user())->id;
         });
     }
 
@@ -86,9 +86,9 @@ class GameInfo extends Model implements Auditable
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
-    public function lastUpdatedEditor()
+    public function latestUpdater()
     {
-        return $this->belongsTo(User::class, 'last_updated_editor_id');
+        return $this->belongsTo(User::class, 'latest_updater_id');
     }
 
     /**

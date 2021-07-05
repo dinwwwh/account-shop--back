@@ -27,7 +27,7 @@ class GameFactory extends Factory
             'name' => $name,
             'slug' => Str::slug($name),
             'publisher_name' => $this->faker->name,
-            'last_updated_editor_id' => 2,
+            'latest_updater_id' => 2,
             'creator_id' => 2,
         ];
     }

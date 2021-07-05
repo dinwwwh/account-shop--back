@@ -38,7 +38,7 @@ class DeleteFile extends Model implements Auditable
         'errors',
         'successes',
         'creator_id',
-        'last_updated_editor_id',
+        'latest_updater_id',
     ];
 
     protected $casts = [
@@ -50,7 +50,7 @@ class DeleteFile extends Model implements Auditable
         'delete_file_at' => 'datetime',
         'deleted_file_at' => 'datetime',
         'creator_id' => 'integer',
-        'last_updated_editor_id' => 'integer',
+        'latest_updater_id' => 'integer',
     ];
 
     /**
@@ -64,12 +64,12 @@ class DeleteFile extends Model implements Auditable
 
         // Custom
         static::creating(function ($query) {
-            $query->creator_id = auth()->id;
-            $query->last_updated_editor_id = auth()->user()->id;
+            $query->creator_id = optional(auth()->user())->id;
+            $query->latest_updater_id = optional(auth()->user())->id;
         });
 
         static::updating(function ($query) {
-            $query->last_updated_editor_id = auth()->user()->id;
+            $query->latest_updater_id = optional(auth()->user())->id;
         });
     }
 

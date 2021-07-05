@@ -49,7 +49,7 @@ class GameController extends Controller
             }
         }
         $gameData['slug'] = Str::slug($gameData['name']);
-        $gameData['last_updated_editor_id'] = auth()->user()->id;
+        $gameData['latest_updater_id'] = auth()->user()->id;
         $gameData['creator_id'] = auth()->user()->id;
 
         // DB transaction
@@ -125,7 +125,7 @@ class GameController extends Controller
         if (array_key_exists('name', $gameData)) {
             $gameData['slug'] = Str::slug($gameData['name']);
         }
-        $gameData['last_updated_editor_id'] = auth()->user()->id;
+        $gameData['latest_updater_id'] = auth()->user()->id;
 
         // DB transaction
         try {

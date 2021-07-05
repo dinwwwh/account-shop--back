@@ -21,8 +21,8 @@ class CreateAccountInfosTable extends Migration
             $table->string('description')->nullable();
             $table->integer('account_type_id');
             $table->integer('rule_id');
-            $table->bigInteger('last_updated_editor_id');
-            $table->bigInteger('creator_id');
+            $table->unsignedBigInteger('latest_updater_id')->nullable();
+            $table->unsignedBigInteger('creator_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

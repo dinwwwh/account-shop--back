@@ -19,7 +19,8 @@ class CreateFilesTable extends Migration
             $table->string('path')->unique();
             $table->string('type');
             $table->string('short_description')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('latest_updater_id')->nullable();
+            $table->unsignedBigInteger('creator_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

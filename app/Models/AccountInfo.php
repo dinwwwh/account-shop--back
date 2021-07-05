@@ -39,7 +39,7 @@ class AccountInfo extends Model implements Auditable
         'description',
         'rule_id',
         'account_type_id',
-        'last_updated_editor_id',
+        'latest_updater_id',
         'creator_id'
     ];
 
@@ -50,7 +50,7 @@ class AccountInfo extends Model implements Auditable
         'description' => 'string',
         'rule_id' => 'integer',
         'account_type_id' => 'integer',
-        'last_updated_editor_id' => 'integer',
+        'latest_updater_id' => 'integer',
         'creator_id' => 'integer',
     ];
 
@@ -65,12 +65,12 @@ class AccountInfo extends Model implements Auditable
 
         // Custom
         static::creating(function ($query) {
-            $query->creator_id = auth()->user()->id;
-            $query->last_updated_editor_id = auth()->user()->id;
+            $query->creator_id = optional(auth()->user())->id;
+            $query->latest_updater_id = optional(auth()->user())->id;
         });
 
         static::updating(function ($query) {
-            $query->last_updated_editor_id = auth()->user()->id;
+            $query->latest_updater_id = optional(auth()->user())->id;
         });
     }
 
@@ -91,9 +91,9 @@ class AccountInfo extends Model implements Auditable
      *
      * @return void
      */
-    public function lastUpdatedEditor()
+    public function latestUpdater()
     {
-        return $this->belongsTo(User::class, 'last_updated_editor_id');
+        return $this->belongsTo(User::class, 'latest_updater_id');
     }
 
     /**

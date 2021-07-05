@@ -22,8 +22,8 @@ class CreateDeleteFilesTable extends Migration
             $table->json('successes')->nullable();
             $table->timestamp('delete_file_at');
             $table->timestamp('deleted_file_at')->nullable();
-            $table->bigInteger('creator_id');
-            $table->bigInteger('last_updated_editor_id');
+            $table->unsignedBigInteger('creator_id')->nullable();
+            $table->unsignedBigInteger('latest_updater_id')->nullable();
             $table->timestamps();
         });
     }
