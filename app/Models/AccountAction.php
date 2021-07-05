@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ModelTraits\HelperForAccountAction;
-use App\PivotModels\AccountAccountAction;
+use App\Models\Pivot\AccountAccountAction;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class AccountAction extends Model implements Auditable

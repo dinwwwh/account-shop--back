@@ -1,13 +1,14 @@
 <?php
 
-namespace App\PivotModels;
+namespace App\Models\Pivot;
 
 use App\Models\Account;
-use App\Models\GameInfo;
+use App\Models\AccountAction;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Redactors\RightRedactor;
 
-class AccountHasGameInfos extends Pivot implements Auditable
+class AccountAccountAction extends Pivot implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
 
@@ -17,6 +18,7 @@ class AccountHasGameInfos extends Pivot implements Auditable
      * @var array
      */
     protected $hidden = [
+        'is_done',
         'audits', #Contain history changes of this model
     ];
 
@@ -26,7 +28,9 @@ class AccountHasGameInfos extends Pivot implements Auditable
      *
      * @var array
      * */
-    protected $attributeModifiers = [];
+    protected $attributeModifiers = [
+        'is_done' => RightRedactor::class,
+    ];
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -41,9 +45,8 @@ class AccountHasGameInfos extends Pivot implements Auditable
      * @var array
      */
     protected $casts = [
-        'value' => 'json'
+        'is_done' => 'boolean',
     ];
-
 
     /**
      * Get account of this model
@@ -60,8 +63,8 @@ class AccountHasGameInfos extends Pivot implements Auditable
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function gameInfo()
+    public function accountAction()
     {
-        return $this->belongsTo(GameInfo::class);
+        return $this->belongsTo(AccountAction::class);
     }
 }

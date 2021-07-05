@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ModelTraits\ManageAccountFeeInAccount;
 use App\ModelTraits\ManagePriceInAccount;
 use App\Observers\AccountObserver;
-use App\PivotModels\AccountAccountAction;
-use App\PivotModels\AccountAccountInfo;
-use App\PivotModels\AccountHasGameInfos;
+use App\Models\Pivot\AccountAccountAction;
+use App\Models\Pivot\AccountAccountInfo;
+use App\Models\Pivot\AccountHasGameInfos;
 use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Redactors\RightRedactor;
 

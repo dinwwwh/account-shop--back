@@ -1,6 +1,6 @@
 <?php
 
-namespace App\PivotModels;
+namespace App\Models\Pivot;
 
 use App\Models\Account;
 use App\Models\AccountInfo;

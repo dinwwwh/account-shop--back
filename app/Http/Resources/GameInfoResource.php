@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Helpers\ArrayHelper;
 use App\Http\Resources\Pivot\AccountHasGameInfosResource;
-use App\PivotModels\AccountHasGameInfos;
+use App\Models\Pivot\AccountHasGameInfos;
 
 class GameInfoResource extends Resource
 {

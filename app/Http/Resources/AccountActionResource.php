@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Http\Resources\Pivot\AccountAccountActionResource;
-use App\PivotModels\AccountAccountAction;
+use App\Models\Pivot\AccountAccountAction;
 
 class AccountActionResource extends Resource
 {

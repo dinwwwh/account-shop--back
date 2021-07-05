@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\PivotModels\AccountAccountInfo;
+use App\Models\Pivot\AccountAccountInfo;
 use App\Http\Resources\Pivot\AccountAccountInfoResource;
 
 class AccountInfoResource extends Resource
