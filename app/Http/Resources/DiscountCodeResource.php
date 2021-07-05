@@ -12,11 +12,14 @@ class DiscountCodeResource extends Resource
      */
     public function toArray($request)
     {
-        return array_merge(parent::toArray($request), [
+        return array_merge(parent::getAttributes($request), [
 
-            // Relationships (exclude one-one & one-many-inverse relationships)
-            // 'buyers' => UserResource::collection($this->whenLoaded('buyers')),
-            // 'supportedGames' => GameResource::collection($this->whenLoaded('supportedGames')),
+            // Relationships
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+            'buyers' => UserResource::collection($this->whenLoaded('buyers')),
+
+            'supportedGames' => GameResource::collection($this->whenLoaded('supportedGames')),
         ]);
     }
 }

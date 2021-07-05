@@ -19,11 +19,17 @@ class AccountActionResource extends Resource
      */
     public function toArray($request)
     {
-        return array_merge(parent::toArray($request), [
+        return array_merge(parent::getAttributes($request), [
 
-            // Relationships (exclude one-one & one-many-inverse relationships)
-            // 'requiredRoles' => RoleResource::collection($this->whenLoaded('requiredRoles')),
-            // 'accounts' => RoleResource::collection($this->whenLoaded('accounts')),
+            // Relationships
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+
+            'requiredRoles' => RoleResource::collection($this->whenLoaded('requiredRoles')),
+
+            'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
+
+            'accountType' => new AccountTypeResource($this->whenLoaded('accountType')),
         ]);
     }
 }

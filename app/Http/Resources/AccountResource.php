@@ -14,19 +14,25 @@ class AccountResource extends Resource
      */
     public function toArray($request)
     {
-        return array_merge(parent::toArray($request), [
+        return array_merge(parent::getAttributes($request), [
 
             // Special attributes
             'price' => $this->calculateTemporaryPrice(),
 
-            // Special relationship need override
+            // Relationships
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+            'censor' => new UserResource($this->whenLoaded('censor')),
+            'buyer' => new UserResource($this->whenLoaded('buyer')),
+
             'images' => FileResource::collection($this->whenLoaded('images')),
             'representativeImage' => new FileResource($this->whenLoaded('representativeImage')),
             'otherImages' => FileResource::collection($this->whenLoaded('otherImages')),
 
-            // Relationships (exclude one-one & one-many-inverse relationships)
-            // 'images' => AccountImageResource::collection($this->whenLoaded('images')),
-            // 'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),
+            'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),
+
+            'accountType' => new AccountTypeResource($this->whenLoaded('accountType')),
+
 
             // Just merge when auth can view sensitive infos
             $this->mergeWhen(

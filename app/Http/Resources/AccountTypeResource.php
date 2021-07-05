@@ -12,14 +12,23 @@ class AccountTypeResource extends Resource
      */
     public function toArray($request)
     {
-        return array_merge(parent::toArray($request), [
+        return array_merge(parent::getAttributes($request), [
 
-            // Relationships (exclude one-one & one-many-inverse relationships)
-            // 'accountInfos' => AccountInfoResource::collection($this->whenLoaded('accountInfos')),
-            // 'accountActions' => AccountActionResource::collection($this->whenLoaded('accountActions')),
-            // 'accountFees' => AccountFeeResource::collection($this->whenLoaded('accountFees')),
-            // 'rolesCanUsedAccountType' => RoleResource::collection($this->whenLoaded('rolesCanUsedAccountType')),
-            // 'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
+            // Relationships
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+
+            'rolesCanUsedAccountType' => RoleResource::collection($this->whenLoaded('rolesCanUsedAccountType')),
+
+            'game' => new GameResource($this->whenLoaded('game')),
+
+            'accountInfos' => AccountInfoResource::collection($this->whenLoaded('accountInfos')),
+
+            'accountActions' => AccountActionResource::collection($this->whenLoaded('accountActions')),
+
+            'accountFees' => AccountFeeResource::collection($this->whenLoaded('accountFees')),
+
+            'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
         ]);
     }
 }

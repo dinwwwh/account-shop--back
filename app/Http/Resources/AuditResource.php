@@ -12,9 +12,12 @@ class AuditResource extends Resource
      */
     public function toArray($request)
     {
-        return array_merge(parent::toArray($request), [
+        return array_merge(parent::getAttributes($request), [
 
-            // Relationships (exclude one-one & one-many-inverse relationships)
+            // Relationships
+            'auditable' => new Resource($this->whenLoaded('auditable')),
+
+            'user' => new UserResource($this->whenLoaded('user')),
         ]);
     }
 }

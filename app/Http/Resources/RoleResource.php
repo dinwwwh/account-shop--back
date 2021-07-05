@@ -12,12 +12,16 @@ class RoleResource extends Resource
      */
     public function toArray($request)
     {
-        return array_merge(parent::toArray($request), [
+        return array_merge(parent::getAttributes($request), [
 
-            // Relationships (exclude one-one & one-many-inverse relationships)
-            // 'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),
-            // 'accountTypes' => AccountTypeResource::collection($this->whenLoaded('accountTypes')),
-            // 'users' => UserResource::collection($this->whenLoaded('users')),
+            // Relationships
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+            'users' => UserResource::collection($this->whenLoaded('users')),
+
+            'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),
+
+            'accountTypes' => AccountTypeResource::collection($this->whenLoaded('accountTypes')),
         ]);
     }
 }

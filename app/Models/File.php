@@ -89,7 +89,7 @@ class File extends Model implements Auditable
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship
      */
-    public function auditable()
+    public function fileable()
     {
         return $this->morphTo();
     }

@@ -12,14 +12,19 @@ class GameResource extends Resource
      */
     public function toArray($request)
     {
-        return array_merge(parent::toArray($request), [
-            // Relationships (exclude one-one & one-many-inverse relationships)
-            // 'accountTypes' => AccountTypeResource::collection($this->whenLoaded('accountTypes')),
-            // 'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),
-            // 'usableDiscountCodes' => DiscountCodeResource::collection($this->whenLoaded('usableDiscountCodes')),
+        return array_merge(parent::getAttributes($request), [
 
-            // Special relationship need override
+            // Relationships
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+
             'representativeImage' => new FileResource($this->whenLoaded('representativeImage')),
+
+            'accountTypes' => AccountTypeResource::collection($this->whenLoaded('accountTypes')),
+
+            'gameInfos' => GameInfoResource::collection($this->whenLoaded('gameInfos')),
+
+            'usableDiscountCodes' => DiscountCodeResource::collection($this->whenLoaded('usableDiscountCodes')),
         ]);
     }
 }

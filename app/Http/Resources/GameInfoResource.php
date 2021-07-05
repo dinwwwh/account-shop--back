@@ -15,10 +15,17 @@ class GameInfoResource extends Resource
      */
     public function toArray($request)
     {
-        return array_merge(parent::toArray($request), [
+        return array_merge(parent::getAttributes($request), [
 
-            // Relationships (exclude one-one & one-many-inverse relationships)
-            // 'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
+            // Relationships
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+
+            'rule' => new RuleResource($this->whenLoaded('rule')),
+
+            'game' => new GameResource($this->whenLoaded('game')),
+
+            'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
         ]);
     }
 }

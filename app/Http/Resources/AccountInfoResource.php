@@ -19,10 +19,17 @@ class AccountInfoResource extends Resource
      */
     public function toArray($request)
     {
-        return array_merge(parent::toArray($request), [
+        return array_merge(parent::getAttributes($request), [
 
-            // Relationships (exclude one-one & one-many-inverse relationships)
-            // 'accounts' => new RuleResource($this->whenLoaded('accounts')),
+            // Relationships
+            'creator' => new UserResource($this->whenLoaded('creator')),
+            'lastUpdatedEditor' => new UserResource($this->whenLoaded('lastUpdatedEditor')),
+
+            'accountType' => new AccountTypeResource($this->whenLoaded('accountType')),
+
+            'rule' => new RuleResource($this->whenLoaded('rule')),
+
+            'accounts' => new AccountResource($this->whenLoaded('accounts')),
         ]);
     }
 }

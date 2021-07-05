@@ -12,10 +12,10 @@ class RuleResource extends Resource
      */
     public function toArray($request)
     {
-        return array_merge(parent::toArray($request), [
+        return array_merge(parent::getAttributes($request), [
 
-            // Relationships (exclude one-one & one-many-inverse relationships)
-            // 'requiredRoles' => RoleResource::collection($this->whenLoaded('requiredRoles')),
+            // Relationships
+            'requiredRoles' => RoleResource::collection($this->whenLoaded('requiredRoles')),
         ]);
     }
 }

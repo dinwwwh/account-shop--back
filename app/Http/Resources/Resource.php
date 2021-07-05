@@ -24,6 +24,40 @@ class Resource extends JsonResource
         return  ArrayHelper::convertArrayKeyToCamelCase(parent::toArray($request), -1);
     }
 
+    /**
+     * Return all unhidden-attributes of resource
+     * (exclude relationships)
+     * (include pivot relationship)
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    public function getAttributes($request)
+    {
+        if (is_null($this->resource)) {
+            return [];
+        }
+
+        $attributes = is_array($this->resource)
+            ? $this->resource
+            : $this->resource->attributesToArray();
+
+        // Convert keys of all-layers to camel case
+        return  array_merge(
+            ArrayHelper::convertArrayKeyToCamelCase(array_merge($attributes), -1),
+            [
+                'pivot' => new Resource($this->whenLoaded('pivot')),
+            ]
+        );
+    }
+
+
+    /**
+     * Instantiate a resource with load required model relationships
+     *
+     * @param any $resource
+     * @return any
+     */
     static function withLoadRelationships($resource)
     {
         // Get required model relationships form config
@@ -36,6 +70,12 @@ class Resource extends JsonResource
             : new static($resource);
     }
 
+    /**
+     * Instantiate a resource with load missing required model relationships
+     *
+     * @param any $resource
+     * @return any
+     */
     static function withLoadMissingRelationships($resource)
     {
         // Get required model relationships form config

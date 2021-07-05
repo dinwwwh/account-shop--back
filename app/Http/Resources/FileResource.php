@@ -14,10 +14,15 @@ class FileResource extends Resource
      */
     public function toArray($request)
     {
-        return array_merge(parent::toArray($request), [
+        return array_merge(parent::getAttributes($request), [
 
             // special attributes
             'path' => URL::asset($this->path),
+
+            // Relationships
+            'fileable' => new Resource($this->whenLoaded('fileable')),
+
+            'user' => new UserResource($this->whenLoaded('user')),
         ]);
     }
 }

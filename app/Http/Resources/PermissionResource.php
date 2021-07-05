@@ -12,11 +12,12 @@ class PermissionResource extends Resource
      */
     public function toArray($request)
     {
-        return array_merge(parent::toArray($request), [
+        return array_merge(parent::getAttributes($request), [
 
-            // Relationships (exclude one-one & one-many-inverse relationships)
-            // 'users' => UserResource::collection($this->whenLoaded('users')),
-            // 'roles' => RoleResource::collection($this->whenLoaded('roles')),
+            // Relationships
+            'users' => UserResource::collection($this->whenLoaded('users')),
+
+            'roles' => RoleResource::collection($this->whenLoaded('roles')),
         ]);
     }
 }

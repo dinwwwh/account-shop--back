@@ -12,11 +12,14 @@ class UserResource extends Resource
      */
     public function toArray($request)
     {
-        return array_merge(parent::toArray($request), [
+        return array_merge(parent::getAttributes($request), [
 
-            // Relationships (exclude one-one & one-many-inverse relationships)
-            // 'roles' => RoleResource::collection($this->whenLoaded('roles')),
-            // 'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),
+            // Relationships
+            'roles' => RoleResource::collection($this->whenLoaded('roles')),
+
+            'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),
+
+            'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
         ]);
     }
 }
