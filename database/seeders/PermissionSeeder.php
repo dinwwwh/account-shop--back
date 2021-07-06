@@ -34,10 +34,6 @@ class PermissionSeeder extends Seeder
             'permission' => 'quyền hạn',
             'account' => 'tài khoản game',
             'game' => 'game',
-            'game_info' => 'thông tin game',
-            'account_type' => 'kiểu tài khoản',
-            'account_info' => 'thông tin tài khoản',
-            'account_action' => 'hành động thực hiện trên tài khoản',
             'discount_code' => 'mã giảm giá',
         ];
 

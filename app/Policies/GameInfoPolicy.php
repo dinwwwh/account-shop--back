@@ -43,8 +43,7 @@ class GameInfoPolicy
      */
     public function create(User $user, Game $game)
     {
-        return $user->hasPermissionTo('create_game_info')
-            && $user->can('update', $game);
+        return $user->can('update', $game);
     }
 
     /**
@@ -56,8 +55,7 @@ class GameInfoPolicy
      */
     public function update(User $user, GameInfo $gameInfo)
     {
-        return $user->hasPermissionTo('update_game_info')
-            && $user->can('update', $gameInfo->game);
+        return $user->can('update', $gameInfo->game);
     }
 
     /**
@@ -69,8 +67,7 @@ class GameInfoPolicy
      */
     public function delete(User $user, GameInfo $gameInfo)
     {
-        return $user->hasPermissionTo('delete_game_info')
-            && $user->can('update', $gameInfo->game);
+        return $user->can('update', $gameInfo->game);
     }
 
     /**

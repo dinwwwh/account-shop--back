@@ -35,17 +35,6 @@ class AccountActionPolicy
     }
 
     /**
-     * Determine whether the user can manage the model.
-     *
-     * @param  \App\Models\User  $user
-     * @return mixed
-     */
-    public function manage(User $user)
-    {
-        return $user->hasPermissionTo('manage_account_action');
-    }
-
-    /**
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
@@ -53,7 +42,7 @@ class AccountActionPolicy
      */
     public function create(User $user, AccountType $accountType)
     {
-        return $user->hasPermissionTo('create_account_action');
+        return $user->can('update', $accountType);
     }
 
     /**
@@ -65,8 +54,7 @@ class AccountActionPolicy
      */
     public function update(User $user, AccountAction $accountAction)
     {
-        return $user->hasPermissionTo('update_account_action')
-            && ($this->manage($user) || $user->is($accountAction->creator));
+        return $user->can('update', $accountAction->accountType);
     }
 
     /**
@@ -78,7 +66,7 @@ class AccountActionPolicy
      */
     public function delete(User $user, AccountAction $accountAction)
     {
-        //
+        return $user->can('update', $accountAction->accountType);
     }
 
     /**
