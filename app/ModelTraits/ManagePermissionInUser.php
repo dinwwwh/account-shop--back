@@ -12,7 +12,7 @@ trait ManagePermissionInUser
      *
      * @return boolean
      */
-    public $_allUserPermissionKeys;
+    private $_allUserPermissionKeys;
     public function hasPermissionTo($permission)
     {
         if (!$this->_allUserPermissionKeys) {
