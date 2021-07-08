@@ -76,7 +76,7 @@ class AccountTradingController extends Controller
      * @param  \App\Models\Account  $account
      * @return \Illuminate\Http\Response
      */
-    public function calculateDetailPrice(Request $request, Account $account)
+    public function getDetailedPrice(Request $request, Account $account)
     {
         return response(['data' => $account->calculatePrice($request->discountCode, true),]);
     }

@@ -307,8 +307,8 @@ use App\Http\Controllers\AccountTradingController;
 
 Route::prefix('account-trading')->group(function () {
     // Get calculated detail price
-    Route::get('detail-price/{account}', [AccountTradingController::class, 'calculateDetailPrice'])
-        ->name('account-trading.calculate-detail-price');
+    Route::get('detail-price/{account}', [AccountTradingController::class, 'getDetailedPrice'])
+        ->name('account-trading.detailed-price');
 
     Route::middleware(['auth', 'verified'])->group(function () {
         // buy
