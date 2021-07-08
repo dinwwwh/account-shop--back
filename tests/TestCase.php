@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use App\Models\Permission;
+use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -26,5 +28,39 @@ abstract class TestCase extends BaseTestCase
             'X-XSRF-TOKEN' => $XSRF_TOKEN,
         ]);
         return parent::json($method, $uri, $data, $headers);
+    }
+
+    /**
+     * Make user with given permissions
+     *
+     * @param array $requiredPermissionKeys
+     * @param mixed $userOrExcludedIds
+     * @param bool $isStrictPermissions
+     * @return \App\Models\User default user will has full permissions
+     */
+    static public $allPermissions;
+    public function makeAuth(array $excludedPermissionKeys = [], $userOrExcludedIds = [], bool $isStrictPermissions = true): User
+    {
+        if (!optional(static::$allPermissions)->isNotEmpty()) {
+            static::$allPermissions = Permission::all();
+        }
+
+        if ($userOrExcludedIds instanceof User) {
+            $user = $userOrExcludedIds;
+        } elseif (is_array($userOrExcludedIds)) {
+            $user = User::whereNotIn('id', $userOrExcludedIds)->inRandomOrder()->first();
+        } else {
+            throw 'Third argument expect array or [App\Models\User]';
+        }
+
+        if ($isStrictPermissions) {
+            $user->syncPermissions([]);
+            $user->syncRoles([]);
+        }
+        $requiredPermissions = static::$allPermissions->filter(
+            fn ($permission) => !in_array($permission->getKey(), $excludedPermissionKeys)
+        );
+        $user->givePermissionTo($requiredPermissions);
+        return $user->refresh();
     }
 }
