@@ -123,8 +123,7 @@ class AccountPolicy
      */
     public function buy(User $user, Account $account)
     {
-        return !$user->is($account->creator)
-            && $account->status_code >= 400
+        return  $account->status_code >= 400
             && $account->status_code <= 499
             && is_null($account->buyer_id);
     }
