@@ -89,25 +89,13 @@ class UpdateTest extends TestCase
     }
 
     /**
-     * Case is manager but lack update_game permission
+     * Case is creator of game but lack update_game manage_game permission
      */
-    public function test_middleware_fail_1()
-    {
-        $user = $this->makeAuth(['update_game']);
-        $this->actingAs($user);
-        $accountType = AccountType::inRandomOrder()->first();
-        $route = route('account-type.update', ['accountType' => $accountType]);
-        $this->json('put', $route)->assertStatus(403);
-    }
-
-    /**
-     * Case is creator of game but lack update_game permission
-     */
-    public function test_middleware_fail_2()
+    public function test_middleware_fail()
     {
         $accountType = AccountType::where('creator_id', '!=', null)
             ->inRandomOrder()->first();
-        $user = $this->makeAuth(['update_game'], $accountType->game->creator);
+        $user = $this->makeAuth(['update_game', 'manage_game'], $accountType->game->creator);
         $this->actingAs($user);
         $route = route('account-type.update', ['accountType' => $accountType]);
         $this->json('put', $route)->assertStatus(403);

@@ -98,16 +98,6 @@ class UpdateImagesTest extends Helper
         $res->assertStatus(204);
     }
 
-    public function test_middleware_fail_manager()
-    {
-        $account = Account::inRandomOrder()->first();
-        $route = route('account.update-images', ['account' => $account]);
-        $user = $this->makeAuth(['update_game']);
-        $this->actingAs($user);
-        $res = $this->json('patch', $route);
-        $res->assertStatus(403);
-    }
-
     public function test_middleware_fail_creator()
     {
         $config = config('account.creator.updatable_images_status_codes', []);

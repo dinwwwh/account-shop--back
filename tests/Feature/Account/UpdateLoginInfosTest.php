@@ -95,19 +95,6 @@ class UpdateLoginInfosTest extends Helper
         $res->assertStatus(422);
     }
 
-    public function test_middleware_fail_manager()
-    {
-        $account = Account::inRandomOrder()->first();
-        $route = route('account.update-login-infos', ['account' => $account]);
-        $user = $this->makeAuth(['update_game'], [
-            $account->creator_id,
-            $account->latestAccountStatus->creator_id,
-        ]);
-        $this->actingAs($user);
-        $res = $this->json('patch', $route);
-        $res->assertStatus(403);
-    }
-
     public function test_middleware_fail_creator()
     {
         $config = config('account.creator.updatable_login_infos_status_codes', []);

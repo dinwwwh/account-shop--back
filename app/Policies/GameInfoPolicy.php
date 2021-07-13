@@ -35,15 +35,14 @@ class GameInfoPolicy
     }
 
     /**
-     * Determine whether the user is manager of the game info
+     * Determine whether the user is manager of all game infos
      *
      * @param \App\Models\User $user
-     * @param \App\Models\Account $account
      * @return bool
      */
-    public function manage(User $user, GameInfo $gameInfo)
+    public function manage(User $user)
     {
-        return $user->can('update', $gameInfo->game);
+        return $user->can('manage', 'App\Models\Game');
     }
 
     /**
@@ -55,7 +54,8 @@ class GameInfoPolicy
      */
     public function create(User $user, Game $game)
     {
-        return $user->can('update', $game);
+        return $user->can('update', $game)
+            || $this->manage($user);
     }
 
     /**
@@ -67,7 +67,8 @@ class GameInfoPolicy
      */
     public function update(User $user, GameInfo $gameInfo)
     {
-        return $this->manage($user, $gameInfo);
+        return $user->can('update', $gameInfo->game)
+            || $this->manage($user);
     }
 
     /**
@@ -79,7 +80,8 @@ class GameInfoPolicy
      */
     public function delete(User $user, GameInfo $gameInfo)
     {
-        return $this->manage($user, $gameInfo);
+        return $user->can('update', $gameInfo->game)
+            || $this->manage($user);
     }
 
     /**

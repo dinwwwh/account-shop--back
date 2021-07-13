@@ -86,25 +86,13 @@ class StoreTest extends TestCase
     }
 
     /**
-     * Case is manager but lack update_game permission
-     */
-    public function test_middleware_fail_1()
-    {
-        $user = $this->makeAuth(['update_game']);
-        $this->actingAs($user);
-        $game = Game::inRandomOrder()->first();
-        $route = route('game-info.store', ['game' => $game]);
-        $this->json('post', $route)->assertStatus(403);
-    }
-
-    /**
-     * Case is creator of game but lack update_game permission
+     * Case is creator of game but lack update_game manage_game permission
      */
     public function test_middleware_fail_2()
     {
         $game = Game::where('creator_id', '!=', null)
             ->inRandomOrder()->first();
-        $user = $this->makeAuth(['update_game'], $game->creator);
+        $user = $this->makeAuth(['update_game', 'manage_game'], $game->creator);
         $this->actingAs($user);
         $route = route('game-info.store', ['game' => $game]);
         $this->json('post', $route)->assertStatus(403);

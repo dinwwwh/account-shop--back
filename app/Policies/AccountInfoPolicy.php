@@ -35,15 +35,14 @@ class AccountInfoPolicy
     }
 
     /**
-     * Determine whether the user is manager of the account info
+     * Determine whether the user is manager of all account infos
      *
      * @param \App\Models\User $user
-     * @param \App\Models\Account $account
      * @return bool
      */
-    public function manage(User $user, AccountInfo $accountInfo)
+    public function manage(User $user)
     {
-        return $user->can('update', $accountInfo->accountType);
+        return $user->can('manage', 'App\Models\AccountType');
     }
 
     /**
@@ -54,7 +53,8 @@ class AccountInfoPolicy
      */
     public function create(User $user, AccountType $accountType)
     {
-        return $user->can('update', $accountType);
+        return $user->can('update', $accountType)
+            || $this->manage($user);
     }
 
     /**
@@ -66,7 +66,8 @@ class AccountInfoPolicy
      */
     public function update(User $user, AccountInfo $accountInfo)
     {
-        return $this->manage($user, $accountInfo);
+        return $user->can('update', $accountInfo->accountType)
+            || $this->manage($user);
     }
 
     /**
@@ -78,7 +79,8 @@ class AccountInfoPolicy
      */
     public function delete(User $user, AccountInfo $accountInfo)
     {
-        return $this->manage($user, $accountInfo);
+        return $user->can('update', $accountInfo->accountType)
+            || $this->manage($user);
     }
 
     /**

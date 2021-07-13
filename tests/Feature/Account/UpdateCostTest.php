@@ -81,20 +81,6 @@ class UpdateCostTest extends Helper
         $res->assertStatus(422);
     }
 
-    public function test_middleware_fail_manager_lack_update_game()
-    {
-        $account = Account::inRandomOrder()->first();
-        $this->actingAs($this->makeAuth([
-            'update_game'
-        ], [
-            $account->creator->getKey(),
-            $account->latestAccountStatus->creator->getKey(),
-        ]));
-        $route = route('account.update-cost', ['account' => $account]);
-        $res = $this->json('patch', $route);
-        $res->assertStatus(403);
-    }
-
     public function test_middleware_fail_creator()
     {
         $count =  0;

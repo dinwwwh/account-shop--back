@@ -36,15 +36,15 @@ class AccountPolicy
     }
 
     /**
-     * Determine whether the user is manager of the account
+     * Determine whether the user is manager of all accounts
      *
      * @param \App\Models\User $user
      * @param \App\Models\Account $account
      * @return bool
      */
-    public function manage(User $user, Account $account)
+    public function manage(User $user)
     {
-        return $user->can('update', $account->accountType);
+        return $user->can('manage', 'App\Models\AccountType');
     }
 
     /**
@@ -58,7 +58,7 @@ class AccountPolicy
     {
         # user is a manager
         if (
-            $this->manage($user, $account)
+            $this->manage($user)
         ) {
             return true;
         }
@@ -108,7 +108,7 @@ class AccountPolicy
     {
         # user is a manager
         if (
-            $this->manage($user, $account)
+            $this->manage($user)
         ) {
             return true;
         }
@@ -189,7 +189,7 @@ class AccountPolicy
     {
         if (
             !$user->is($account->latestAccountStatus->creator)
-            && !$this->manage($user, $account)
+            && !$this->manage($user)
         ) {
             return false;
         }
@@ -224,7 +224,7 @@ class AccountPolicy
     {
         # user is a manager
         if (
-            $this->manage($user, $account)
+            $this->manage($user)
         ) {
             return true;
         }
@@ -263,7 +263,7 @@ class AccountPolicy
     {
         # user is a manager
         if (
-            $this->manage($user, $account)
+            $this->manage($user)
         ) {
             return true;
         }
@@ -302,7 +302,7 @@ class AccountPolicy
     {
         # user is a manager
         if (
-            $this->manage($user, $account)
+            $this->manage($user)
         ) {
             return true;
         }
@@ -341,7 +341,7 @@ class AccountPolicy
     {
         # user is a manager
         if (
-            $this->manage($user, $account)
+            $this->manage($user)
         ) {
             return true;
         }
@@ -380,7 +380,7 @@ class AccountPolicy
     {
         # user is a manager
         if (
-            $this->manage($user, $account)
+            $this->manage($user)
         ) {
             return true;
         }

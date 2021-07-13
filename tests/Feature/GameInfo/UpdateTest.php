@@ -81,20 +81,11 @@ class UpdateTest extends TestCase
         $this->json('put', $route)->assertStatus(200);
     }
 
-    public function test_middleware_fail_lack_update_game()
-    {
-        $user = $this->makeAuth(['update_game']);
-        $this->actingAs($user);
-        $gameInfo = GameInfo::inRandomOrder()->first();
-        $route = route('game-info.update', ['gameInfo' => $gameInfo]);
-        $this->json('put', $route)->assertStatus(403);
-    }
-
-    public function test_middleware_fail_creator_lack_update_game()
+    public function test_middleware_fail_creator_lack_update_game_manage_game()
     {
         $gameInfo = GameInfo::where('creator_id', '!=', null)
             ->inRandomOrder()->first();
-        $user = $this->makeAuth(['update_game'], $gameInfo->game->creator);
+        $user = $this->makeAuth(['update_game', 'manage_game'], $gameInfo->game->creator);
         $this->actingAs($user);
         $route = route('game-info.update', ['gameInfo' => $gameInfo]);
         $this->json('put', $route)->assertStatus(403);

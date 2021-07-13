@@ -81,16 +81,6 @@ class UpdateAccountInfosTest extends Helper
         $res->assertStatus(422);
     }
 
-    public function test_middleware_fail_manager()
-    {
-        $account = Account::inRandomOrder()->first();
-        $route = route('account.update-account-infos', ['account' => $account]);
-        $user = $this->makeAuth(['update_game']);
-        $this->actingAs($user);
-        $res = $this->json('patch', $route);
-        $res->assertStatus(403);
-    }
-
     public function test_middleware_fail_creator()
     {
         $config = config('account.creator.updatable_account_infos_status_codes', []);

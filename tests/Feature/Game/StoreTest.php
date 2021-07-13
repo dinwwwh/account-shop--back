@@ -39,22 +39,33 @@ class StoreTest extends TestCase
     }
 
     /**
-     * Case is manager
+     * Case is manager but lack create_game
      */
     public function test_middleware_success_1()
     {
-        $user = $this->makeAuth([]);
+        $user = $this->makeAuth(['create_game']);
         $this->actingAs($user);
         $route = route('game.store');
         $this->json('post', $route)->assertStatus(422);
     }
 
     /**
-     * Case is manager but lack create_game
+     * Case is normal user but lack manage_game
      */
-    public function test_middleware_fail_1()
+    public function test_middleware_success_2()
     {
-        $user = $this->makeAuth(['create_game']);
+        $user = $this->makeAuth(['manage_game']);
+        $this->actingAs($user);
+        $route = route('game.store');
+        $this->json('post', $route)->assertStatus(422);
+    }
+
+    /**
+     * Case lack mange_game and create_game
+     */
+    public function test_middleware_fail()
+    {
+        $user = $this->makeAuth(['manage_game', 'create_game']);
         $this->actingAs($user);
         $route = route('game.store');
         $this->json('post', $route)->assertStatus(403);

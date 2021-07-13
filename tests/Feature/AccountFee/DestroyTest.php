@@ -51,25 +51,13 @@ class DestroyTest extends TestCase
     }
 
     /**
-     * Case is manager but lack update_game permission
+     * Case is creator of game but lack update_game manage_game permission
      */
-    public function test_middleware_fail_1()
-    {
-        $user = $this->makeAuth(['update_game']);
-        $this->actingAs($user);
-        $accountFee = AccountFee::inRandomOrder()->first();
-        $route = route('account-fee.destroy', ['accountFee' => $accountFee]);
-        $this->json('delete', $route)->assertStatus(403);
-    }
-
-    /**
-     * Case is creator of game but lack update_game permission
-     */
-    public function test_middleware_fail_2()
+    public function test_middleware_fail()
     {
         $accountFee = AccountFee::where('creator_id', '!=', null)
             ->inRandomOrder()->first();
-        $user = $this->makeAuth(['update_game'], $accountFee->accountType->game->creator);
+        $user = $this->makeAuth(['update_game', 'manage_game'], $accountFee->accountType->game->creator);
         $this->actingAs($user);
         $route = route('account-fee.destroy', ['accountFee' => $accountFee]);
         $this->json('delete', $route)->assertStatus(403);
