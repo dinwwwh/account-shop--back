@@ -92,10 +92,10 @@ class GameController extends Controller
      */
     public function getUsableGame()
     {
-        $roles = auth()->user()->roles()->with('accountTypes.game')->get();
+        $roles = auth()->user()->roles()->with('usableAccountTypes.game')->get();
         $games = new Collection;
         foreach ($roles as $role) {
-            foreach ($role->accountTypes as $accountType) {
+            foreach ($role->usableAccountTypes as $accountType) {
                 if (!$games->contains($accountType->game)) {
                     $games->push($accountType->game);
                 }

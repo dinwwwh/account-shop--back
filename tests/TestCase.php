@@ -4,11 +4,34 @@ namespace Tests;
 
 use App\Models\Permission;
 use App\Models\User;
+use DB;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // DB::rollBack();
+        // DB::beginTransaction();
+        // $this->seed(\Database\Seeders\ForTestSeeder::class);
+    }
+
+    /**
+     * Run this method per end of classes
+     */
+    public function test_prepare()
+    {
+        $this->refreshDatabase();
+        $this->assertTrue(true);
+    }
+
+    public function refreshDatabase(): void
+    {
+        $this->seed(\Database\Seeders\ForTestSeeder::class);
+    }
 
     /**
      * To Fix error 419 in request to web middleware
@@ -39,7 +62,7 @@ abstract class TestCase extends BaseTestCase
      * @return \App\Models\User default user will has full permissions
      */
     static public $allPermissions;
-    public function makeAuth(array $excludedPermissionKeys = [], $userOrExcludedIds = [], bool $isStrictPermissions = true): User
+    public function makeAuth(array $excludedPermissionKeys = [], $userOrExcludedIds = [], bool $isRevertPermissions = false): User
     {
         if (!optional(static::$allPermissions)->isNotEmpty()) {
             static::$allPermissions = Permission::all();
@@ -50,17 +73,18 @@ abstract class TestCase extends BaseTestCase
         } elseif (is_array($userOrExcludedIds)) {
             $user = User::whereNotIn('id', $userOrExcludedIds)->inRandomOrder()->first();
         } else {
-            throw 'Third argument expect array or [App\Models\User]';
+            throw 'Third argument expect array or [App\Models\User] , ' . $userOrExcludedIds . ' given.';
         }
 
-        if ($isStrictPermissions) {
-            $user->syncPermissions([]);
-            $user->syncRoles([]);
+        $user->syncRoles([]);
+        if ($isRevertPermissions) {
+            $user->syncPermissions($excludedPermissionKeys);
+        } else {
+            $requiredPermissions = static::$allPermissions->filter(
+                fn ($permission) => !in_array($permission->getKey(), $excludedPermissionKeys)
+            );
+            $user->syncPermissions($requiredPermissions);
         }
-        $requiredPermissions = static::$allPermissions->filter(
-            fn ($permission) => !in_array($permission->getKey(), $excludedPermissionKeys)
-        );
-        $user->givePermissionTo($requiredPermissions);
         return $user->refresh();
     }
 }

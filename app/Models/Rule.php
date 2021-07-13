@@ -13,6 +13,22 @@ class Rule extends Model implements Auditable
         HelperForRule,
         \OwenIt\Auditing\Auditable;
 
+    public const RULE_REQUEST = [
+        'nullable',
+        'array',
+        'placeholder' => 'nullable|string',
+        'datatype' => 'nullable|string',
+        'required' => 'nullable|boolean',
+        'multiple' => 'nullable|boolean',
+        'min' => 'nullable|integer',
+        'max' => 'nullable|integer',
+        'values' => 'nullable|array',
+        'requiredUserIds' => 'nullable|array',
+        'requiredUserIds.*' => 'integer|exists:users,id',
+        'unrequiredUserIds' => 'nullable|array',
+        'unrequiredUserIds.*' => 'integer|exists:users,id'
+    ];
+
     /**
      * The attributes & relationships that should be hidden for arrays.
      *
@@ -55,7 +71,7 @@ class Rule extends Model implements Auditable
      *
      * @var array
      */
-    protected $with = ['requiredRoles'];
+    protected $with = ['requiredUsers', 'unrequiredUsers'];
 
     /**
      * To set default
@@ -68,20 +84,16 @@ class Rule extends Model implements Auditable
 
         // Custom
         static::creating(function ($query) {
-            $query->placeholder = $query->placeholder ?? null;
             $query->datatype = $query->datatype ?? 'string';
-            // $query->required = $query->required ?? false;
+            $query->required = $query->required ?? false;
             $query->multiple = $query->multiple ?? false;
-            $query->min = $query->min ?? null;
-            $query->max = $query->max ?? null;
-            $query->values = $query->values ?? null;
 
-            $query->creator_id = optional(auth()->user())->id;
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->creator_id = $query->creator_id ?? optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
 
         static::updating(function ($query) {
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
     }
 
@@ -106,13 +118,22 @@ class Rule extends Model implements Auditable
     }
 
     /**
-     * Relationship many-many with Models\Role
-     * Include roles must required in this rule
+     * Get all-users required do this rule
      *
-     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function requiredRoles()
+    public function requiredUsers()
     {
-        return $this->belongsToMany(Role::class, 'rule_required_roles');
+        return $this->belongsToMany(User::class, 'rule_user_required');
+    }
+
+    /**
+     * Get all-users unrequired do this rule
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function unrequiredUsers()
+    {
+        return $this->belongsToMany(User::class, 'rule_user_unrequired');
     }
 }

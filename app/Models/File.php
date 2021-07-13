@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Casts\StoragePublicFile;
+use App\ModelTraits\HelperForFile;
 use App\Observers\FileObserver;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -13,7 +14,8 @@ class File extends Model implements Auditable
 {
     use HasFactory,
         SoftDeletes,
-        \OwenIt\Auditing\Auditable;
+        \OwenIt\Auditing\Auditable,
+        HelperForFile;
 
     /**
      * Group of type file
@@ -79,12 +81,12 @@ class File extends Model implements Auditable
         static::observe(FileObserver::class);
 
         static::creating(function ($query) {
-            $query->creator_id = optional(auth()->user())->id;
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->creator_id = $query->creator_id ?? optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
 
         static::updating(function ($query) {
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
     }
 

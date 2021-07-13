@@ -18,17 +18,13 @@ class CreateAccountsTable extends Migration
             $table->string('username');
             $table->string('password');
             $table->integer('cost');
-            $table->integer('status_code');
             $table->string('description')->nullable();
             $table->integer('account_type_id');
-            $table->bigInteger('censor_id')->nullable();
             $table->bigInteger('buyer_id')->nullable();
             $table->integer('sold_at_price')->nullable();
             $table->timestamp('sold_at')->nullable();
             $table->unsignedBigInteger('latest_updater_id')->nullable();
             $table->unsignedBigInteger('creator_id')->nullable();
-            $table->string('last_role_key_editor_used');
-            $table->timestamp('approved_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

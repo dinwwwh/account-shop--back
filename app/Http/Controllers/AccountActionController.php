@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Http\Requests\StoreAccountActionRequest;
 use App\Http\Requests\UpdateAccountActionRequest;
 use App\Models\AccountType;
+use App\Models\Rule;
 
 class AccountActionController extends Controller
 {
@@ -43,20 +44,22 @@ class AccountActionController extends Controller
                 $accountActionData[Str::snake($key)] = $request->$key;
             }
         }
-        $accountActionData['required'] = $request->required;
         $accountActionData['slug'] = Str::slug($accountActionData['name']);
-        $accountActionData['account_type_id'] = $accountType->id;
+        $accountActionData['account_type_id'] = $accountType->getKey();
 
         // DB transaction
         try {
             DB::beginTransaction();
-            $accountAction = AccountAction::create($accountActionData)->refresh(); // Save account info to database
 
-            // Relationship
-            if (is_null($accountAction->required)) {
-                $roles = Role::mustBeManyRoles($request->requiredRoleKeys ?? []);
-                $accountAction->requiredRoles()->attach($roles);
+            $dataOfRule = $request->rule ?? [];
+            $dataOfRule['datatype'] = 'boolean';
+            if ($request->rule && array_key_exists('required', $request->rule) && $request->rule['required']) {
+                $dataOfRule['values'] = [true];
             }
+            $rule = Rule::createQuickly($dataOfRule);
+            $accountActionData['rule_id'] = $rule->getKey();
+
+            $accountAction = AccountAction::create($accountActionData)->refresh(); // Save account info to database
 
             DB::commit();
         } catch (\Throwable $th) {
@@ -99,20 +102,18 @@ class AccountActionController extends Controller
         if (array_key_exists('name', $accountActionData)) {
             $accountActionData['slug'] = Str::slug($accountActionData['name']);
         }
-        $accountActionData['required'] = $request->required;
 
         // DB transaction
         try {
             DB::beginTransaction();
             $accountAction->update($accountActionData); // Save account info to database
 
-            // Relationship
-            if (is_null($accountAction->required)) {
-                $roles = Role::mustBeManyRoles($request->requiredRoleKeys ?? []);
-                $accountAction->requiredRoles()->sync($roles);
-            } else {
-                $accountAction->requiredRoles()->sync([]);
+            $dataOfRule = $request->rule ?? [];
+            $dataOfRule['datatype'] = 'boolean';
+            if ($request->rule && array_key_exists('required', $request->rule) && $request->rule['required']) {
+                $dataOfRule['values'] = [true];
             }
+            $accountAction->rule->updateQuickly($dataOfRule);
 
             DB::commit();
         } catch (\Throwable $th) {
@@ -134,7 +135,6 @@ class AccountActionController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $accountAction->rolesThatNeedPerformingAccountAction()->sync([]); // Delete relationship with Models\Role
             $accountAction->delete();
             DB::commit();
         } catch (\Throwable $th) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\AccountStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -30,32 +31,35 @@ class AccountTradingController extends Controller
 
         try {
             DB::beginTransaction();
+            $oldStatusCode = $account->latestAccountStatus->code;
 
             // Do something before send account for user
-            switch ($account->status_code) {
+            switch ($oldStatusCode) {
                 case 480:
-                    $account->status_code = 880;
+                    $newStatusCode = 880;
                     break;
 
                 case 440:
-                    $account->status_code = 840;
+                    $newStatusCode = 840;
                     break;
 
                 default:
-                    # code...
-                    break;
+                    throw 'Lack case handle status code given ' . $oldStatusCode;
             }
 
             // Handle on user
             auth()->user()->reduceGoldCoin($bestPrice);
 
             // Handle on account
-            {
-                $account->buyer_id = auth()->user()->id;
-                $account->sold_at_price = $bestPrice;
-                $account->sold_at = Carbon::now();
-                $account->save();
-            }
+            $account->update([
+                'buyer_id' => auth()->user()->getKey(),
+                'sold_at_price' => $bestPrice,
+                'sold_at' => now(),
+            ]);
+            $account->accountStatuses()->create([
+                'code' => $newStatusCode,
+                'short_description' => AccountStatus::SHORT_DESCRIPTION_OF_SOLD
+            ]);
 
             // When Success
             DB::commit();
@@ -64,9 +68,7 @@ class AccountTradingController extends Controller
             throw $th;
         }
 
-        return response()->json([
-            'message' => 'Mua tài khoản thành công, vui lòng vào lịch sử giao dịch để xem chi tiết.'
-        ], 200);
+        return response()->json([], 204);
     }
 
     /**

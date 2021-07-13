@@ -29,14 +29,14 @@ class AccountFactory extends Factory
          * account_type_id, status_code,
          *
          * if status_code === 480, 840, 880
-         * need state: 'status_code' 'approved_at' 'censor_id'
+         * need state: 'status_code' 'approved_at' 'approver_id'
          *
          * if status_code === 840, 880
          * need state: 'buyer_id', 'sold_at'
          */
         /**
          * Properties will receive default value
-         * censor_id, buyer_id,
+         * approver_id, buyer_id,
          * sold_at_price, sold_at,
          *
          */
@@ -45,7 +45,6 @@ class AccountFactory extends Factory
             'password' => Str::random(40),
             'cost' => rand(10000, 99999),
             'description' => $this->faker->title,
-            'last_role_key_editor_used' => 'tester',
         ];
     }
 

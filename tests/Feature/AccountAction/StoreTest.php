@@ -12,82 +12,59 @@ use Arr;
 
 class StoreTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         $user = $this->makeAuth([]);
         $this->actingAs($user);
         $accountType = AccountType::inRandomOrder()->first();
         $route = route('account-action.store', ['accountType' => $accountType]);
 
-        # Case required is null
+        # Case required is true
         $data = [
             'order' => rand(1, 100),
             'name' => Str::random(10),
             'description' => Str::random(10),
             'videoPath' => Str::random(10),
-            'required' => null,
-            'requiredRoleKeys' => ['administrator', 'customer'],
-            '_requiredModelRelationships' => ['requiredRoles']
+            'rule' => [
+                'required' => true,
+                'requiredUserIds' => [1, 2, 3],
+                'unrequiredUserIds' => [4, 5, 6, 7],
+            ],
+            '_requiredModelRelationships' => ['rule']
         ];
 
         $res = $this->json('post', $route, $data);
         $res->assertStatus(201);
+        $res->assertJsonCount(0, 'data.rule.requiredUsers');
+        $res->assertJsonCount(4, 'data.rule.unrequiredUsers');
         $res->assertJson(
-            fn ($json) => $json
-                ->has(
-                    'data',
-                    fn ($json) => $json
-                        ->where('order', $data['order'])
-                        ->where('name', $data['name'])
-                        ->where('description', $data['description'])
-                        ->where('videoPath', $data['videoPath'])
-                        ->where('required', $data['required'])
-                        ->has(
-                            'requiredRoles',
-                            fn ($json) => $json
-                                ->has(
-                                    0,
-                                    fn ($json) => $json
-                                        ->where('key', $data['requiredRoleKeys'][0])
-                                        ->etc()
-                                )
-                                ->has(
-                                    1,
-                                    fn ($json) => $json
-                                        ->where('key', $data['requiredRoleKeys'][1])
-                                        ->etc()
-                                )
-                        )
-                        ->etc()
-                )
+            fn ($j) => $j
+                ->where('data.rule.datatype', 'boolean')
+                ->where('data.rule.values', [true])
+                ->where('data.rule.required', true)
         );
+        $ruleId = $res->getData()->data->rule->id;
 
-        # Case required isn't null
-        $data = [
-            'order' => rand(1, 100),
-            'name' => Str::random(10),
-            'description' => Str::random(10),
-            'videoPath' => Str::random(10),
-            'required' => Arr::random([true, false]),
-            '_requiredModelRelationships' => ['requiredRoles'],
-        ];
+        $this->assertDatabaseHas('account_actions', [
+            'order' => $data['order'],
+            'name' => $data['name'],
+            'description' => $data['description'],
+            'video_path' => $data['videoPath'],
+        ]);
 
-        $res = $this->json('post', $route, $data);
-        $res->assertStatus(201);
-        $res->assertJson(
-            fn ($json) => $json
-                ->has(
-                    'data',
-                    fn ($json) => $json
-                        ->where('order', $data['order'])
-                        ->where('name', $data['name'])
-                        ->where('description', $data['description'])
-                        ->where('videoPath', $data['videoPath'])
-                        ->where('required', $data['required'])
-                        ->where('requiredRoles', [])
-                        ->etc()
-                )
-        );
+        foreach ($data['rule']['requiredUserIds'] as $userId) {
+            $this->assertDatabaseMissing('rule_user_required', [
+                'user_id' => $userId,
+                'rule_id' => $ruleId,
+            ]);
+        }
+
+        foreach ($data['rule']['unrequiredUserIds'] as $userId) {
+            $this->assertDatabaseHas('rule_user_unrequired', [
+                'user_id' => $userId,
+                'rule_id' => $ruleId,
+            ]);
+        }
     }
 
     /**

@@ -36,55 +36,115 @@ class AccountPolicy
     }
 
     /**
-     * Determine whether the user can view sensitive info of the model.
+     * Determine whether the user is manager of the account
+     *
+     * @param \App\Models\User $user
+     * @param \App\Models\Account $account
+     * @return bool
+     */
+    public function manage(User $user, Account $account)
+    {
+        return $user->can('update', $account->accountType);
+    }
+
+    /**
+     * Determine whether the user can READ LOGIN INFOS of the model.
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Account  $account
      * @return mixed
      */
-    public function viewSensitiveInfo(User $user, Account $account)
+    public function readLoginInfos(User $user, Account $account)
     {
         # user is a manager
         if (
-            $this->manage($user)
-            // && in_array($account->status_code, [])
+            $this->manage($user, $account)
         ) {
             return true;
         }
 
         # user is buyer
         if (
-            $user->is($account->buyer)
-            && in_array($account->status_code, [840, 880])
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.buyer.readable_login_infos_status_codes', [])
+            )
+            && $user->is($account->buyer)
         ) {
             return true;
         }
 
         # user can approve account
         if (
-            $this->approve($user, $account)
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.approver.readable_login_infos_status_codes', [])
+            )
+            && $this->endApproving($user, $account)
         ) {
             return true;
         }
 
         # user is creator
         if (
-            $user->is($account->creator)
-            && in_array($account->status_code, [440, 0])
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.creator.readable_login_infos_status_codes', [])
+            )
+            && $user->is($account->creator)
         ) {
             return true;
         }
     }
 
     /**
-     * Determine whether the user can manage the model.
+     * Determine whether the user can READ ACCOUNT INFOS of the model.
      *
      * @param  \App\Models\User  $user
+     * @param  \App\Models\Account  $account
      * @return mixed
      */
-    public function manage(User $user)
+    public function readAccountInfos(User $user, Account $account)
     {
-        return $user->hasPermissionTo('manage_account');
+        # user is a manager
+        if (
+            $this->manage($user, $account)
+        ) {
+            return true;
+        }
+
+        # user is buyer
+        if (
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.buyer.readable_account_infos_status_codes', [])
+            )
+            && $user->is($account->buyer)
+        ) {
+            return true;
+        }
+
+        # user can approve account
+        if (
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.approver.readable_account_infos_status_codes', [])
+            )
+            && $this->endApproving($user, $account)
+        ) {
+            return true;
+        }
+
+        # user is creator
+        if (
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.creator.readable_login_infos_status_codes', [])
+            )
+            && $user->is($account->creator)
+        ) {
+            return true;
+        }
     }
 
     /**
@@ -96,8 +156,7 @@ class AccountPolicy
      */
     public function create(User $user, AccountType $accountType)
     {
-        return $user->hasPermissionTo('create_account')
-            && $accountType->checkUserCanUse($user);
+        return  $accountType->isUsableUser($user);
     }
 
     /**
@@ -107,11 +166,35 @@ class AccountPolicy
      * @param  \App\Models\Account  $account
      * @return mixed
      */
-    public function approve(User $user, Account $account)
+    public function startApproving(User $user, Account $account)
     {
-        return $user->hasPermissionTo('approve_account')
-            && $account->status_code >= 0
-            && $account->status_code <= 99;
+        if (!in_array(
+            $account->latestAccountStatus->code,
+            config('account.status_codes_pending_approval', [])
+        )) {
+            return false;
+        }
+
+        return $account->accountType->isApprovableUser($user);
+    }
+
+    /**
+     * Determine whether the user can approve models.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Account  $account
+     * @return mixed
+     */
+    public function endApproving(User $user, Account $account)
+    {
+        if (
+            !$user->is($account->latestAccountStatus->creator)
+            && !$this->manage($user, $account)
+        ) {
+            return false;
+        }
+
+        return  $account->accountType->isApprovableUser($user);
     }
 
     /**
@@ -123,36 +206,203 @@ class AccountPolicy
      */
     public function buy(User $user, Account $account)
     {
-        return  $account->status_code >= 400
-            && $account->status_code <= 499
+        return  in_array(
+            $account->latestAccountStatus->code,
+            config('account.buyable_status_codes', [])
+        )
             && is_null($account->buyer_id);
     }
 
     /**
-     * Determine whether the user can update the model.
+     * Determine whether the user can update GAME INFOS the model.
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\Account  $account
      * @return mixed
      */
-    public function update(User $user, Account $account)
+    public function updateGameInfos(User $user, Account $account)
     {
-        if (!$user->hasPermissionTo('update_account')) {
-            return false;
-        }
-
-        # Case: $user is creator
+        # user is a manager
         if (
-            $user->is($account->creator)
-            && in_array($account->status_code, [0, 440])
+            $this->manage($user, $account)
         ) {
             return true;
         }
 
-        # Case: $user is manager
+        # user can approve account
         if (
-            $this->manage($user)
-            && in_array($account->status_code, [0, 440, 480])
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.approver.updatable_game_infos_status_codes')
+            )
+            && $this->endApproving($user, $account)
+        ) {
+            return true;
+        }
+
+        # user is creator
+        if (
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.creator.updatable_game_infos_status_codes', [])
+            )
+            && $user->is($account->creator)
+        ) {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether the user can update ACCOUNT INFOS of this account.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Account  $account
+     * @return boolean
+     */
+    public function updateAccountInfos(User $user, Account $account)
+    {
+        # user is a manager
+        if (
+            $this->manage($user, $account)
+        ) {
+            return true;
+        }
+
+        # user can approve account
+        if (
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.approver.updatable_account_infos_status_codes', [])
+            )
+            && $this->endApproving($user, $account)
+        ) {
+            return true;
+        }
+
+        # user is creator
+        if (
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.creator.updatable_account_infos_status_codes', [])
+            )
+            && $user->is($account->creator)
+        ) {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether the user can update LOGIN INFOS of this account.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Account  $account
+     * @return boolean
+     */
+    public function updateLoginInfos(User $user, Account $account)
+    {
+        # user is a manager
+        if (
+            $this->manage($user, $account)
+        ) {
+            return true;
+        }
+
+        # user can approve account
+        if (
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.approver.updatable_login_infos_status_codes', [])
+            )
+            && $this->endApproving($user, $account)
+        ) {
+            return true;
+        }
+
+        # user is creator
+        if (
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.creator.updatable_login_infos_status_codes', [])
+            )
+            && $user->is($account->creator)
+        ) {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether the user can update IMAGES of this account.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Account  $account
+     * @return boolean
+     */
+    public function updateImages(User $user, Account $account)
+    {
+        # user is a manager
+        if (
+            $this->manage($user, $account)
+        ) {
+            return true;
+        }
+
+        # user can approve account
+        if (
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.approver.updatable_images_status_codes', [])
+            )
+            && $this->endApproving($user, $account)
+        ) {
+            return true;
+        }
+
+        # user is creator
+        if (
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.creator.updatable_images_status_codes', [])
+            )
+            && $user->is($account->creator)
+        ) {
+            return true;
+        }
+    }
+
+    /**
+     * Determine whether the user can update COST of this account.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Account  $account
+     * @return boolean
+     */
+    public function updateCost(User $user, Account $account)
+    {
+        # user is a manager
+        if (
+            $this->manage($user, $account)
+        ) {
+            return true;
+        }
+
+        # user can approve account
+        if (
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.approver.updatable_cost_status_codes', [])
+            )
+            && $this->endApproving($user, $account)
+        ) {
+            return true;
+        }
+
+        # user is creator
+        if (
+            in_array(
+                $account->latestAccountStatus->code,
+                config('account.creator.updatable_cost_status_codes', [])
+            )
+            && $user->is($account->creator)
         ) {
             return true;
         }

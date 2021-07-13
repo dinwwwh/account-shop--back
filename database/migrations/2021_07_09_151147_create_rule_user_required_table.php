@@ -1,10 +1,12 @@
 <?php
 
+use App\Models\Rule;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRuleRequiredRolesTable extends Migration
+class CreateRuleUserRequiredTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +15,10 @@ class CreateRuleRequiredRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create('rule_required_roles', function (Blueprint $table) {
+        Schema::create('rule_user_required', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('rule_id');
-            $table->string('role_key');
+            $table->foreignIdFor(User::class)->nullable();
+            $table->foreignIdFor(Rule::class)->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ class CreateRuleRequiredRolesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rule_required_roles');
+        Schema::dropIfExists('rule_user_required');
     }
 }

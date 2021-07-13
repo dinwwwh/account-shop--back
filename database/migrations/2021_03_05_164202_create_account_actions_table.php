@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\AccountType;
+use App\Models\Rule;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,11 +20,10 @@ class CreateAccountActionsTable extends Migration
             $table->integer('order')->nullable();
             $table->string('name');
             $table->string('slug');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->string('video_path')->nullable();
-            $table->boolean('required')->nullable()->default(false);
-            $table->integer('display_type')->default(0);
-            $table->integer('account_type_id');
+            $table->foreignIdFor(AccountType::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Rule::class)->constrained();
             $table->unsignedBigInteger('latest_updater_id')->nullable();
             $table->unsignedBigInteger('creator_id')->nullable();
             $table->timestamps();

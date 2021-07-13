@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class DestroyTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         $gameInfo = GameInfo::inRandomOrder()->first();
         $route = route('game-info.destroy', ['gameInfo' => $gameInfo]);
@@ -23,9 +23,6 @@ class DestroyTest extends TestCase
         $this->assertDatabaseMissing('game_infos', [
             'id' => $gameInfoKey,
             'deleted_at' => null
-        ]);
-        $this->assertDatabaseMissing('rules', [
-            'id' => $ruleKey
         ]);
     }
 

@@ -15,7 +15,8 @@ class AccountTypeResource extends Resource
         return array_merge(parent::getAttributes($request), [
 
             // Relationships
-            'rolesCanUsedAccountType' => RoleResource::collection($this->whenLoaded('rolesCanUsedAccountType')),
+            'usableUsers' => UserResource::collection($this->whenLoaded('usableUsers')),
+            'approvableUsers' => UserResource::collection($this->whenLoaded('approvableUsers')),
 
             'game' => new GameResource($this->whenLoaded('game')),
 

@@ -53,11 +53,7 @@ class GameInfoController extends Controller
             DB::beginTransaction();
 
             // rule relationship
-            $rule = Rule::create($request->rule ?? [])->refresh();
-            if (is_null($rule->required)) {
-                $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoleKeys'] ?? []);
-                $rule->requiredRoles()->attach($requiredRoles);
-            }
+            $rule = Rule::createQuickly($request->rule ?? []);
             $gameInfoData['rule_id'] = $rule->getKey();
 
             $gameInfo = GameInfo::create($gameInfoData);
@@ -107,19 +103,7 @@ class GameInfoController extends Controller
         try {
             DB::beginTransaction();
             $gameInfo->update($gameInfoData);
-
-            // rule relationship
-            if ($request->filled('rule')) {
-                $rule = $gameInfo->rule;
-                $rule->update($request->rule);
-                if (is_null($rule->required)) {
-                    $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoleKeys'] ?? []);
-                    $rule->requiredRoles()->sync($requiredRoles);
-                } else {
-                    $rule->requiredRoles()->sync([]);
-                }
-            }
-
+            $gameInfo->rule->updateQuickly($request->rule ?? []);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -139,12 +123,7 @@ class GameInfoController extends Controller
     {
         try {
             DB::beginTransaction();
-
-            // Relationship
-            $gameInfo->rule->delete();
-            // Main
             $gameInfo->delete();
-
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();

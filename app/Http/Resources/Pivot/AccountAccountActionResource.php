@@ -18,7 +18,7 @@ class AccountAccountActionResource extends Resource
 
             // Just merge when auth can view sensitive infos
             $this->mergeWhen(
-                auth()->check() && auth()->user()->can('viewSensitiveInfo', $this->resource->account),
+                auth()->check() && auth()->user()->can('viewBaseSensitiveInfo', $this->resource->account),
                 function () {
                     return [
                         'isDone' => $this->is_done,

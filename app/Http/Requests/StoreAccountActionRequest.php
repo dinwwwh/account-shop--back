@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\ValidationHelper;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Rule;
 
 class StoreAccountActionRequest extends FormRequest
 {
@@ -23,16 +25,14 @@ class StoreAccountActionRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'order' => 'nullable|integer',
-            'name' => 'required|string',
-            'description' => 'nullable|string',
-            'videoPath' => 'nullable|string',
-            'required' => 'nullable|boolean',
-
-            // Relationship
-            'requiredRoleKeys' => 'nullable|array',
-            'requiredRoleKeys.*' => 'string',
-        ];
+        return array_merge(
+            [
+                'order' => 'nullable|integer',
+                'name' => 'required|string',
+                'description' => 'nullable|string',
+                'videoPath' => 'nullable|string',
+            ],
+            ValidationHelper::parseRulesByArray('rule', Rule::RULE_REQUEST)
+        );
     }
 }

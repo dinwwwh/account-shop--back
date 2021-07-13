@@ -61,17 +61,14 @@ class Account extends Model implements Auditable
         'username' => 'string',
         'password' => 'string',
         'cost' => 'integer',
-        'status_code' => 'integer',
         'description' => 'string',
         'account_type_id' => 'integer',
-        'censor_id' => 'integer',
+        'approver_id' => 'integer',
         'buyer_id' => 'integer',
         'sold_at_price' => 'integer',
         'sold_at' => 'datetime',
         'latest_updater_id' => 'integer',
         'creator_id' => 'integer',
-        'last_role_key_editor_used' => 'string',
-        'approved_at' => 'datetime',
     ];
 
     /**
@@ -86,12 +83,12 @@ class Account extends Model implements Auditable
 
         // Custom
         static::creating(function ($query) {
-            $query->creator_id = optional(auth()->user())->id;
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->creator_id = $query->creator_id ?? optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
 
         static::updating(function ($query) {
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
     }
 
@@ -161,14 +158,23 @@ class Account extends Model implements Auditable
     }
 
     /**
-     * Relationship one-one with User
-     * Include infos of censor model
+     * Get latest status_code of this account
      *
-     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function censor()
+    public function latestAccountStatus()
     {
-        return $this->belongsTo(User::class, 'censor_id');
+        return $this->hasOne(AccountStatus::class)->latestOfMany();
+    }
+
+    /**
+     * Get all status_codes of this account
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function accountStatuses()
+    {
+        return $this->hasMany(AccountStatus::class);
     }
 
     /**

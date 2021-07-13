@@ -30,6 +30,7 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
      */
     protected $hidden = [
         'password',
+        'email',
         'remember_token', #Token remember user in client
         'audits', #Contain history changes of this model
     ];
@@ -82,12 +83,12 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
 
         // Custom
         static::creating(function ($query) {
-            $query->creator_id = optional(auth()->user())->id;
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->creator_id = $query->creator_id ?? optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
 
         static::updating(function ($query) {
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
     }
 
@@ -151,5 +152,28 @@ class User extends Authenticatable implements MustVerifyEmail, Auditable
     public function accounts()
     {
         return $this->hasMany(Account::class, 'creator_id');
+    }
+
+    /**
+     * Get account types that this user can use it to create account
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function usableAccountTypes()
+    {
+        return $this->belongsToMany(AccountType::class, 'account_type_user_usable')
+            ->withPivot('status_code');
+    }
+
+    /**
+     * Get account types that user
+     * can approve account created by it
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function approvableAccountTypes()
+    {
+        return $this->belongsToMany(AccountType::class, 'account_type_user_approvable')
+            ->withPivot('status_code');
     }
 }

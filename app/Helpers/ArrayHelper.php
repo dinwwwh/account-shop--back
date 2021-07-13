@@ -7,18 +7,36 @@ use Illuminate\Support\Str;
 class ArrayHelper
 {
     /**
-     * Convert an array with key is snackCase to camelCase
+     * Convert all- array keys to CAMEL CASE (like: proAnApple)
      *
      * @param array $arr
      * @return array
      */
-    static function convertArrayKeyToCamelCase(array $arr, int $depth = 1): array
+    static function convertArrayKeysToCamelCase(array $arr, int $depth = 1): array
     {
         if ($depth == 0) return $arr;
         $result = [];
         foreach ($arr as $key => $value) {
             $result[Str::camel($key)] = is_array($value)
-                ? static::convertArrayKeyToCamelCase($value, $depth - 1)
+                ? static::convertArrayKeysToCamelCase($value, $depth - 1)
+                : $value;
+        }
+        return $result;
+    }
+
+    /**
+     * Convert all- array keys to SNAKE CASE (like: pro_an_apple)
+     *
+     * @param array $arr
+     * @return array
+     */
+    static function convertArrayKeysToSnakeCase(array $arr, int $depth = 1): array
+    {
+        if ($depth == 0) return $arr;
+        $result = [];
+        foreach ($arr as $key => $value) {
+            $result[Str::snake($key)] = is_array($value)
+                ? static::convertArrayKeysToSnakeCase($value, $depth - 1)
                 : $value;
         }
         return $result;

@@ -16,9 +16,14 @@ use App\Http\Requests\Request;
 use App\Models\Account;
 use App\Http\Resources\AuditResource;
 use App\Http\Resources\AccountResource;
+use Illuminate\Validation\Rule;
+use App\Helpers\ValidationHelper;
+use App\Models\Rule as ModelsRule;
+use App\Rules\ValidateForKeys;
 
-Route::get('test', function (Request $request) {
-    return response(Account::with(config('request.requiredModelRelationships'))->first()->toArray());
+Route::post('test', function (Request $request) {
+    dd($request->file);
+    return $request->user();
 });
 
 // ====================================================
@@ -256,14 +261,34 @@ Route::prefix('account')->group(function () {
         Route::post('{accountType}', [AccountController::class, 'store'])
             ->middleware('can:create,App\Models\Account,accountType')
             ->name('account.store');
-        // approve
-        Route::post('approve/{account}', [AccountController::class, 'approve'])
-            ->middleware('can:approve,account')
-            ->name('account.approve');
-        // Update
-        Route::put('{account}', [AccountController::class, 'update'])
-            ->middleware('can:update,account')
-            ->name('account.update');
+        // start approving
+        Route::post('start-approving/{account}', [AccountController::class, 'startApproving'])
+            ->middleware('can:startApproving,account')
+            ->name('account.start-approving');
+        // end approving
+        Route::post('end-approving/{account}', [AccountController::class, 'endApproving'])
+            ->middleware('can:endApproving,account')
+            ->name('account.end-approving');
+        // Update account infos
+        Route::patch('{account}/account-infos', [AccountController::class, 'updateAccountInfos'])
+            ->middleware('can:update-account-infos,account')
+            ->name('account.update-account-infos');
+        // Update game infos
+        Route::patch('{account}/game-infos', [AccountController::class, 'updateGameInfos'])
+            ->middleware('can:update-game-infos,account')
+            ->name('account.update-game-infos');
+        // Update login infos
+        Route::patch('{account}/login-infos', [AccountController::class, 'updateLoginInfos'])
+            ->middleware('can:update-login-infos,account')
+            ->name('account.update-login-infos');
+        // Update images
+        Route::patch('{account}/images', [AccountController::class, 'updateImages'])
+            ->middleware('can:update-images,account')
+            ->name('account.update-images');
+        // Update cost
+        Route::patch('{account}/cost', [AccountController::class, 'updateCost'])
+            ->middleware('can:update-cost,account')
+            ->name('account.update-cost');
         // Destroy
         // Route::delete('{account}', [AccountController::class, 'destroy'])
         //     ->name('account.destroy');

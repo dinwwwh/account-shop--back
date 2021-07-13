@@ -52,12 +52,7 @@ class AccountInfoController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-
-            $rule = Rule::create($request->rule ?? [])->refresh(); // Save rule in database
-            if (is_null($rule->required)) {
-                $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoleKeys'] ?? []);
-                $rule->requiredRoles()->attach($requiredRoles);
-            }
+            $rule = Rule::createQuickly($request->rule ?? []);
             $accountInfoData['rule_id'] = $rule->getKey();
             $accountInfo = AccountInfo::create($accountInfoData); // Save account info to database
 
@@ -108,17 +103,7 @@ class AccountInfoController extends Controller
         try {
             DB::beginTransaction();
             $accountInfo->update($accountInfoData);
-
-            // Update rule
-            if ($request->filled('rule')) {
-                $accountInfo->rule->update($request->rule);
-                if (is_null($accountInfo->rule->required)) {
-                    $requiredRoles = Role::mustBeManyRoles($request->rule['requiredRoleKeys'] ?? []);
-                    $accountInfo->rule->requiredRoles()->sync($requiredRoles);
-                } else {
-                    $accountInfo->rule->requiredRoles()->sync([]);
-                }
-            }
+            $accountInfo->rule->updateQuickly($request->rule ?? []);
 
             DB::commit();
         } catch (\Throwable $th) {
@@ -140,7 +125,6 @@ class AccountInfoController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $accountInfo->rolesNeedFilling()->sync([]); // Delete relationship with Models\Role
             $accountInfo->delete();
         } catch (\Throwable $th) {
             DB::rollback();

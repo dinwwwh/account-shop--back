@@ -56,17 +56,6 @@ class AccountTypeController extends Controller
      */
     public function store(StoreAccountTypeRequest $request, Game $game)
     {
-        // Validate status codes - unimportant
-        foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
-            if (!key_exists($role['statusCode'], config('account.status_codes'))) {
-                return response()->json([
-                    'message' => 'Status code of role[key: '
-                        . $role['key'] . ', statusCode: '
-                        . $role['statusCode'] . '] invalid.'
-                ], 422);
-            }
-        }
-
         // Initialize data
         $accountTypeData = [];
         foreach ([
@@ -84,17 +73,22 @@ class AccountTypeController extends Controller
             DB::beginTransaction();
             $accountType = AccountType::create($accountTypeData); // Save rule to database
 
-            $appRoles = Role::all();
-            // Relationship many-many with Models\Role 1
-            $syncRoles = [];
-            foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
-                if ($appRoles->contains($role['key'])) {
-                    $syncRoles[$role['key']] = [
-                        'status_code' => $role['statusCode'],
-                    ];
-                }
+            $syncUsableUsers = [];
+            foreach ($request->usableUsers ?? [] as $user) {
+                $syncUsableUsers[$user['id']] = [
+                    'status_code' => $user['statusCode'],
+                ];
             }
-            $accountType->rolesCanUsedAccountType()->sync($syncRoles);
+            $accountType->usableUsers()->sync($syncUsableUsers);
+
+            $syncApprovableUsers = [];
+            foreach ($request->approvableUsers ?? [] as $user) {
+                $syncApprovableUsers[$user['id']] = [
+                    'status_code' => $user['statusCode'],
+                ];
+            }
+            $accountType->approvableUsers()->sync($syncApprovableUsers);
+
 
             // When success
             DB::commit();
@@ -126,17 +120,6 @@ class AccountTypeController extends Controller
      */
     public function update(UpdateAccountTypeRequest $request, AccountType $accountType)
     {
-        // Validate status codes
-        foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
-            if (!key_exists($role['statusCode'], config('account.status_codes'))) {
-                return response()->json([
-                    'message' => 'Status code of role[key: '
-                        . $role['key'] . ', statusCode: '
-                        . $role['statusCode'] . '] invalid.'
-                ], 422);
-            }
-        }
-
         // Initialize data
         $accountTypeData = [];
         foreach ([
@@ -156,16 +139,21 @@ class AccountTypeController extends Controller
             DB::beginTransaction();
             $accountType->update($accountTypeData); // Save rule to database
 
-            $roles = Role::all();
-            // Relationship many-many with Models\Role 1
-            $syncRoles = [];
-            foreach ($request->rolesCanUsedAccountType ?? [] as $role) {
-                if ($roles->contains($role['key'])) {
-                    $syncRoles[$role['key']] = ['status_code' => $role['statusCode']];
-                }
+            $syncUsableUsers = [];
+            foreach ($request->usableUsers ?? [] as $user) {
+                $syncUsableUsers[$user['id']] = [
+                    'status_code' => $user['statusCode'],
+                ];
             }
-            $accountType->rolesCanUsedAccountType()->sync($syncRoles);
+            $accountType->usableUsers()->sync($syncUsableUsers);
 
+            $syncApprovableUsers = [];
+            foreach ($request->approvableUsers ?? [] as $user) {
+                $syncApprovableUsers[$user['id']] = [
+                    'status_code' => $user['statusCode'],
+                ];
+            }
+            $accountType->approvableUsers()->sync($syncApprovableUsers);
             // When success
             DB::commit();
         } catch (\Throwable $th) {
@@ -187,7 +175,6 @@ class AccountTypeController extends Controller
         // DB transaction
         try {
             DB::beginTransaction();
-            $accountType->rolesCanUsedAccountType()->sync([]); // Delete relationship with Models\Role
             $accountType->delete();
             DB::commit();
         } catch (\Throwable $th) {

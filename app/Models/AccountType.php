@@ -6,22 +6,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Collection;
-use App\ModelTraits\ManageRoleInAccountType;
 use App\ModelTraits\ManageAccountInfoInAccountType;
 use App\ModelTraits\ManageAccountActionInAccountType;
 use App\ModelTraits\ManageAccountFeeInAccountType;
+use App\ModelTraits\ManageUserInAccountType;
 use OwenIt\Auditing\Contracts\Auditable;
 
 
 class AccountType extends Model implements Auditable
 {
-    use ManageRoleInAccountType,
+    use
         ManageAccountInfoInAccountType,
         ManageAccountActionInAccountType,
         ManageAccountFeeInAccountType,
         HasFactory,
         SoftDeletes,
-        \OwenIt\Auditing\Auditable;
+        \OwenIt\Auditing\Auditable,
+        ManageUserInAccountType;
 
     /**
      * The attributes & relationships that should be hidden for arrays.
@@ -71,12 +72,12 @@ class AccountType extends Model implements Auditable
 
         // Custom
         static::creating(function ($query) {
-            $query->creator_id = optional(auth()->user())->id;
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->creator_id = $query->creator_id ?? optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
 
         static::updating(function ($query) {
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
     }
 
@@ -123,13 +124,24 @@ class AccountType extends Model implements Auditable
     }
 
     /**
-     * Relationship many-many with Models\Role
+     * Get users can use this account type to create account
      *
-     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function rolesCanUsedAccountType()
+    public function usableUsers()
     {
-        return $this->belongsToMany(Role::class, 'role_can_used_account_type')
+        return $this->belongsToMany(User::class, 'account_type_user_usable')
+            ->withPivot('status_code');
+    }
+
+    /**
+     * Get users that it can approve account created by this account type
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function approvableUsers()
+    {
+        return $this->belongsToMany(User::class, 'account_type_user_approvable')
             ->withPivot('status_code');
     }
 

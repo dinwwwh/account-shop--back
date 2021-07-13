@@ -6,7 +6,6 @@ use App\Models\Account;
 use App\Models\AccountAction;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use OwenIt\Auditing\Contracts\Auditable;
-use OwenIt\Auditing\Redactors\RightRedactor;
 
 class AccountAccountAction extends Pivot implements Auditable
 {
@@ -18,7 +17,6 @@ class AccountAccountAction extends Pivot implements Auditable
      * @var array
      */
     protected $hidden = [
-        'is_done',
         'audits', #Contain history changes of this model
     ];
 
@@ -28,9 +26,7 @@ class AccountAccountAction extends Pivot implements Auditable
      *
      * @var array
      * */
-    protected $attributeModifiers = [
-        'is_done' => RightRedactor::class,
-    ];
+    protected $attributeModifiers = [];
 
     /**
      * Indicates if the IDs are auto-incrementing.

@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class DestroyTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         $accountFee = AccountFee::inRandomOrder()->first();
         $route = route('account-fee.destroy', ['accountFee' => $accountFee]);

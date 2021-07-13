@@ -10,7 +10,7 @@ use Str;
 
 class StoreTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         $accountType = AccountType::inRandomOrder()->first();
         $route = route('account-info.store', ['accountType' => $accountType]);
@@ -21,43 +21,43 @@ class StoreTest extends TestCase
             'order' => rand(1, 100),
             'name' => Str::random(10),
             'description' => Str::random(30),
+            'rule' => [
+                'required' => true,
+                'requiredUserIds' => [1, 2, 3],
+                'unrequiredUserIds' => [4, 5, 6, 7],
+            ],
             '_requiredModelRelationships' => ['rule']
         ];
 
         $res = $this->json('post', $route, $data);
         $res->assertStatus(201);
+        $res->assertJsonCount(0, 'data.rule.requiredUsers');
+        $res->assertJsonCount(4, 'data.rule.unrequiredUsers');
         $res->assertJson(
-            fn ($json) => $json
-                ->has(
-                    'data',
-                    fn ($json) => $json
-                        ->where('order', $data['order'])
-                        ->where('name', $data['name'])
-                        ->where('description', $data['description'])
-                        ->etc()
-                )
+            fn ($j) => $j
+                ->where('data.rule.required', true)
         );
+        $ruleId = $res->getData()->data->rule->id;
 
-        # Case advanced rule
-        $data['rule'] = [
-            'required' => null,
-            'requiredRoleKeys' => ['tester'],
-        ];
-        $res = $this->json('post', $route, $data);
-        $res->assertStatus(201);
-        $res->assertJson(
-            fn ($json) => $json
-                ->has(
-                    'data',
-                    fn ($json) => $json
-                        ->where('order', $data['order'])
-                        ->where('name', $data['name'])
-                        ->where('description', $data['description'])
-                        ->where('rule.required', null)
-                        ->where('rule.requiredRoles.0.key', 'tester')
-                        ->etc()
-                )
-        );
+        $this->assertDatabaseHas('account_infos', [
+            'order' => $data['order'],
+            'name' => $data['name'],
+            'description' => $data['description'],
+        ]);
+
+        foreach ($data['rule']['requiredUserIds'] as $userId) {
+            $this->assertDatabaseMissing('rule_user_required', [
+                'user_id' => $userId,
+                'rule_id' => $ruleId,
+            ]);
+        }
+
+        foreach ($data['rule']['unrequiredUserIds'] as $userId) {
+            $this->assertDatabaseHas('rule_user_unrequired', [
+                'user_id' => $userId,
+                'rule_id' => $ruleId,
+            ]);
+        }
     }
 
     /**
@@ -69,7 +69,7 @@ class StoreTest extends TestCase
         $this->actingAs($user);
         $accountType = AccountType::inRandomOrder()->first();
         $route = route('account-info.store', ['accountType' => $accountType]);
-        $this->json('put', $route)->assertStatus(200);
+        $this->json('post', $route)->assertStatus(422);
     }
 
     /**
@@ -82,7 +82,7 @@ class StoreTest extends TestCase
         $user = $this->makeAuth(['manage_game'], $accountType->game->creator);
         $this->actingAs($user);
         $route = route('account-info.store', ['accountType' => $accountType]);
-        $this->json('put', $route)->assertStatus(200);
+        $this->json('post', $route)->assertStatus(422);
     }
 
     /**
@@ -94,7 +94,7 @@ class StoreTest extends TestCase
         $this->actingAs($user);
         $accountType = AccountType::inRandomOrder()->first();
         $route = route('account-info.store', ['accountType' => $accountType]);
-        $this->json('put', $route)->assertStatus(403);
+        $this->json('post', $route)->assertStatus(403);
     }
 
     /**
@@ -107,6 +107,6 @@ class StoreTest extends TestCase
         $user = $this->makeAuth(['update_game'], $accountType->game->creator);
         $this->actingAs($user);
         $route = route('account-info.store', ['accountType' => $accountType]);
-        $this->json('put', $route)->assertStatus(403);
+        $this->json('post', $route)->assertStatus(403);
     }
 }

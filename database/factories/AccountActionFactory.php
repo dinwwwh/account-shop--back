@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\AccountAction;
+use App\Models\Rule;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
@@ -23,12 +24,17 @@ class AccountActionFactory extends Factory
      */
     public function definition()
     {
+        $isRequired = rand(0, 1);
         return [
             'name' => 'AccountInfo' . Str::random(20),
             'slug' => fn ($attrs) => Str::slug($attrs['name']),
             'description' => Str::random(40),
             'video_path' => 'no thing this is test',
-            'required' => Arr::random([null, true, false]),
+            'rule_id' => Rule::factory()->state([
+                'datatype' => 'boolean',
+                'required' => $isRequired,
+                'values' => $isRequired ? [true] : null,
+            ]),
         ];
     }
 }

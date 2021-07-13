@@ -35,6 +35,18 @@ class AccountActionPolicy
     }
 
     /**
+     * Determine whether the user is manager of the account action
+     *
+     * @param \App\Models\User $user
+     * @param \App\Models\Account $account
+     * @return bool
+     */
+    public function manage(User $user, AccountAction $accountAction)
+    {
+        return $user->can('update', $accountAction->accountType);
+    }
+
+    /**
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
@@ -54,7 +66,7 @@ class AccountActionPolicy
      */
     public function update(User $user, AccountAction $accountAction)
     {
-        return $user->can('update', $accountAction->accountType);
+        return $this->manage($user, $accountAction);
     }
 
     /**
@@ -66,7 +78,7 @@ class AccountActionPolicy
      */
     public function delete(User $user, AccountAction $accountAction)
     {
-        return $user->can('update', $accountAction->accountType);
+        return $this->manage($user, $accountAction);
     }
 
     /**

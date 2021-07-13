@@ -10,63 +10,96 @@ use Tests\TestCase;
 
 class BuyTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller_and_middleware_success()
     {
-        $account = Account::inRandomOrder()
-            ->where('status_code', '>=', 400)
-            ->where('status_code', '<=', 499)
-            ->first();
+        $config = config('account.buyable_status_codes', []);
+        $count = 0;
+        do {
+            $account = Account::inRandomOrder()->first();
+            $count++;
+            if ($count == 100) return;
+        } while (
+            !in_array(
+                $account->latestAccountStatus->code,
+                $config
+            )
+        );
 
-
+        $oldStatusCode = $account->latestAccountStatus->code;
         $route = route('account-trading.buy', ['account' => $account]);
-        $user = User::where('id', '!=', $account->creator->getKey())->inRandomOrder()->first();
-        $goldCoin = rand($account->calculateTemporaryPrice(), $account->calculateTemporaryPrice() + 200000);
+        $user = $this->makeAuth([], [], true);
+        $price = $account->calculateTemporaryPrice();
+        $goldCoin = rand($price, $price + 200000);
         $user->gold_coin = $goldCoin;
         $user->save();
 
         # Case: enough gold coin to buy account
         $res = $this->actingAs($user)
             ->json('post', $route);
-        $res->assertStatus(200);
+        $res->assertStatus(204);
         $this->assertDatabaseHas('users', [
             'id' => $user->getKey(),
             'gold_coin' => ($goldCoin - $account->calculateTemporaryPrice()),
         ]);
 
-        $account = Account::inRandomOrder()
-            ->where('status_code', '>=', 400)
-            ->where('status_code', '<=', 499)
-            ->first();
-        $user = User::where('id', '!=', $account->creator->id)->inRandomOrder()->first();
+        $this->assertDatabaseHas('accounts', [
+            'buyer_id' => $user->getKey(),
+            'sold_at_price' => $price,
+        ]);
+
+        $this->assertDatabaseHas('account_statuses', [
+            'creator_id' => $user->getKey(),
+            'code' =>  $oldStatusCode + 400,
+        ]);
+    }
+
+    public function test_middleware_fail_invalid_account()
+    {
+        $config = config('account.buyable_status_codes', []);
+        $count = 0;
+        do {
+            $account = Account::inRandomOrder()->first();
+            $count++;
+            if ($count == 100) return;
+        } while (
+            in_array(
+                $account->latestAccountStatus->code,
+                $config
+            )
+        );
+
         $route = route('account-trading.buy', ['account' => $account]);
-        # Case: don't enough gold coin to buy account
-        $user->gold_coin = rand(1, $account->cost - 1);
+        $user = $this->makeAuth([], [], true);
+        $this->actingAs($user);
+
+        $res = $this->json('post', $route);
+        $res->assertStatus(403);
+    }
+
+    public function test_middleware_fail_not_enough_money()
+    {
+        $config = config('account.buyable_status_codes', []);
+        $count = 0;
+        do {
+            $account = Account::inRandomOrder()->first();
+            $count++;
+            if ($count == 100) return;
+        } while (
+            !in_array(
+                $account->latestAccountStatus->code,
+                $config
+            )
+        );
+
+        $route = route('account-trading.buy', ['account' => $account]);
+        $user = $this->makeAuth([], [], true);
+        $price = $account->calculateTemporaryPrice();
+        $user->gold_coin = $price - 1;
         $user->save();
+
+        # Case: enough gold coin to buy account
         $res = $this->actingAs($user)
             ->json('post', $route);
         $res->assertStatus(422);
-    }
-
-    public function test_middleware_with_valid_account()
-    {
-        $validAccount = Account::where('status_code', '>=', 400)
-            ->where('status_code', '<=', 499)
-            ->first();
-        $this->actingAs($this->makeAuth([]));
-
-        # valid account
-        $res = $this->json('post', route('account-trading.buy', ['account' => $validAccount]));
-        $this->assertTrue($res->status() == 422 || $res->status() == 200);
-    }
-
-    public function test_middleware_with_invalid_account()
-    {
-        $invalidAccount = Account::where('status_code', '<', 400)
-            ->orWhere('status_code', '>', 499)
-            ->first();
-        $this->actingAs($this->makeAuth([]));
-
-        $this->json('post', route('account-trading.buy', ['account' => $invalidAccount]))
-            ->assertStatus(403);
     }
 }

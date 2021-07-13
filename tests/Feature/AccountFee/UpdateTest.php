@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class UpdateTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         $accountFee = AccountFee::inRandomOrder()->first();
         $route = route('account-fee.update', ['accountFee' => $accountFee]);

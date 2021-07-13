@@ -1,10 +1,12 @@
 <?php
 
+use App\Models\Rule;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRoleCanUsedAccountTypeTable extends Migration
+class CreateRuleUserUnrequiredTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +15,10 @@ class CreateRoleCanUsedAccountTypeTable extends Migration
      */
     public function up()
     {
-        Schema::create('role_can_used_account_type', function (Blueprint $table) {
+        Schema::create('rule_user_unrequired', function (Blueprint $table) {
             $table->id();
-            $table->string('role_key');
-            $table->integer('account_type_id');
-            $table->integer('status_code')->default(0);
+            $table->foreignIdFor(User::class)->nullable();
+            $table->foreignIdFor(Rule::class)->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateRoleCanUsedAccountTypeTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('role_can_used_account_type');
+        Schema::dropIfExists('rule_user_unrequired');
     }
 }

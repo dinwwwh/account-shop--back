@@ -35,6 +35,18 @@ class AccountTypePolicy
     }
 
     /**
+     * Determine whether the user is manager of the account type
+     *
+     * @param \App\Models\User $user
+     * @param \App\Models\Account $accountType
+     * @return bool
+     */
+    public function manage(User $user, AccountType $accountType): bool
+    {
+        return $user->can('update', $accountType->game);
+    }
+
+    /**
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
@@ -54,7 +66,7 @@ class AccountTypePolicy
      */
     public function update(User $user, AccountType $accountType)
     {
-        return $user->can('update', $accountType->game);
+        return $this->manage($user, $accountType);
     }
 
     /**

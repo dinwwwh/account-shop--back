@@ -33,18 +33,4 @@ class AccountTypeFactory extends Factory
             'description' => $this->faker->title,
         ];
     }
-
-    /**
-     * a28s = autoCreateSmallerRelationships
-     *
-     */
-    public function a28s()
-    {
-        return $this->has(
-            AccountFee::factory()
-                ->count(rand(1, 4))
-                ->a28s(),
-            'accountFees'
-        );
-    }
 }

@@ -10,7 +10,7 @@ use Tests\TestCase;
 
 class StoreTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         // Initial data
         $this->actingAs($this->makeAuth([]));

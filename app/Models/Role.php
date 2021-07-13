@@ -62,12 +62,12 @@ class Role extends Model implements Auditable
 
         // Custom
         static::creating(function ($query) {
-            $query->creator_id = optional(auth()->user())->id;
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->creator_id = $query->creator_id ?? optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
 
         static::updating(function ($query) {
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
     }
 
@@ -102,18 +102,6 @@ class Role extends Model implements Auditable
     public function permissions()
     {
         return $this->belongsToMany(Permission::class, 'role_permission');
-    }
-
-    /**
-     * Relationship many-many with Models\AccountType
-     * Include account types that role can used to create account.
-     *
-     * @return Illuminate\Database\Eloquent\Factories\Relationship
-     */
-    public function accountTypes()
-    {
-        return $this->belongsToMany(AccountType::class, 'role_can_used_account_type')
-            ->withPivot('status_code');
     }
 
     /**

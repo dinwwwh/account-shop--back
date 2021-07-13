@@ -20,8 +20,11 @@ class AccountResource extends Resource
             'price' => $this->calculateTemporaryPrice(),
 
             // Relationships
-            'censor' => new UserResource($this->whenLoaded('censor')),
+            'approver' => new UserResource($this->whenLoaded('approver')),
             'buyer' => new UserResource($this->whenLoaded('buyer')),
+
+            'latestAccountStatus' => new AccountStatusResource($this->whenLoaded('latestAccountStatus')),
+            'accountStatuses' => new AccountStatusResource($this->whenLoaded('accountStatuses')),
 
             'images' => FileResource::collection($this->whenLoaded('images')),
             'representativeImage' => new FileResource($this->whenLoaded('representativeImage')),
@@ -31,14 +34,15 @@ class AccountResource extends Resource
 
             'accountType' => new AccountTypeResource($this->whenLoaded('accountType')),
 
+            'accountActions' => AccountActionResource::collection($this->whenLoaded('accountActions')),
 
-            // Just merge when auth can view sensitive infos
+            'accountInfos' => AccountInfoResource::collection($this->whenLoaded('accountInfos')),
+
+            // Just merge when auth can READ LOGIN INFOS
             $this->mergeWhen(
-                auth()->check() && auth()->user()->can('viewSensitiveInfo', $this->resource),
+                auth()->check() && auth()->user()->can('readLoginInfos', $this->resource),
                 function () {
                     return [
-                        'accountActions' => AccountActionResource::collection($this->whenLoaded('accountActions')),
-                        'accountInfos' => AccountInfoResource::collection($this->whenLoaded('accountInfos')),
                         'password' => $this->password,
                     ];
                 }

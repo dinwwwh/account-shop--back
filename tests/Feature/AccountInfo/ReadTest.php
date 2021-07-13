@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class ReadTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         $accountInfo = AccountInfo::inRandomOrder()->first();
         $route = route('account-info.show', ['accountInfo' => $accountInfo]);

@@ -35,14 +35,20 @@ class GamePolicy
     }
 
     /**
-     * Determine whether the user can manage the model.
+     * Determine whether the user is manager of the game
      *
-     * @param  \App\Models\User  $user
-     * @return mixed
+     * @param \App\Models\User $user
+     * @param \App\Models\Account $account
+     * @return bool
      */
-    public function manage(User $user)
+    public function manage(User $user, Game $game): bool
     {
-        return $user->hasPermissionTo('manage_game');
+        if (!$user->hasPermissionTo('update_game')) {
+            return false;
+        }
+
+        return $user->hasPermissionTo('manage_game')
+            || $user->is($game->creator);
     }
 
     /**
@@ -65,8 +71,12 @@ class GamePolicy
      */
     public function update(User $user, Game $game)
     {
+        if ($this->manage($user, $game)) {
+            return true;
+        }
+
         return $user->hasPermissionTo('update_game')
-            && ($this->manage($user) || $user->is($game->creator));
+            && $user->is($game->creator);
     }
 
     /**
@@ -78,8 +88,12 @@ class GamePolicy
      */
     public function delete(User $user, Game $game)
     {
+        if ($this->manage($user, $game)) {
+            return true;
+        }
+
         return $user->hasPermissionTo('delete_game')
-            && ($this->manage($user) || $user->is($game->creator));
+            && $user->is($game->creator);
     }
 
     /**

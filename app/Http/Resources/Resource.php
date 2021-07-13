@@ -21,7 +21,7 @@ class Resource extends JsonResource
         // This method generate unhidden attributes and loaded relationship one-one, one-many-inverse
         // Therefore all-resources don't need declare relationship one-one and one-many-inverse
         // Unless you want to show hidden attributes in that relationships
-        return  ArrayHelper::convertArrayKeyToCamelCase(parent::toArray($request), -1);
+        return  ArrayHelper::convertArrayKeysToCamelCase(parent::toArray($request), -1);
     }
 
     /**
@@ -44,7 +44,7 @@ class Resource extends JsonResource
 
         // Convert keys of all-layers to camel case
         return  array_merge(
-            ArrayHelper::convertArrayKeyToCamelCase(array_merge($attributes), -1),
+            ArrayHelper::convertArrayKeysToCamelCase(array_merge($attributes), -1),
             [
                 'creator' => new UserResource($this->whenLoaded('creator')),
                 'latestUpdater' => new UserResource($this->whenLoaded('latestUpdater')),

@@ -3,69 +3,118 @@
 namespace App\ModelTraits;
 
 use App\Models\Role;
+use App\Models\Rule;
+use App\Models\User;
 use Illuminate\Validation\Rule as RuleHelper;
 
 trait HelperForRule
 {
     /**
+     * Support create quickly a rule
+     *
+     * @return \App\Models\Rule
+     */
+    static public function createQuickly(array $data = null): Rule
+    {
+        $data = $data ?? [];
+        $rule = static::create($data)->refresh();
+        if ($rule->required) {
+            $rule->unrequiredUsers()->sync($data['unrequiredUserIds'] ?? []);
+        } else {
+            $rule->requiredUsers()->sync($data['requiredUserIds'] ?? []);
+        }
+        return $rule;
+    }
+
+    /**
+     * Support create quickly a rule
+     *
+     * @return \App\Models\Rule
+     */
+    public function updateQuickly(array $data): Rule
+    {
+        $this->update($data);
+        if ($this->required) {
+            $this->requiredUsers()->sync([]);
+            $this->unrequiredUsers()->sync($data['unrequiredUserIds'] ?? []);
+        } else {
+            $this->requiredUsers()->sync($data['requiredUserIds'] ?? []);
+            $this->unrequiredUsers()->sync([]);
+        }
+        return $this;
+    }
+
+
+    /**
      * Generate rule used to validate
      *
+     * @param \App\Models\User $user
      * @return array
      */
-    public function generateRule(Role $role)
+    public function generateRule(User $user): array
     {
-        $rule = [
-            'nested' => $this->multiple,
-            'rule' => '',
-            'ruleOfParent' => '',
-            'ruleOfChild' => '',
-        ];
+        $isRequired = $this->isRequired($user);
+        $rule = [];
 
-        if (!empty($this->min)) {
-            $rule['rule'] .= '|min:' . $this->min;
-        }
-
-        if (!empty($this->max)) {
-            $rule['rule'] .= '|max:' . $this->max;
-        }
-
-        if (!empty($this->values)) {
-            $rule['rule'] .= '|' . RuleHelper::in($this->values);
-        }
-
-        if ($this->isRequired($role)) {
-            $rule['rule'] .= '|required';
+        if ($isRequired) {
+            $rule[] = 'required';
         } else {
-            $rule['rule'] .= '|nullable';
+            $rule[] = 'nullable';
         }
 
         if ($this->multiple) {
-            $parent = '';
-            if ($this->required) {
-                $parent .= 'required';
-            } else {
-                $parent .= 'nullable';
+            $rule[] = 'array';
+            $rule['*'][] = $this->datatype;
+
+            if (!empty($this->min)) {
+                $rule['*'][] = 'min:' . $this->min;
             }
 
-            $rule['ruleOfParent'] = $parent . '|array';
-            $rule['ruleOfChild'] =  trim($rule['rule'], '| ');
-        }
+            if (!empty($this->max)) {
+                $rule['*'][] = 'max:' . $this->max;
+            }
 
+            if (!empty($this->values)) {
+                $rule['*'][] = RuleHelper::in($this->values);
+            }
+        } else {
+            $rule[] = $this->datatype;
+
+            if (!empty($this->min)) {
+                $rule[] = 'min:' . $this->min;
+            }
+
+            if (!empty($this->max)) {
+                $rule[] = 'max:' . $this->max;
+            }
+
+            if (!empty($this->values)) {
+                $rule[] = RuleHelper::in($this->values);
+            }
+        }
         return $rule;
     }
 
     /**
      * Determine whether $role must required this rule
      *
-     * @param \App\Models\Role $role
+     * @param \App\Models\User $role
      * @return boolean
      */
-    public function isRequired(Role $role)
+    public function isRequired(User $user): bool
     {
-        if (!is_null($this->required)) {
-            return $this->required;
+        if ($this->required) {
+            if (is_null($this->unrequiredUsers()->where('user_id', $user->getKey())->first())) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (is_null($this->requiredUsers()->where('user_id', $user->getKey())->first())) {
+                return false;
+            } else {
+                return true;
+            }
         }
-
-        return $this->requiredRoles->contains($role);
     }
 }

@@ -12,7 +12,7 @@ use Arr;
 
 class UpdateTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         $gameInfo = GameInfo::inRandomOrder()->first();
         $route = route('game-info.update', ['gameInfo' => $gameInfo]);
@@ -24,45 +24,42 @@ class UpdateTest extends TestCase
             'name' => Str::random(40),
             'description' => Str::random(80),
             'rule' => [
-                'required' => null,
-                'requiredRoleKeys' => [Role::inRandomOrder()->first()->key],
+                'required' => false,
+                'requiredUserIds' => [1, 2, 3],
+                'unrequiredUserIds' => [4, 5, 6, 7],
             ],
-            '_requiredModelRelationships' => ['rule.requiredRoles']
+            '_requiredModelRelationships' => ['rule']
         ];
         $res = $this->json('put', $route, $data);
 
         $res->assertStatus(200);
+        $res->assertJsonCount(3, 'data.rule.requiredUsers');
+        $res->assertJsonCount(0, 'data.rule.unrequiredUsers');
         $res->assertJson(
             fn ($j) => $j
-                ->where('data.order', $data['order'])
-                ->where('data.name', $data['name'])
-                ->where('data.description', $data['description'])
-                ->where('data.rule.required', $data['rule']['required'])
-                ->where('data.rule.requiredRoles.0.key', $data['rule']['requiredRoleKeys'][0])
+                ->where('data.rule.required', false)
         );
+        $ruleId = $res->getData()->data->rule->id;
 
-        // # Case rule's required isn't null
-        $data = [
-            'order' => rand(1, 5),
-            'name' => Str::random(40),
-            'description' => Str::random(80),
-            'rule' => [
-                'required' => Arr::random([true, false]),
-                'requiredRoleKeys' => ['tester'],
-            ],
-            '_requiredModelRelationships' => ['rule.requiredRoles']
-        ];
-        $res = $this->json('put', $route, $data);
+        $this->assertDatabaseHas('game_infos', [
+            'order' => $data['order'],
+            'name' => $data['name'],
+            'description' => $data['description'],
+        ]);
 
-        $res->assertStatus(200);
-        $res->assertJson(
-            fn ($j) => $j
-                ->where('data.order', $data['order'])
-                ->where('data.name', $data['name'])
-                ->where('data.description', $data['description'])
-                ->where('data.rule.required', $data['rule']['required'])
-                ->where('data.rule.requiredRoles', [])
-        );
+        foreach ($data['rule']['requiredUserIds'] as $userId) {
+            $this->assertDatabaseHas('rule_user_required', [
+                'user_id' => $userId,
+                'rule_id' => $ruleId,
+            ]);
+        }
+
+        foreach ($data['rule']['unrequiredUserIds'] as $userId) {
+            $this->assertDatabaseMissing('rule_user_unrequired', [
+                'user_id' => $userId,
+                'rule_id' => $ruleId,
+            ]);
+        }
     }
 
     public function test_middleware_success()

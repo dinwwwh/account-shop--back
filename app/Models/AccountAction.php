@@ -33,18 +33,7 @@ class AccountAction extends Model implements Auditable
      * */
     protected $attributeModifiers = [];
 
-    protected $fillable = [
-        'order',
-        'name',
-        'slug',
-        'description',
-        'video_path',
-        'required',
-        'display_type',
-        'account_type_id',
-        'latest_updater_id',
-        'creator_id',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'order' => 'integer',
@@ -52,11 +41,7 @@ class AccountAction extends Model implements Auditable
         'slug' => 'string',
         'description' => 'string',
         'video_path' => 'string',
-        'required' => 'boolean',
-        'display_type' => 'integer',
         'account_type_id' => 'integer',
-        'latest_updater_id' => 'integer',
-        'creator_id' => 'integer',
     ];
 
     /**
@@ -70,12 +55,12 @@ class AccountAction extends Model implements Auditable
 
         // Custom
         static::creating(function ($query) {
-            $query->creator_id = optional(auth()->user())->id;
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->creator_id = $query->creator_id ?? optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
 
         static::updating(function ($query) {
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
     }
 
@@ -102,13 +87,13 @@ class AccountAction extends Model implements Auditable
     }
 
     /**
-     * Relationship many-many with Models\Role
+     * Get rule of this account action
      *
-     * @return Illuminate\Database\Eloquent\Factories\Relationship
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function requiredRoles()
+    public function rule()
     {
-        return $this->belongsToMany(Role::class, 'account_action_required_roles');
+        return $this->belongsTo(Rule::class);
     }
 
     /**

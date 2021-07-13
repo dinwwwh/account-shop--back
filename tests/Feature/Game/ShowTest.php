@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class ShowTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         $game = Game::inRandomOrder()->first();
         $res = $this->json('get', route('game.show', ['game' => $game]));

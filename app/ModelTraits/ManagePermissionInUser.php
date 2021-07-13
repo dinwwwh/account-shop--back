@@ -101,7 +101,7 @@ trait ManagePermissionInUser
      */
     public function syncPermissions(...$permissions)
     {
-        return $this->_syncPermissions($permissions);
+        return $this->_syncPermissions(...$permissions);
     }
 
     /**

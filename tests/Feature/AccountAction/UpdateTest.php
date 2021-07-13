@@ -8,10 +8,11 @@ use Tests\TestCase;
 use App\Models\AccountAction;
 use Str;
 use Arr;
+use Illuminate\Testing\Fluent\AssertableJson;
 
 class UpdateTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         $accountAction = AccountAction::inRandomOrder()->first();
         $creator = $this->makeAuth([], $accountAction->creator);
@@ -24,54 +25,45 @@ class UpdateTest extends TestCase
             'name' => Str::random(10),
             'description' => Str::random(10),
             'videoPath' => Str::random(10),
-            'required' => null,
-            'requiredRoleKeys' => ['administrator', 'customer', 'tester'],
-            '_requiredModelRelationships' => ['requiredRoles'],
+            'rule' => [
+                'required' => false,
+                'requiredUserIds' => [1, 2, 3],
+                'unrequiredUserIds' => [4, 5, 6, 7],
+            ],
+            '_requiredModelRelationships' => ['rule']
         ];
 
         $res = $this->json('put', $route, $data);
         $res->assertStatus(200);
+        $res->assertJsonCount(3, 'data.rule.requiredUsers');
+        $res->assertJsonCount(0, 'data.rule.unrequiredUsers');
         $res->assertJson(
-            fn ($json) => $json
-                ->has(
-                    'data',
-                    fn ($json) => $json
-                        ->where('order', $data['order'])
-                        ->where('name', $data['name'])
-                        ->where('description', $data['description'])
-                        ->where('videoPath', $data['videoPath'])
-                        ->where('required', $data['required'])
-                        ->has('requiredRoles.2.key')
-                        ->etc()
-                )
+            fn (AssertableJson $j) => $j
+                ->where('data.rule.datatype', 'boolean')
+                ->where('data.rule.required', false)
         );
+        $ruleId = $res->getData()->data->rule->id;
 
-        # Case required isn't null
-        $data = [
-            'order' => rand(1, 100),
-            'name' => Str::random(10),
-            'description' => Str::random(10),
-            'videoPath' => Str::random(10),
-            'required' => Arr::random([true, false]),
-            '_requiredModelRelationships' => ['requiredRoles'],
-        ];
+        $this->assertDatabaseHas('account_actions', [
+            'order' => $data['order'],
+            'name' => $data['name'],
+            'description' => $data['description'],
+            'video_path' => $data['videoPath'],
+        ]);
 
-        $res = $this->json('put', $route, $data);
-        $res->assertStatus(200);
-        $res->assertJson(
-            fn ($json) => $json
-                ->has(
-                    'data',
-                    fn ($json) => $json
-                        ->where('order', $data['order'])
-                        ->where('name', $data['name'])
-                        ->where('description', $data['description'])
-                        ->where('videoPath', $data['videoPath'])
-                        ->where('required', $data['required'])
-                        ->where('requiredRoles', [])
-                        ->etc()
-                )
-        );
+        foreach ($data['rule']['requiredUserIds'] as $userId) {
+            $this->assertDatabaseHas('rule_user_required', [
+                'user_id' => $userId,
+                'rule_id' => $ruleId,
+            ]);
+        }
+
+        foreach ($data['rule']['unrequiredUserIds'] as $userId) {
+            $this->assertDatabaseMissing('rule_user_unrequired', [
+                'user_id' => $userId,
+                'rule_id' => $ruleId,
+            ]);
+        }
     }
 
     /**

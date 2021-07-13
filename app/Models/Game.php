@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ModelTraits\ManageAccountTypeInGame;
+use App\ModelTraits\ManageGameInfoInGame;
 use App\Observers\GameObserver;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -14,7 +15,8 @@ class Game extends Model implements Auditable
     use HasFactory,
         SoftDeletes,
         ManageAccountTypeInGame,
-        \OwenIt\Auditing\Auditable;
+        \OwenIt\Auditing\Auditable,
+        ManageGameInfoInGame;
 
     /**
      * The attributes & relationships that should be hidden for arrays.
@@ -62,12 +64,12 @@ class Game extends Model implements Auditable
 
         // Custom
         static::creating(function ($query) {
-            $query->creator_id = optional(auth()->user())->id;
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->creator_id = $query->creator_id ?? optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
 
         static::updating(function ($query) {
-            $query->latest_updater_id = optional(auth()->user())->id;
+            $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;
         });
     }
 

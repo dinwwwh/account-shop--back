@@ -17,6 +17,9 @@ class UserResource extends Resource
             // Relationships
             'roles' => RoleResource::collection($this->whenLoaded('roles')),
 
+            'usableAccountTypes' => AccountTypeResource::collection($this->whenLoaded('usableAccountTypes')),
+            'approvableAccountTypes' => AccountTypeResource::collection($this->whenLoaded('approvableAccountTypes')),
+
             'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),
 
             'accounts' => AccountResource::collection($this->whenLoaded('accounts')),

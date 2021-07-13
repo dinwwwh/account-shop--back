@@ -9,7 +9,7 @@ use App\Models\AccountAction;
 
 class ReadTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         $accountAction = AccountAction::inRandomOrder()->first();
         $route = route('account-action.show', ['accountAction' => $accountAction]);

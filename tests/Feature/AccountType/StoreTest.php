@@ -3,6 +3,8 @@
 namespace Tests\Feature\AccountType;
 
 use App\Models\Game;
+use App\Models\User;
+use Arr;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -10,13 +12,13 @@ use Str;
 
 class StoreTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         // Initial data
         $game = Game::inRandomOrder()->first();
         $route = route('account-type.store', ['game' => $game]);
         $data = [
-            '_requiredModelRelationships' => ['rolesCanUsedAccountType']
+            '_requiredModelRelationships' => ['usableUsers', 'approvableUsers']
         ];
         $this->actingAs($this->makeAuth([]));
 
@@ -28,60 +30,46 @@ class StoreTest extends TestCase
             'gameId' => $game->id,
             'name' => Str::random(20),
             'description' => Str::random(20),
-            'rolesCanUsedAccountType' => [
-                [
-                    'key' => 'administrator',
-                    'statusCode' => 0,
-                ],
-                [
-                    'key' => 'customer',
-                    'statusCode' => 440,
-                ],
-                [
-                    'key' => 'tester',
-                    'statusCode' => 440,
-                ],
-            ],
         ]);
+
+        $usableUsers = User::inRandomOrder()->limit(3)->get();
+        foreach ($usableUsers as $user) {
+            $data['usableUsers'][] = [
+                'id' => $user->getKey(),
+                'statusCode' => Arr::random([0, 440, 480]),
+            ];
+        };
+
+        $approvableUsers = User::inRandomOrder()->limit(2)->get();
+        foreach ($approvableUsers as $user) {
+            $data['approvableUsers'][] = [
+                'id' => $user->getKey(),
+                'statusCode' => Arr::random([440, 480]),
+            ];
+        };
 
         # Case: validate success
         $res = $this->json('post', $route, $data);
         $res->assertStatus(201);
-        $res->assertJson(
-            fn ($json) => $json
-                ->has(
-                    'data',
-                    fn ($json) => $json
-                        ->where('name', $data['name'])
-                        ->where('description', $data['description'])
-                        ->has(
-                            'rolesCanUsedAccountType',
-                            fn ($json) => $json
-                                ->has(
-                                    0,
-                                    fn ($json) => $json
-                                        ->where('key', $data['rolesCanUsedAccountType'][0]['key'])
-                                        ->where('pivot.statusCode', $data['rolesCanUsedAccountType'][0]['statusCode'])
-                                        ->etc()
-                                )
-                                ->has(
-                                    1,
-                                    fn ($json) => $json
-                                        ->where('key', $data['rolesCanUsedAccountType'][1]['key'])
-                                        ->where('pivot.statusCode', $data['rolesCanUsedAccountType'][1]['statusCode'])
-                                        ->etc()
-                                )
-                                ->has(
-                                    2,
-                                    fn ($json) => $json
-                                        ->where('key', $data['rolesCanUsedAccountType'][2]['key'])
-                                        ->where('pivot.statusCode', $data['rolesCanUsedAccountType'][2]['statusCode'])
-                                        ->etc()
-                                )
-                        )
-                        ->etc()
-                )
-        );
+        $res->assertJsonCount(count($data['usableUsers']), 'data.usableUsers');
+        $res->assertJsonCount(count($data['approvableUsers']), 'data.approvableUsers');
+        $accountTypeId = $res->getData()->data->id;
+
+        foreach ($data['usableUsers'] as $user) {
+            $this->assertDatabaseHas('account_type_user_usable', [
+                'user_id' => $user['id'],
+                'account_type_id' => $accountTypeId,
+                'status_code' => $user['statusCode'],
+            ]);
+        };
+
+        foreach ($data['approvableUsers'] as $user) {
+            $this->assertDatabaseHas('account_type_user_approvable', [
+                'user_id' => $user['id'],
+                'account_type_id' => $accountTypeId,
+                'status_code' => $user['statusCode'],
+            ]);
+        };
     }
 
     /**

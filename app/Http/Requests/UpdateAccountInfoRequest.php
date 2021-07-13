@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\ValidationHelper;
+use App\Models\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateAccountInfoRequest extends FormRequest
@@ -23,15 +25,13 @@ class UpdateAccountInfoRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'order' => 'nullable|integer',
-            'name' => 'nullable|string',
-            'description' => 'nullable|string',
-
-            // Relationship rule
-            'rule' => 'nullable|array',
-            'rule.requiredRoleKeys' => 'nullable|array',
-            'rule.requiredRoleKeys.*' => 'string',
-        ];
+        return array_merge(
+            [
+                'order' => 'nullable|integer',
+                'name' => 'nullable|string',
+                'description' => 'nullable|string',
+            ],
+            ValidationHelper::parseRulesByArray('rule', Rule::RULE_REQUEST)
+        );
     }
 }

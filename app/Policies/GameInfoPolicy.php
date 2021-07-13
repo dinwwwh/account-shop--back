@@ -35,6 +35,18 @@ class GameInfoPolicy
     }
 
     /**
+     * Determine whether the user is manager of the game info
+     *
+     * @param \App\Models\User $user
+     * @param \App\Models\Account $account
+     * @return bool
+     */
+    public function manage(User $user, GameInfo $gameInfo)
+    {
+        return $user->can('update', $gameInfo->game);
+    }
+
+    /**
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user
@@ -55,7 +67,7 @@ class GameInfoPolicy
      */
     public function update(User $user, GameInfo $gameInfo)
     {
-        return $user->can('update', $gameInfo->game);
+        return $this->manage($user, $gameInfo);
     }
 
     /**
@@ -67,7 +79,7 @@ class GameInfoPolicy
      */
     public function delete(User $user, GameInfo $gameInfo)
     {
-        return $user->can('update', $gameInfo->game);
+        return $this->manage($user, $gameInfo);
     }
 
     /**

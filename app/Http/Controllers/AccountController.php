@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ArrayHelper;
+use App\Http\Requests\Account\UpdateAccountInfosRequest;
+use App\Http\Requests\Account\UpdateCostRequest;
+use App\Http\Requests\Account\UpdateGameInfosRequest;
+use App\Http\Requests\Account\UpdateImagesRequest;
+use App\Http\Requests\Account\UpdateLoginInfosRequest;
 use App\Models\Account;
 use App\Models\AccountType;
 use App\Models\Role;
-use App\Http\Requests\StoreAccountRequest;
 use App\Http\Requests\UpdateAccountRequest;
 use App\Http\Resources\AccountResource;
 use Illuminate\Support\Facades\Validator;
@@ -13,15 +18,13 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Request;
+use App\Http\Requests\Account\StoreRequest;
+use App\Models\AccountStatus;
 use App\Models\File;
 use Carbon\Carbon;
 
 class AccountController extends Controller
 {
-    private $config = [
-        'key' => 'id' # Use as prefix account actions and account infos
-    ];
-
     /**
      * Display a listing of the resource.
      *
@@ -43,7 +46,7 @@ class AccountController extends Controller
     {
         $search = $this->searchedKeyword;
         $_with = $this->requiredModelRelationships;
-        $isManager = auth()->user()->can('manage', 'App\Models\Account');
+        $isManager = auth()->user()->can('manage', 'App\Models\Game');
 
         if ($isManager) {
             $baseQuery = new Account;
@@ -53,8 +56,8 @@ class AccountController extends Controller
 
         $accounts = $baseQuery->where(
             fn ($query) =>  $query
-                ->where('username', 'LIKE', "%{$search}%")
-                ->orWhere('description', 'LIKE', "%{$search}%")
+                ->where('username', 'LIKE', "%$search%")
+                ->orWhere('description', 'LIKE', "%$search%")
                 ->orWhere('id', $search)
                 ->orWhere('cost', $search)
         )
@@ -67,134 +70,54 @@ class AccountController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Account\StoreRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreAccountRequest $request, AccountType $accountType)
+    public function store(StoreRequest $request, AccountType $accountType)
     {
-        $game = $accountType->game;
-
-        // Get role use to create account
-        $roleThatUsing = auth()->user()->roles->find($request->roleKey);
-        if (is_null($roleThatUsing)) {
-            return response()->json([
-                'errors' => [
-                    'roleKey' => 'Vai trò không hợp lệ.'
-                ]
-            ], 422);
-        }
-
-        // Validate
-        {
-            // Validate Account infos
-            $validate = Validator::make(
-                $request->accountInfos ?? [], # case accountInfo is null
-                $this->makeRuleAccountInfos($accountType->accountInfos, $roleThatUsing),
-            );
-            if ($validate->fails()) {
-                return response()->json([
-                    'message' => 'Thông tin tài khoản không hợp lệ.',
-                    'errors' => ['accountInfos' => $validate->errors()],
-                ], 422);
-            }
-
-            // Validate Account actions
-            $validate = Validator::make(
-                $request->accountActions ?? [], # case accountInfo is null
-                $this->makeRuleAccountActions($accountType->accountActions, $roleThatUsing),
-            );
-            if ($validate->fails()) {
-                return response()->json([
-                    'message' => 'Một số hành động bắt buộc đối với tài khoản còn thiếu.',
-                    'errors' => ['accountActions' => $validate->errors()],
-                ], 422);
-            }
-
-            // Validate Game infos
-            $validate = Validator::make(
-                $request->gameInfos ?? [], # case accountInfo is null
-                $this->makeRuleGameInfos($game->gameInfos, $roleThatUsing),
-            );
-            if ($validate->fails()) {
-                return response()->json([
-                    'message' => 'Một số thông tin game không hợp lệ.',
-                    'errors' => ['gameInfos' => $validate->errors()],
-                ], 422);
+        $usableStatusCode = auth()->user()->usableAccountTypes()
+            ->where('account_type_id', $accountType->getKey())
+            ->first()->pivot->status_code;
+        $dataOfAccount = [];
+        foreach ([
+            'username', 'password', 'cost', 'description'
+        ] as $key) {
+            if ($request->filled($key)) {
+                $snackKey = Str::snake($key);
+                $dataOfAccount[$snackKey] = $request->$key;
             }
         }
-
-        // Make data to save
-        {
-            // Initialize data
-            $account = new Account;
-            foreach ([
-                'username', 'password', 'cost', 'description'
-            ] as $key) {
-                if ($request->filled($key)) {
-                    $snackKey = Str::snake($key);
-                    $account->$snackKey = $request->$key;
-                }
-            }
-
-            // Process other account info
-            $account->account_type_id = $accountType->getKey();
-            $account->last_role_key_editor_used = $roleThatUsing->getKey();
-
-            // Process advance account info
-            $account->status_code = $this->getStatusCode($accountType, $roleThatUsing);
-        }
+        $dataOfAccount['account_type_id'] = $accountType->getKey();
 
         try {
             DB::beginTransaction();
             $imagePathsNeedDeleteWhenFail = [];
 
             // Save account in database
-            $account->save();
+            $account = Account::create($dataOfAccount);
+            $account->accountStatuses()->create([
+                'short_description' => AccountStatus::SHORT_DESCRIPTION_OF_CREATED,
+                'code' => $usableStatusCode,
+            ]);
 
-            // handle representative
-            if ($request->hasFile('representativeImage')) {
-                $path
-                    = $request->representativeImage->store('public/account-images');
-                $imagePathsNeedDeleteWhenFail[] = $path;
-                $account->representativeImage()->create([
-                    'path' => $path,
-                    'type' => File::IMAGE_TYPE,
-                    'short_description' => File::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE,
-                ]);
-            }
+            // handle representative image
+            $path
+                = $request->representativeImage->store('public/account-images');
+            $imagePathsNeedDeleteWhenFail[] = $path;
+            $account->representativeImage()->create([
+                'path' => $path,
+                'type' => File::IMAGE_TYPE,
+                'short_description' => File::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE,
+            ]);
 
-            // Handle relationship
-            {
-                // Account info
-                $syncInfos = [];
-                foreach ($request->accountInfos ?? [] as $key => $value) {
-                    $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->accountInfos->contains($id)) {
-                        $syncInfos[$id] =  ['value' => $value];
-                    }
-                }
-                $account->accountInfos()->sync($syncInfos);
-
-                // Account action
-                $syncActions = [];
-                foreach ($request->accountActions ?? [] as $key => $value) {
-                    $id = (int)trim($key, $this->config['key']);
-                    if ($accountType->accountActions->contains($id)) {
-                        $syncActions[$id] = ['is_done' => $value];
-                    }
-                }
-                $account->accountActions()->sync($syncActions);
-
-                // game info
-                $syncGameInfos = [];
-                foreach ($request->gameInfos ?? [] as $key => $value) {
-                    $id = (int)trim($key, $this->config['key']);
-                    if ($game->gameInfos->contains($id)) {
-                        $syncGameInfos[$id] = ['value' => $value];
-                    }
-                }
-                $account->gameInfos()->sync($syncGameInfos);
-            }
+            // Account infos
+            $account->accountInfos()->sync($request->accountInfos ?? []);
+            // Account actions
+            $account->accountActions()->sync(
+                ArrayHelper::convertArrayKeysToSnakeCase($request->accountActions ?? [], -1)
+            );
+            // game infos
+            $account->gameInfos()->sync($request->gameInfos ?? []);
 
             // handle sub account images
             if ($request->hasFile('images')) {
@@ -211,10 +134,7 @@ class AccountController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollback();
-            // Handle delete images
-            foreach ($imagePathsNeedDeleteWhenFail as $imagePath) {
-                Storage::delete($imagePath);
-            }
+            Storage::delete($imagePathsNeedDeleteWhenFail);
             throw $th;
         }
 
@@ -222,37 +142,59 @@ class AccountController extends Controller
     }
 
     /**
-     * Approve account to publish account to user buyable.
+     * End approving account to publish account to user buyable or not publish.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Account  $account
      * @return \Illuminate\Http\Response
      */
-    public function approve(Request $request, Account $account)
+    public function startApproving(Request $request, Account $account)
     {
         try {
-
-            switch ($account->status_code) {
-                case 0:
-                    $account->status_code = 480;
-                    break;
-
-                default:
-                    return response()->json([
-                        'message' => 'Account don\'t allow approve.',
-                    ], 503);
-                    break;
-            }
-
-            // When success
-            $account->approved_at = Carbon::now();
-            $account->save();
+            DB::beginTransaction();
+            $account->accountStatuses()->create([
+                'code' => 200,
+                'short_description' => AccountStatus::SHORT_DESCRIPTION_OF_START_APPROVING,
+            ]);
+            DB::commit();
         } catch (\Throwable $th) {
+            DB::rollBack();
             throw $th;
         }
 
         // Done
-        return AccountResource::withLoadRelationships($account);
+        return response()->json([], 204);
+    }
+
+    /**
+     * End approving account to publish account to user buyable or not publish.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Account  $account
+     * @return \Illuminate\Http\Response
+     */
+    public function endApproving(Request $request, Account $account)
+    {
+        $newStatusCode = $account->accountType
+            ->approvableUsers()->where('user_id', auth()->user()->id)
+            ->first()->pivot->status_code;
+
+        try {
+            DB::beginTransaction();
+
+            $account->accountStatuses()->create([
+                'code' => $newStatusCode,
+                'short_description' => AccountStatus::SHORT_DESCRIPTION_OF_END_APPROVING,
+            ]);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        // Done
+        return response()->json([], 204);
     }
 
     /**
@@ -263,185 +205,127 @@ class AccountController extends Controller
      */
     public function show(Account $account)
     {
-        return AccountResource::withLoadRelationships($account);
+        return AccountResource::withLoadMissingRelationships($account);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update account infos of $account
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Account\UpdateAccountInfosRequest  $request
      * @param  \App\Models\Account  $account
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateAccountRequest $request, Account $account)
+    public function updateAccountInfos(UpdateAccountInfosRequest $request, Account $account)
     {
-        $accountType = $account->accountType;
-        $game = $accountType->game;
-
-        // Get role use to update
-        $roleThatUsing = auth()->user()->roles->find($request->roleKey ?? $account->last_role_key_editor_used);
-        if (is_null($roleThatUsing)) {
-            return response()->json([
-                'errors' => [
-                    'roleKey' => 'Vai trò không hợp lệ.'
-                ]
-            ], 422);
-        }
-
-        // Validate account info and account action
-        {
-            // Validate Account infos
-            if ($request->accountInfos) {
-                $validate = Validator::make(
-                    $request->accountInfos ?? [], # case accountInfo is null
-                    $this->makeRuleAccountInfos($accountType->accountInfos, $roleThatUsing),
-                );
-                if ($validate->fails()) {
-                    return response()->json([
-                        'message' => 'Thông tin tài khoản không hợp lệ.',
-                        'errors' => ['accountInfos' => $validate->errors()],
-                    ], 422);
-                }
-            }
-
-            // Validate Account actions
-            if ($request->accountActions) {
-                $validate = Validator::make(
-                    $request->accountActions ?? [], # case accountAction is null
-                    $this->makeRuleAccountActions($accountType->accountActions, $roleThatUsing),
-                );
-                if ($validate->fails()) {
-                    return response()->json([
-                        'message' => 'Một số hành động bắt buộc đối với tài khoản còn thiếu.',
-                        'errors' => ['accountActions' => $validate->errors()],
-                    ], 422);
-                }
-            }
-
-            // Validate Game infos
-            if ($request->gameInfos) {
-                $validate = Validator::make(
-                    $request->gameInfos ?? [], # case accountInfo is null
-                    $this->makeRuleGameInfos($game->gameInfos, $roleThatUsing),
-                );
-                if ($validate->fails()) {
-                    return response()->json([
-                        'message' => 'Một số thông tin game không hợp lệ.',
-                        'errors' => ['gameInfos' => $validate->errors()],
-                    ], 422);
-                }
-            }
-        }
-
-        // Make data to save
-        {
-            // Initialize data
-            foreach ([
-                'username', 'password', 'cost', 'description'
-            ] as $key) {
-                if ($request->filled($key)) {
-                    $snackKey = Str::snake($key);
-                    $account->$snackKey = $request->$key;
-                }
-            }
-
-            // Process other account info
-            $account->last_role_key_editor_used = $roleThatUsing->getKey();
-        }
-
-
         try {
             DB::beginTransaction();
-            $imagePathsNeedDeleteWhenFail = [];
-            $imagePathsNeedDeleteWhenSuccess = [];
-
-            // handle representative
-            if ($request->hasFile('representativeImage')) {
-                // delete old representative image file
-                optional($account->representativeImage)->forceDelete();
-                $newPath = $request->representativeImage
-                    ->store('public/account-images');
-                $account->representativeImage()->create([
-                    'path' => $newPath,
-                    'type' => File::IMAGE_TYPE,
-                    'short_description' => File::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE,
-                ]);
-                $imagePathsNeedDeleteWhenFail[]
-                    = $newPath;
-            }
-
-            // Save account in database
-            $account->save();
-
-            // Handle relationship
-            {
-                // account infos
-                if ($request->accountInfos) {
-                    $syncInfos = [];
-                    foreach ($request->accountInfos ?? [] as $key => $value) {
-                        $id = (int)trim($key, $this->config['key']);
-                        if ($accountType->accountInfos->contains($id)) {
-                            $syncInfos[$id] =  ['value' => $value];
-                        }
-                    }
-                    $account->accountInfos()->sync($syncInfos);
-                }
-
-
-                // account actions
-                if ($request->accountActions) {
-                    $syncActions = [];
-                    foreach ($request->accountActions ?? [] as $key => $value) {
-                        $id = (int)trim($key, $this->config['key']);
-                        if ($accountType->accountActions->contains($id)) {
-                            $syncActions[$id] = ['is_done' => $value];
-                        }
-                    }
-                    $account->accountActions()->sync($syncActions);
-                }
-
-                // game info
-                if ($request->gameInfos) {
-                    $syncGameInfos = [];
-                    foreach ($request->gameInfos ?? [] as $key => $value) {
-                        $id = (int)trim($key, $this->config['key']);
-                        if ($game->gameInfos->contains($id)) {
-                            $syncGameInfos[$id] = ['value' => $value];
-                        }
-                    }
-                    $account->gameInfos()->sync($syncGameInfos);
-                }
-
-                // sub account images
-                if ($request->hasFile('images')) {
-                    // delete all sub image files of account
-                    $account->otherImages->each(fn ($file) => $file->forceDelete());
-                    foreach ($request->images as $image) {
-                        $imagePath = $image->store('public/account-images');
-                        $imagePathsNeedDeleteWhenFail[] = $imagePath;
-                        $account->otherImages()->create([
-                            'path' => $imagePath,
-                            'type' => File::IMAGE_TYPE,
-                        ]);
-                    }
-                }
-            }
-
-            // When success
-            foreach ($imagePathsNeedDeleteWhenSuccess as $imagePath) {
-                Storage::delete($imagePath);
-            }
+            $account->accountInfos()->sync($request->accountInfos);
             DB::commit();
         } catch (\Throwable $th) {
-            DB::rollback();
-            // Handle delete images
-            foreach ($imagePathsNeedDeleteWhenFail as $imagePath) {
-                Storage::delete($imagePath);
-            }
+            DB::rollBack();
             throw $th;
         }
 
-        return AccountResource::withLoadRelationships($account);
+        return response()->json([], 204);
+    }
+
+    /**
+     * Update game infos of $account
+     *
+     * @param  \App\Http\Requests\Account\UpdateGameInfosRequest  $request
+     * @param  \App\Models\Account  $account
+     * @return \Illuminate\Http\Response
+     */
+    public function updateGameInfos(UpdateGameInfosRequest $request, Account $account)
+    {
+        try {
+            DB::beginTransaction();
+            $account->gameInfos()->sync($request->gameInfos);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        return response()->json([], 204);
+    }
+
+    /**
+     * Update login infos of $account
+     *
+     * @param  \App\Http\Requests\Account\UpdateLoginInfosRequest  $request
+     * @param  \App\Models\Account  $account
+     * @return \Illuminate\Http\Response
+     */
+    public function updateLoginInfos(UpdateLoginInfosRequest $request, Account $account)
+    {
+        $account->update([
+            'username' => $request->username,
+            'password' => $request->password,
+        ]);
+
+        return response()->json([], 204);
+    }
+
+    /**
+     * Update images of $account
+     *
+     * @param  \App\Http\Requests\Account\UpdateImagesRequest  $request
+     * @param  \App\Models\Account  $account
+     * @return \Illuminate\Http\Response
+     */
+    public function updateImages(UpdateImagesRequest $request, Account $account)
+    {
+        $deletedFilePathsWhenFail = [];
+        try {
+            DB::beginTransaction();
+
+            if ($request->hasFile('representativeImage')) {
+                optional($account->representativeImage)->forceDelete();
+                $filePath = $request->representativeImage->store('public/account-images');
+                $deletedFilePathsWhenFail[] = $filePath;
+                $account->representativeImage()->create([
+                    'path' => $filePath,
+                    'short_description' => File::SHORT_DESCRIPTION_OF_REPRESENTATIVE_IMAGE,
+                    'type' => File::IMAGE_TYPE,
+                ]);
+            }
+
+            if ($request->hasFile('otherImages')) {
+                $account->otherImages->each(fn ($file) => $file->forceDelete());
+                foreach ($request->otherImages as $image) {
+                    $filePath = $image->store('public/account-images');
+                    $deletedFilePathsWhenFail[] = $filePath;
+                    $account->representativeImage()->create([
+                        'path' => $filePath,
+                        'type' => File::IMAGE_TYPE,
+                    ]);
+                }
+            }
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Storage::delete($deletedFilePathsWhenFail);
+            throw $th;
+        }
+
+        return response()->json([], 204);
+    }
+
+    /**
+     * Update Cost of $account
+     *
+     * @param  \App\Http\Requests\Account\UpdateCostRequest  $request
+     * @param  \App\Models\Account  $account
+     * @return \Illuminate\Http\Response
+     */
+    public function updateCost(UpdateCostRequest $request, Account $account)
+    {
+        $account->update([
+            'cost' => $request->cost,
+        ]);
+        return response()->json([], 204);
     }
 
     /**
@@ -467,71 +351,5 @@ class AccountController extends Controller
         return response()->json([
             'message' => 'Xoá tài khoản thành công.',
         ], 200);
-    }
-
-    // -------------------------------------------------------
-    // -------------------------------------------------------
-    // -------------------------------------------------------
-    // -------------------------------------------------------
-
-    private function makeRuleAccountInfos($accountInfos, Role $role)
-    {
-        // Initial data
-        $rules = [];
-        foreach ($accountInfos as $accountInfo) {
-            // Get rule
-            $rule = $accountInfo->rule->generateRule($role);
-
-            // Make rule for validate
-            if ($rule['nested']) { # if nested
-                $rules[$this->config['key'] . $accountInfo->id] = $rule['ruleOfParent'];
-                $rules[$this->config['key'] . $accountInfo->id . '.*'] = $rule['ruleOfChild'];
-            } else {
-                $rules[$this->config['key'] . $accountInfo->id] = $rule['rule'];
-            }
-        }
-
-        return $rules;
-    }
-
-    private function makeRuleAccountActions($accountActions, Role $role)
-    {
-
-        // Initial data
-        $rules = [];
-        foreach ($accountActions as $accountAction) {
-            // Make rule
-            $rule = $accountAction->generateRule($role);
-            $rules[$this->config['key'] . $accountAction->id] = $rule;
-        }
-
-        return $rules;
-    }
-
-    private function makeRuleGameInfos($gameInfos, Role $role)
-    {
-        // Initial data
-        $rules = [];
-        foreach ($gameInfos as $gameInfo) {
-            // Get rule
-            $rule = $gameInfo->rule->generateRule($role);
-
-            // Make rule for validate
-            if ($rule['nested']) { # if nested
-                $rules[$this->config['key'] . $gameInfo->getKey()] = $rule['ruleOfParent'];
-                $rules[$this->config['key'] . $gameInfo->getKey() . '.*'] = $rule['ruleOfChild'];
-            } else {
-                $rules[$this->config['key'] . $gameInfo->getKey()] = $rule['rule'];
-            }
-        }
-
-        return $rules;
-    }
-
-    private function getStatusCode(AccountType $accountType, Role $role)
-    {
-        return $accountType->rolesCanUsedAccountType
-            ->find($role->getKey())
-            ->pivot->status_code;
     }
 }

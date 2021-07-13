@@ -27,10 +27,16 @@ class StoreAccountTypeRequest extends FormRequest
         return [
             'name' => 'required|string',
             'description' => 'nullable|string',
-            'rolesCanUsedAccountType' => 'nullable|array',
-            'rolesCanUsedAccountType.*' => 'array',
-            'rolesCanUsedAccountType.*.key' => 'required|string',
-            'rolesCanUsedAccountType.*.statusCode' => 'required|integer|' .  Rule::in([0, 440]),
+
+            'usableUsers' => 'nullable|array',
+            'usableUsers.*' => 'array',
+            'usableUsers.*.id' => 'required|integer|exists:users,id',
+            'usableUsers.*.statusCode' => 'required|integer|' .  Rule::in(config('account.status_codes_after_created', [])),
+
+            'approvableUsers' => 'nullable|array',
+            'approvableUsers.*' => 'array',
+            'approvableUsers.*.id' => 'required|integer|exists:users,id',
+            'approvableUsers.*.statusCode' => 'required|integer|' .  Rule::in(config('account.status_codes_after_approved', [])),
         ];
     }
 

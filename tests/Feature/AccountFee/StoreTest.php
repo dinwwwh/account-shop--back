@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class StoreTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         $accountType = AccountType::where('creator_id', '!=', null)->inRandomOrder()->first();
         $route = route('account-fee.store', ['accountType' => $accountType]);

@@ -10,7 +10,7 @@ use App\Models\AccountInfo;
 
 class UpdateTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         $accountInfo = AccountInfo::inRandomOrder()->first();
         $this->actingAs($this->makeAuth([]));
@@ -19,21 +19,43 @@ class UpdateTest extends TestCase
             'order' => rand(1, 100),
             'name' => Str::random(10),
             'description' => Str::random(30),
+            'rule' => [
+                'required' => false,
+                'requiredUserIds' => [1, 2, 3],
+                'unrequiredUserIds' => [4, 5, 6, 7],
+            ],
+            '_requiredModelRelationships' => ['rule']
         ];
 
         $res = $this->json('put', $route, $data);
         $res->assertStatus(200);
+        $res->assertJsonCount(3, 'data.rule.requiredUsers');
+        $res->assertJsonCount(0, 'data.rule.unrequiredUsers');
         $res->assertJson(
-            fn ($json) => $json
-                ->has(
-                    'data',
-                    fn ($json) => $json
-                        ->where('order', $data['order'])
-                        ->where('name', $data['name'])
-                        ->where('description', $data['description'])
-                        ->etc()
-                )
+            fn ($j) => $j
+                ->where('data.rule.required', false)
         );
+        $ruleId = $res->getData()->data->rule->id;
+
+        $this->assertDatabaseHas('account_infos', [
+            'order' => $data['order'],
+            'name' => $data['name'],
+            'description' => $data['description'],
+        ]);
+
+        foreach ($data['rule']['requiredUserIds'] as $userId) {
+            $this->assertDatabaseHas('rule_user_required', [
+                'user_id' => $userId,
+                'rule_id' => $ruleId,
+            ]);
+        }
+
+        foreach ($data['rule']['unrequiredUserIds'] as $userId) {
+            $this->assertDatabaseMissing('rule_user_unrequired', [
+                'user_id' => $userId,
+                'rule_id' => $ruleId,
+            ]);
+        }
     }
 
     public function test_middleware_success()

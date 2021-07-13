@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 class UpdateTest extends TestCase
 {
-    public function test_controller_and_request()
+    public function test_controller()
     {
         // Initial data
         $game = Game::inRandomOrder()->first();
