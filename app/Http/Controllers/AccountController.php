@@ -44,7 +44,7 @@ class AccountController extends Controller
      */
     public function manage()
     {
-        $search = $this->searchedKeyword;
+        $search = $this->keyword;
         $_with = $this->requiredModelRelationships;
         $isManager = auth()->user()->can('manage', 'App\Models\Game');
 

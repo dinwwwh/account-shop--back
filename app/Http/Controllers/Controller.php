@@ -26,11 +26,11 @@ class Controller extends BaseController
      * @param \Illuminate\Http\Request $request
      * @var string
      */
-    public string $searchedKeyword;
+    public string $keyword;
 
     function  __construct(Request $request)
     {
         $this->requiredModelRelationships = RequestHelper::generateRequiredModelRelationships($request);
-        $this->searchedKeyword = (string)$request->_searchedKeyword;
+        $this->keyword = (string)$request->_keyword;
     }
 }

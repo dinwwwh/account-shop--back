@@ -63,4 +63,20 @@ class UserController extends Controller
             'message' => 'Email xác thực đã được gửi.'
         ]);
     }
+
+    /**
+     * Find users by keyword
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function search()
+    {
+        $users = User::where('id', $this->keyword)
+            ->orWhere('email', $this->keyword)
+            ->orWhere('name', $this->keyword)
+            ->with($this->requiredModelRelationships)
+            ->get();
+
+        return UserResource::collection($users);
+    }
 }

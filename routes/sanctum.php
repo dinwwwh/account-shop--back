@@ -43,6 +43,13 @@ Route::get('verify/{id}/{hash}', [UserController::class, 'verify'])
 Route::post('verification-notification', [UserController::class, 'sendEmailVerificationNotification'])
     ->middleware(['auth', 'throttle:6,1'])
     ->name('verification.send');
+Route::prefix('user')->group(function () {
+    Route::middleware(['auth', 'verified'])->group(function () {
+        // Find user by search keyword
+        Route::get('search', [UserController::class, 'search'])
+            ->name('user.search');
+    });
+});
 
 // ====================================================
 // Password routes
@@ -57,7 +64,6 @@ Route::post('forgot-password', [PasswordController::class, 'forgotPassword'])
 Route::post('reset-password', [PasswordController::class, 'resetPassword'])
     ->middleware('guest')
     ->name('password.update');
-
 // ====================================================
 // Auth routes
 // ====================================================
