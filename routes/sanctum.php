@@ -126,8 +126,8 @@ Route::prefix('game')->group(function () {
             ->middleware('can:allowDiscountCode,game,discountCode')
             ->name('game.allow-discount-code');
         // get usable game to create an account
-        Route::get('all/usable-to-create-account', [GameController::class, 'getUsableGame'])
-            ->name('game.get-usable-games');
+        Route::get('all/usable', [GameController::class, 'getUsableGame'])
+            ->name('game.get-usable');
     });
 });
 
