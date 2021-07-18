@@ -125,7 +125,7 @@ class AccountInfo extends Model implements Auditable
     {
         return $this->belongsToMany(Account::class, 'account_has_game_infos')
             ->using(AccountHasGameInfos::class)
-            ->withPivot('value')
+            ->withPivot('values')
             ->withTimestamps();
     }
 }

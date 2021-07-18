@@ -17,7 +17,7 @@ class CreateAccountAccountInfoTable extends Migration
             $table->id();
             $table->bigInteger('account_id');
             $table->integer('account_info_id');
-            $table->json('value');
+            $table->json('values');
             $table->timestamps();
         });
     }

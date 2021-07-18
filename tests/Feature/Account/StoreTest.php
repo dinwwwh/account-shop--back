@@ -38,7 +38,7 @@ class StoreTest extends Helper
             $this->assertDatabaseHas('account_account_info', [
                 'account_id' => $res->getData()->data->id,
                 'account_info_id' => (int)trim($key, 'id '),
-                'value' => json_encode($value['value']),
+                'values' => json_encode($value['values']),
             ]);
         }
         foreach ($data['rawAccountActions'] as $key => $value) {
@@ -52,7 +52,7 @@ class StoreTest extends Helper
             $this->assertDatabaseHas('account_has_game_infos', [
                 'account_id' => $res->getData()->data->id,
                 'game_info_id' => (int)trim($key, 'id '),
-                'value' => json_encode($value['value']),
+                'values' => json_encode($value['values']),
             ]);
         }
     }

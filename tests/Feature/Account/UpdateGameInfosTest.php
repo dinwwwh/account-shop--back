@@ -32,7 +32,7 @@ class UpdateGameInfosTest extends Helper
         foreach ($data['rawGameInfos'] as $key => $value) {
             $this->assertDatabaseHas('account_has_game_infos', [
                 'game_info_id' => $key,
-                'value' => json_encode($value['value']),
+                'values' => json_encode($value['values']),
             ]);
         }
     }

@@ -41,7 +41,7 @@ class AccountHasGameInfos extends Pivot implements Auditable
      * @var array
      */
     protected $casts = [
-        'value' => 'json'
+        'values' => 'array'
     ];
 
 

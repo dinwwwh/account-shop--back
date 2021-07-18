@@ -18,7 +18,7 @@ class AccountAccountInfo extends Pivot implements Auditable
      * @var array
      */
     protected $hidden = [
-        'value',
+        'values',
         'audits', #Contain history changes of this model
     ];
 
@@ -29,7 +29,7 @@ class AccountAccountInfo extends Pivot implements Auditable
      * @var array
      * */
     protected $attributeModifiers = [
-        'value' => RightRedactor::class,
+        'values' => RightRedactor::class,
     ];
 
     /**
@@ -45,7 +45,7 @@ class AccountAccountInfo extends Pivot implements Auditable
      * @var array
      */
     protected $casts = [
-        'value' => 'json'
+        'values' => 'array'
     ];
 
     /**

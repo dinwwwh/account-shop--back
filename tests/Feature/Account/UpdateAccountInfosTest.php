@@ -22,7 +22,7 @@ class UpdateAccountInfosTest extends Helper
         foreach ($data['rawAccountInfos'] as $key => $value) {
             $this->assertDatabaseHas('account_account_info', [
                 'account_info_id' => (int)trim($key, 'id '),
-                'value' => json_encode($value['value']),
+                'values' => json_encode($value['values']),
             ]);
         }
     }

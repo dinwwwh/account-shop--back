@@ -17,7 +17,7 @@ class CreateAccountHasGameInfosTable extends Migration
             $table->id();
             $table->integer('account_id');
             $table->integer('game_info_id');
-            $table->json('value');
+            $table->json('values');
             $table->timestamps();
         });
     }

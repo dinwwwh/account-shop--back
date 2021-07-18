@@ -31,7 +31,7 @@ trait ManageAccountInfoInAccountType
         ];
         foreach ($this->accountInfos as $accountInfo) {
             $rules[$accountInfo->getKey()]
-                = ['value' => $accountInfo->rule->generateRule($user)];
+                = ['values' => $accountInfo->rule->generateRule($user)];
         }
         return $rules;
     }

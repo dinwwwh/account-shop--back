@@ -21,7 +21,7 @@ class AccountAccountInfoResource extends Resource
                 auth()->check() && auth()->user()->can('readAccountInfos', $this->resource->account),
                 function () {
                     return [
-                        'value' => $this->value,
+                        'values' => $this->values,
                     ];
                 }
             ),

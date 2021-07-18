@@ -23,9 +23,9 @@ class Helper extends TestCase
         foreach ($accountInfos as $accountInfo) {
             if ($accountInfo->rule->isRequired($user)) {
                 if ($accountInfo->rule->datatype == 'string') {
-                    $data[$accountInfo->getKey()] = ['value' => [Str::random(10)]];
+                    $data[$accountInfo->getKey()] = ['values' => [Str::random(10)]];
                 } elseif ($accountInfo->rule->datatype == 'integer') {
-                    $data[$accountInfo->getKey()] = ['value' => [rand(1, 01000)]];
+                    $data[$accountInfo->getKey()] = ['values' => [rand(1, 01000)]];
                 }
             }
         }
@@ -55,9 +55,9 @@ class Helper extends TestCase
         foreach ($gameInfos as $gameInfo) {
             if ($gameInfo->rule->isRequired($user)) {
                 if ($gameInfo->rule->datatype == 'string') {
-                    $data[$gameInfo->getKey()] = ['value' => [Str::random(10)]];
+                    $data[$gameInfo->getKey()] = ['values' => [Str::random(10)]];
                 } elseif ($gameInfo->rule->datatype == 'integer') {
-                    $data[$gameInfo->getKey()] = ['value' => [rand(1, 01000)]];
+                    $data[$gameInfo->getKey()] = ['values' => [rand(1, 01000)]];
                 }
             }
         }

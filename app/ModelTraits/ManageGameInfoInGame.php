@@ -29,7 +29,7 @@ trait ManageGameInfoInGame
         ];
         foreach ($this->gameInfos as $gameInfo) {
             $rules[$gameInfo->getKey()]
-                = ['value' => $gameInfo->rule->generateRule($user)];
+                = ['values' => $gameInfo->rule->generateRule($user)];
         }
         return $rules;
     }
