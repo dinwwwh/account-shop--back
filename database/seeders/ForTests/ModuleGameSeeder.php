@@ -53,7 +53,7 @@ class ModuleGameSeeder extends Seeder
         $requiredBoolRule = Rule::factory()->state([
             'datatype' => 'boolean',
             'required' => true,
-            'values' => [true]
+            'allowable_values' => [true]
         ])->create();
         $requiredBoolRule->unrequiredUsers()->sync($firstHalfUsers);
 

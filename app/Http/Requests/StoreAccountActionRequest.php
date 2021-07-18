@@ -32,7 +32,7 @@ class StoreAccountActionRequest extends FormRequest
                 'description' => 'nullable|string',
                 'videoPath' => 'nullable|string',
             ],
-            ValidationHelper::parseRulesByArray('rule', Rule::RULE_REQUEST)
+            ValidationHelper::parseRulesByArray('rule', Rule::getRequestRules())
         );
     }
 }

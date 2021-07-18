@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\ModelTraits\HelperForRule;
+use App\Rules\ValidateForKeys;
 use OwenIt\Auditing\Contracts\Auditable;
 
 class Rule extends Model implements Auditable
@@ -13,21 +14,25 @@ class Rule extends Model implements Auditable
         HelperForRule,
         \OwenIt\Auditing\Auditable;
 
-    public const RULE_REQUEST = [
-        'nullable',
-        'array',
-        'placeholder' => 'nullable|string',
-        'datatype' => 'nullable|string',
-        'required' => 'nullable|boolean',
-        'multiple' => 'nullable|boolean',
-        'min' => 'nullable|integer',
-        'max' => 'nullable|integer',
-        'values' => 'nullable|array',
-        'requiredUserIds' => 'nullable|array',
-        'requiredUserIds.*' => 'integer|exists:users,id',
-        'unrequiredUserIds' => 'nullable|array',
-        'unrequiredUserIds.*' => 'integer|exists:users,id'
-    ];
+    public static function getRequestRules()
+    {
+        return [
+            'nullable',
+            'array',
+            'placeholder' => 'nullable|string',
+            'datatype' => 'nullable|string',
+            'required' => 'nullable|boolean',
+            'allowable_number' => ['nullable', 'integer', 'min:1', 'max:255'],
+            'min' => ['nullable', 'integer', 'min:1', 'max:255'],
+            'max' => ['nullable', 'integer', 'min:1', 'max:255'],
+            'allowable_values' => ['nullable', 'array'],
+            'allowable_values.*' => ['distinct'],
+            'rawRequiredUsers' => ['nullable', 'array', new ValidateForKeys(['exists:users,id'])],
+            'rawRequiredUsers.*' => ['array'],
+            'rawUnrequiredUsers' => ['nullable', 'array',  new ValidateForKeys(['exists:users,id'])],
+            'rawUnrequiredUsers.*' => ['array'],
+        ];
+    }
 
     /**
      * The attributes & relationships that should be hidden for arrays.
@@ -50,20 +55,20 @@ class Rule extends Model implements Auditable
         'placeholder',
         'datatype',
         'required',
-        'multiple',
+        'allowable_number',
         'min',
         'max',
-        'values'
+        'allowable_values'
     ];
 
     protected $casts = [
         'placeholder' => 'string',
         'datatype' => 'string',
         'required' => 'boolean',
-        'multiple' => 'boolean',
+        'allowable_number' => 'integer',
         'min' => 'integer',
         'max' => 'integer',
-        'values' => 'array',
+        'allowable_values' => 'array',
     ];
 
     /**
@@ -86,7 +91,7 @@ class Rule extends Model implements Auditable
         static::creating(function ($query) {
             $query->datatype = $query->datatype ?? 'string';
             $query->required = $query->required ?? false;
-            $query->multiple = $query->multiple ?? false;
+            $query->allowable_number = $query->allowable_number ?? 1;
 
             $query->creator_id = $query->creator_id ?? optional(auth()->user())->id;
             $query->latest_updater_id = $query->latest_updater_id ?? optional(auth()->user())->id;

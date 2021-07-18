@@ -33,7 +33,7 @@ class UpdateAccountActionRequest extends FormRequest
                 'videoPath' => 'nullable|string',
 
             ],
-            ValidationHelper::parseRulesByArray('rule', Rule::RULE_REQUEST)
+            ValidationHelper::parseRulesByArray('rule', Rule::getRequestRules())
         );
     }
 }

@@ -40,7 +40,7 @@ class StoreTest extends TestCase
         $res->assertJson(
             fn ($j) => $j
                 ->where('data.rule.datatype', 'boolean')
-                ->where('data.rule.values', [true])
+                ->where('data.rule.allowableValues', [true])
                 ->where('data.rule.required', true)
         );
         $ruleId = $res->getData()->data->rule->id;

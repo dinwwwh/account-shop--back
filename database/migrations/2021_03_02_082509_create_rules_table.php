@@ -18,10 +18,10 @@ class CreateRulesTable extends Migration
             $table->string('datatype');
             $table->string('placeholder')->nullable();
             $table->boolean('required')->default(false);
-            $table->boolean('multiple')->default(false);
-            $table->integer('min')->nullable();
-            $table->integer('max')->nullable();
-            $table->json('values')->nullable();
+            $table->unsignedTinyInteger('allowable_number')->default(1);
+            $table->unsignedTinyInteger('min')->nullable();
+            $table->unsignedTinyInteger('max')->nullable();
+            $table->json('allowable_values')->nullable();
 
             $table->unsignedBigInteger('latest_updater_id')->nullable();
             $table->unsignedBigInteger('creator_id')->nullable();

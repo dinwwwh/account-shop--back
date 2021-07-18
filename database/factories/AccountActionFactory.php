@@ -33,7 +33,7 @@ class AccountActionFactory extends Factory
             'rule_id' => Rule::factory()->state([
                 'datatype' => 'boolean',
                 'required' => $isRequired,
-                'values' => $isRequired ? [true] : null,
+                'allowable_values' => $isRequired ? [true] : null,
             ]),
         ];
     }

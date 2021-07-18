@@ -58,39 +58,26 @@ trait HelperForRule
 
         if ($isRequired) {
             $rule[] = 'required';
+            $rule[] = 'min:1';
         } else {
             $rule[] = 'nullable';
         }
 
-        if ($this->multiple) {
-            $rule[] = 'array';
-            $rule['*'][] = $this->datatype;
+        $rule[] = 'array';
+        $rule[] = 'max:' . $this->allowable_number;
+        $rule['*'][] = $this->datatype;
+        $rule['*'][] = 'distinct';
 
-            if (!empty($this->min)) {
-                $rule['*'][] = 'min:' . $this->min;
-            }
+        if (!empty($this->min)) {
+            $rule['*'][] = 'min:' . $this->min;
+        }
 
-            if (!empty($this->max)) {
-                $rule['*'][] = 'max:' . $this->max;
-            }
+        if (!empty($this->max)) {
+            $rule['*'][] = 'max:' . $this->max;
+        }
 
-            if (!empty($this->values)) {
-                $rule['*'][] = RuleHelper::in($this->values);
-            }
-        } else {
-            $rule[] = $this->datatype;
-
-            if (!empty($this->min)) {
-                $rule[] = 'min:' . $this->min;
-            }
-
-            if (!empty($this->max)) {
-                $rule[] = 'max:' . $this->max;
-            }
-
-            if (!empty($this->values)) {
-                $rule[] = RuleHelper::in($this->values);
-            }
+        if (!empty($this->allowable_values)) {
+            $rule['*'][] = RuleHelper::in($this->allowable_values);
         }
         return $rule;
     }

@@ -18,13 +18,12 @@ use App\Http\Resources\AuditResource;
 use App\Http\Resources\AccountResource;
 use Illuminate\Validation\Rule;
 use App\Helpers\ValidationHelper;
+use App\Models\AccountType;
 use App\Models\Rule as ModelsRule;
 use App\Rules\ValidateForKeys;
 
 Route::post('test', function (Request $request) {
-    $request->validate([
-        'arr.*.id' => ['distinct', 'required']
-    ]);
+    return array_map(fn ($field) => dd($field), [2 => 2, 3]);
 });
 
 // ====================================================

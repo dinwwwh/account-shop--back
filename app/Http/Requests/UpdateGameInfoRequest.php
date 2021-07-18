@@ -31,7 +31,7 @@ class UpdateGameInfoRequest extends FormRequest
                 'name' => 'nullable|string',
                 'description' => 'nullable|string',
             ],
-            ValidationHelper::parseRulesByArray('rule', Rule::RULE_REQUEST)
+            ValidationHelper::parseRulesByArray('rule', Rule::getRequestRules())
         );
     }
 }

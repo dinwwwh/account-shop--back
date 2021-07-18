@@ -54,7 +54,7 @@ class AccountActionController extends Controller
             $dataOfRule = $request->rule ?? [];
             $dataOfRule['datatype'] = 'boolean';
             if ($request->rule && array_key_exists('required', $request->rule) && $request->rule['required']) {
-                $dataOfRule['values'] = [true];
+                $dataOfRule['allowable_values'] = [true];
             }
             $rule = Rule::createQuickly($dataOfRule);
             $accountActionData['rule_id'] = $rule->getKey();
@@ -111,7 +111,7 @@ class AccountActionController extends Controller
             $dataOfRule = $request->rule ?? [];
             $dataOfRule['datatype'] = 'boolean';
             if ($request->rule && array_key_exists('required', $request->rule) && $request->rule['required']) {
-                $dataOfRule['values'] = [true];
+                $dataOfRule['allowable_values'] = [true];
             }
             $accountAction->rule->updateQuickly($dataOfRule);
 

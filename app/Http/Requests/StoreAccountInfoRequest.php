@@ -31,7 +31,7 @@ class StoreAccountInfoRequest extends FormRequest
                 'name' => 'required|string',
                 'description' => 'nullable|string',
             ],
-            ValidationHelper::parseRulesByArray('rule', Rule::RULE_REQUEST)
+            ValidationHelper::parseRulesByArray('rule', Rule::getRequestRules())
         );
     }
 }
