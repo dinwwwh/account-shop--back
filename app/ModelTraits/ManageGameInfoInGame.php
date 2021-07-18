@@ -31,6 +31,9 @@ trait ManageGameInfoInGame
             $rules[$gameInfo->getKey()]
                 = ['values' => $gameInfo->rule->generateRule($user)];
         }
+
+        // Validate structure
+        $rules['*.values'] = 'required';
         return $rules;
     }
 }

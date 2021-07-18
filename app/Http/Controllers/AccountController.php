@@ -10,10 +10,7 @@ use App\Http\Requests\Account\UpdateImagesRequest;
 use App\Http\Requests\Account\UpdateLoginInfosRequest;
 use App\Models\Account;
 use App\Models\AccountType;
-use App\Models\Role;
-use App\Http\Requests\UpdateAccountRequest;
 use App\Http\Resources\AccountResource;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -21,7 +18,6 @@ use App\Http\Requests\Request;
 use App\Http\Requests\Account\StoreRequest;
 use App\Models\AccountStatus;
 use App\Models\File;
-use Carbon\Carbon;
 
 class AccountController extends Controller
 {
@@ -111,13 +107,20 @@ class AccountController extends Controller
             ]);
 
             // Account infos
-            $account->accountInfos()->sync($request->rawAccountInfos ?? []);
+            $rawAccountInfos = array_map(fn ($field) => [
+                'values' => $field['values']
+            ], $request->rawAccountInfos ?? []);
+            $account->accountInfos()->sync($rawAccountInfos);
             // Account actions
-            $account->accountActions()->sync(
-                ArrayHelper::convertArrayKeysToSnakeCase($request->rawAccountActions ?? [], -1)
-            );
+            $rawAccountActions = array_map(fn ($field) => [
+                'is_done' => $field['isDone']
+            ], $request->rawAccountActions ?? []);
+            $account->accountActions()->sync($rawAccountActions);
             // game infos
-            $account->gameInfos()->sync($request->rawGameInfos ?? []);
+            $rawGameInfos = array_map(fn ($field) => [
+                'values' => $field['values']
+            ], $request->rawGameInfos ?? []);
+            $account->gameInfos()->sync($rawGameInfos);
 
             // handle sub account images
             if ($request->hasFile('images')) {
@@ -219,7 +222,10 @@ class AccountController extends Controller
     {
         try {
             DB::beginTransaction();
-            $account->accountInfos()->sync($request->rawAccountInfos);
+            $rawAccountInfos = array_map(fn ($field) => [
+                'values' => $field['values']
+            ], $request->rawAccountInfos ?? []);
+            $account->accountInfos()->sync($rawAccountInfos);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -240,7 +246,10 @@ class AccountController extends Controller
     {
         try {
             DB::beginTransaction();
-            $account->gameInfos()->sync($request->rawGameInfos);
+            $rawGameInfos = array_map(fn ($field) => [
+                'values' => $field['values']
+            ], $request->rawGameInfos ?? []);
+            $account->gameInfos()->sync($rawGameInfos);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();

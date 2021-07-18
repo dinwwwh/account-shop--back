@@ -33,6 +33,9 @@ trait ManageAccountActionInAccountType
             $rules[$accountAction->getKey()]
                 = ['isDone' => $accountAction->rule->generateBooleanRule($user)];
         }
+
+        // Validate structure
+        $rules['*.isDone'] = 'required';
         return $rules;
     }
 }

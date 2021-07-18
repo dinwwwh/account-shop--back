@@ -33,6 +33,9 @@ trait ManageAccountInfoInAccountType
             $rules[$accountInfo->getKey()]
                 = ['values' => $accountInfo->rule->generateRule($user)];
         }
+
+        // Validate structure
+        $rules['*.values'] = 'required';
         return $rules;
     }
 }
