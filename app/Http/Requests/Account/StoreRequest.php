@@ -53,9 +53,9 @@ class StoreRequest extends FormRequest
                 'images' => 'nullable|array',
                 'images.*' => 'image',
             ],
-            ValidationHelper::parseRulesByArray('accountInfos', $accountType->generateAccountInfoRulesForValidation($user)),
-            ValidationHelper::parseRulesByArray('accountActions', $accountType->generateAccountActionRulesForValidation($user)),
-            ValidationHelper::parseRulesByArray('gameInfos', $accountType->game->generateGameInfoRulesForValidation($user)),
+            ValidationHelper::parseRulesByArray('rawAccountInfos', $accountType->generateAccountInfoRulesForValidation($user)),
+            ValidationHelper::parseRulesByArray('rawAccountActions', $accountType->generateAccountActionRulesForValidation($user)),
+            ValidationHelper::parseRulesByArray('rawGameInfos', $accountType->game->generateGameInfoRulesForValidation($user)),
         );
     }
 }

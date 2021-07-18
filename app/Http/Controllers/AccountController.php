@@ -111,13 +111,13 @@ class AccountController extends Controller
             ]);
 
             // Account infos
-            $account->accountInfos()->sync($request->accountInfos ?? []);
+            $account->accountInfos()->sync($request->rawAccountInfos ?? []);
             // Account actions
             $account->accountActions()->sync(
-                ArrayHelper::convertArrayKeysToSnakeCase($request->accountActions ?? [], -1)
+                ArrayHelper::convertArrayKeysToSnakeCase($request->rawAccountActions ?? [], -1)
             );
             // game infos
-            $account->gameInfos()->sync($request->gameInfos ?? []);
+            $account->gameInfos()->sync($request->rawGameInfos ?? []);
 
             // handle sub account images
             if ($request->hasFile('images')) {
@@ -219,7 +219,7 @@ class AccountController extends Controller
     {
         try {
             DB::beginTransaction();
-            $account->accountInfos()->sync($request->accountInfos);
+            $account->accountInfos()->sync($request->rawAccountInfos);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -240,7 +240,7 @@ class AccountController extends Controller
     {
         try {
             DB::beginTransaction();
-            $account->gameInfos()->sync($request->gameInfos);
+            $account->gameInfos()->sync($request->rawGameInfos);
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();

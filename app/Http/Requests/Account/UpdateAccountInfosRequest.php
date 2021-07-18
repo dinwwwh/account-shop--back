@@ -28,7 +28,7 @@ class UpdateAccountInfosRequest extends FormRequest
         $user = auth()->user();
 
         return ValidationHelper::parseRulesByArray(
-            'accountInfos',
+            'rawAccountInfos',
             $account->accountType->generateAccountInfoRulesForValidation($user)
         );
     }

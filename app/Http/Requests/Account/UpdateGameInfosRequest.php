@@ -27,6 +27,6 @@ class UpdateGameInfosRequest extends FormRequest
         $account = $this->route('account');
         $user = auth()->user();
 
-        return ValidationHelper::parseRulesByArray('gameInfos', $account->accountType->game->generateGameInfoRulesForValidation($user));
+        return ValidationHelper::parseRulesByArray('rawGameInfos', $account->accountType->game->generateGameInfoRulesForValidation($user));
     }
 }
