@@ -34,21 +34,21 @@ class StoreTest extends Helper
             'description' => $data['description'],
         ]);
 
-        foreach ($data['accountInfos'] as $key => $value) {
+        foreach ($data['rawAccountInfos'] as $key => $value) {
             $this->assertDatabaseHas('account_account_info', [
                 'account_id' => $res->getData()->data->id,
                 'account_info_id' => (int)trim($key, 'id '),
                 'value' => json_encode($value['value']),
             ]);
         }
-        foreach ($data['accountActions'] as $key => $value) {
+        foreach ($data['rawAccountActions'] as $key => $value) {
             $this->assertDatabaseHas('account_account_action', [
                 'account_id' => $res->getData()->data->id,
                 'account_action_id' => (int)trim($key, 'id '),
                 'is_done' => (bool)$value['isDone'],
             ]);
         }
-        foreach ($data['gameInfos'] as $key => $value) {
+        foreach ($data['rawGameInfos'] as $key => $value) {
             $this->assertDatabaseHas('account_has_game_infos', [
                 'account_id' => $res->getData()->data->id,
                 'game_info_id' => (int)trim($key, 'id '),
@@ -71,15 +71,16 @@ class StoreTest extends Helper
             $data = $this->makeAccountData($accountType, $user);
             $count++;
             if ($count == 100) return;
-        } while (empty($data['gameInfos']));
+        } while (empty($data['rawGameInfos']));
 
-        unset($data['gameInfos']);
+        unset($data['rawGameInfos']);
         $this->json('post', $route, $data)
             ->assertStatus(422);
     }
 
     public function test_request_lack_account_infos()
     {
+        $count = 0;
         do {
             $user = $this->makeAuth(
                 Permission::all()->pluck('key')->toArray(),
@@ -89,15 +90,18 @@ class StoreTest extends Helper
             $this->actingAs($user);
             $route = route('account.store', ['accountType' => $accountType]);
             $data = $this->makeAccountData($accountType, $user);
-        } while (empty($data['accountInfos']));
+            $count++;
+            if ($count == 100) return;
+        } while (empty($data['rawAccountInfos']));
 
-        unset($data['accountInfos']);
+        unset($data['rawAccountInfos']);
         $this->json('post', $route, $data)
             ->assertStatus(422);
     }
 
     public function test_request_lack_account_actions()
     {
+        $count = 0;
         do {
             $user = $this->makeAuth(
                 Permission::all()->pluck('key')->toArray(),
@@ -107,9 +111,11 @@ class StoreTest extends Helper
             $this->actingAs($user);
             $route = route('account.store', ['accountType' => $accountType]);
             $data = $this->makeAccountData($accountType, $user);
-        } while (empty($data['accountActions']));
+            $count++;
+            if ($count == 100) return;
+        } while (empty($data['rawAccountActions']));
 
-        unset($data['accountActions']);
+        unset($data['rawAccountActions']);
         $this->json('post', $route, $data)
             ->assertStatus(422);
     }

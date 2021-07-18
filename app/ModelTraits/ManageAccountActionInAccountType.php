@@ -31,7 +31,7 @@ trait ManageAccountActionInAccountType
         ];
         foreach ($this->accountActions as $accountAction) {
             $rules[$accountAction->getKey()]
-                = ['isDone' => $accountAction->rule->generateRule($user)];
+                = ['isDone' => $accountAction->rule->generateBooleanRule($user)];
         }
         return $rules;
     }

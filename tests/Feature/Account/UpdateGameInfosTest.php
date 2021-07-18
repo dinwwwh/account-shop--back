@@ -23,13 +23,13 @@ class UpdateGameInfosTest extends Helper
         $user = $this->makeAuth([]);
         $this->actingAs($user);
         $data = [
-            'gameInfos' => $this->makeDataForGameInfos($account->accountType->game, $user),
+            'rawGameInfos' => $this->makeDataForGameInfos($account->accountType->game, $user),
         ];
 
         $res = $this->json('patch', $route, $data);
         $res->assertStatus(204);
 
-        foreach ($data['gameInfos'] as $key => $value) {
+        foreach ($data['rawGameInfos'] as $key => $value) {
             $this->assertDatabaseHas('account_has_game_infos', [
                 'game_info_id' => $key,
                 'value' => json_encode($value['value']),

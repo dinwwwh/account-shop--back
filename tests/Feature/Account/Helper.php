@@ -23,9 +23,9 @@ class Helper extends TestCase
         foreach ($accountInfos as $accountInfo) {
             if ($accountInfo->rule->isRequired($user)) {
                 if ($accountInfo->rule->datatype == 'string') {
-                    $data[$accountInfo->getKey()] = ['value' => Str::random(10)];
+                    $data[$accountInfo->getKey()] = ['value' => [Str::random(10)]];
                 } elseif ($accountInfo->rule->datatype == 'integer') {
-                    $data[$accountInfo->getKey()] = ['value' => rand(1, 01000)];
+                    $data[$accountInfo->getKey()] = ['value' => [rand(1, 01000)]];
                 }
             }
         }
@@ -55,9 +55,9 @@ class Helper extends TestCase
         foreach ($gameInfos as $gameInfo) {
             if ($gameInfo->rule->isRequired($user)) {
                 if ($gameInfo->rule->datatype == 'string') {
-                    $data[$gameInfo->getKey()] = ['value' => Str::random(10)];
+                    $data[$gameInfo->getKey()] = ['value' => [Str::random(10)]];
                 } elseif ($gameInfo->rule->datatype == 'integer') {
-                    $data[$gameInfo->getKey()] = ['value' => rand(1, 01000)];
+                    $data[$gameInfo->getKey()] = ['value' => [rand(1, 01000)]];
                 }
             }
         }
@@ -85,9 +85,9 @@ class Helper extends TestCase
                 UploadedFile::fake()->image('avatar343243.jpg'),
                 UploadedFile::fake()->image('avatar4324.jpg'),
             ],
-            'accountInfos' => $dataOfAccountInfos,
-            'accountActions' => $dataOfAccountActions,
-            'gameInfos' => $dataOfGameInfos,
+            'rawAccountInfos' => $dataOfAccountInfos,
+            'rawAccountActions' => $dataOfAccountActions,
+            'rawGameInfos' => $dataOfGameInfos,
             '_requiredModelRelationships' => ['representativeImage', 'otherImages']
         ];
     }

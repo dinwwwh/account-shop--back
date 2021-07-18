@@ -13,13 +13,13 @@ class UpdateAccountInfosTest extends Helper
         $user = $this->makeAuth([]);
         $this->actingAs($user);
         $data = [
-            'accountInfos' => $this->makeDataForAccountInfos($account->accountType, $user),
+            'rawAccountInfos' => $this->makeDataForAccountInfos($account->accountType, $user),
         ];
 
         $res = $this->json('patch', $route, $data);
         $res->assertStatus(204);
 
-        foreach ($data['accountInfos'] as $key => $value) {
+        foreach ($data['rawAccountInfos'] as $key => $value) {
             $this->assertDatabaseHas('account_account_info', [
                 'account_info_id' => (int)trim($key, 'id '),
                 'value' => json_encode($value['value']),

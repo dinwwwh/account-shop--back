@@ -83,6 +83,30 @@ trait HelperForRule
     }
 
     /**
+     * Generate boolean rule used to validate
+     * Just required true or false
+     *
+     * @param \App\Models\User $user
+     * @return array
+     */
+    public function generateBooleanRule(User $user): array
+    {
+        $isRequired = $this->isRequired($user);
+        $rule = [];
+
+        if ($isRequired) {
+            $rule[] = 'required';
+            $rule[] = 'boolean';
+            $rule[] = RuleHelper::in([true]);
+        } else {
+            $rule[] = 'nullable';
+            $rule[] = 'boolean';
+        }
+
+        return $rule;
+    }
+
+    /**
      * Determine whether $role must required this rule
      *
      * @param \App\Models\User $role
