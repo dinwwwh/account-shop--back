@@ -22,8 +22,9 @@ use App\Models\Rule as ModelsRule;
 use App\Rules\ValidateForKeys;
 
 Route::post('test', function (Request $request) {
-    dd($request->file);
-    return $request->user();
+    $request->validate([
+        'arr.*.id' => ['distinct', 'required']
+    ]);
 });
 
 // ====================================================
