@@ -2,6 +2,7 @@
 
 namespace App\ModelTraits;
 
+use App\Helpers\ArrayHelper;
 use App\Models\Role;
 use App\Models\Rule;
 use App\Models\User;
@@ -17,11 +18,13 @@ trait HelperForRule
     static public function createQuickly(array $data = null): Rule
     {
         $data = $data ?? [];
-        $rule = static::create($data)->refresh();
+        $rule = static::create(
+            ArrayHelper::convertArrayKeysToSnakeCase($data)
+        )->refresh();
         if ($rule->required) {
-            $rule->unrequiredUsers()->sync($data['unrequiredUserIds'] ?? []);
+            $rule->unrequiredUsers()->sync($data['rawUnrequiredUsers'] ?? []);
         } else {
-            $rule->requiredUsers()->sync($data['requiredUserIds'] ?? []);
+            $rule->requiredUsers()->sync($data['rawRequiredUsers'] ?? []);
         }
         return $rule;
     }
@@ -33,12 +36,12 @@ trait HelperForRule
      */
     public function updateQuickly(array $data): Rule
     {
-        $this->update($data);
+        $this->update(ArrayHelper::convertArrayKeysToSnakeCase($data));
         if ($this->required) {
             $this->requiredUsers()->sync([]);
-            $this->unrequiredUsers()->sync($data['unrequiredUserIds'] ?? []);
+            $this->unrequiredUsers()->sync($data['rawUnrequiredUsers'] ?? []);
         } else {
-            $this->requiredUsers()->sync($data['requiredUserIds'] ?? []);
+            $this->requiredUsers()->sync($data['rawRequiredUsers'] ?? []);
             $this->unrequiredUsers()->sync([]);
         }
         return $this;
