@@ -30,7 +30,7 @@ class ArrayHelper
      * @param array $arr
      * @return array
      */
-    static function convertArrayKeysToSnakeCase(array $arr, int $depth = 1): array
+    static function convertArrayKeysToSnakeCase(array $arr, int $depth = -1): array
     {
         if ($depth == 0) return $arr;
         $result = [];

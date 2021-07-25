@@ -99,7 +99,7 @@ class GameController extends Controller
                 $games->push($accountType->game);
             }
         }
-        return GameResource::withLoadMissingRelationships($games);
+        return GameResource::withLoadRelationships($games);
     }
 
     /**
