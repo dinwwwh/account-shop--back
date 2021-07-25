@@ -197,7 +197,7 @@ class Account extends Model implements Auditable
     {
         return $this->belongsToMany(AccountInfo::class, 'account_account_info')
             ->using(AccountAccountInfo::class)
-            ->withPivot('values')
+            ->withPivot(['values', 'id'])
             ->withTimestamps();
     }
 
@@ -210,7 +210,7 @@ class Account extends Model implements Auditable
     {
         return $this->belongsToMany(AccountAction::class, 'account_account_action')
             ->using(AccountAccountAction::class)
-            ->withPivot('is_done')
+            ->withPivot(['is_done', 'id'])
             ->withTimestamps();
     }
 
@@ -223,7 +223,7 @@ class Account extends Model implements Auditable
     {
         return $this->belongsToMany(GameInfo::class, 'account_has_game_infos')
             ->using(AccountHasGameInfos::class)
-            ->withPivot('values')
+            ->withPivot(['values', 'id'])
             ->withTimestamps();
     }
 }
