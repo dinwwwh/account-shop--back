@@ -5,35 +5,15 @@ namespace App\Models\Pivot;
 use App\Models\Account;
 use App\Models\AccountAction;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use OwenIt\Auditing\Contracts\Auditable;
 
-class AccountAccountAction extends Pivot implements Auditable
+class AccountAccountAction extends Pivot
 {
-    use \OwenIt\Auditing\Auditable;
-
     /**
      * The attributes & relationships that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = [
-        'audits', #Contain history changes of this model
-    ];
-
-    /**
-     * Modify before store data changes in audit
-     * Should add attributes in $hidden property above
-     *
-     * @var array
-     * */
-    protected $attributeModifiers = [];
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = true;
+    protected $hidden = [];
 
     /**
      * The attributes should be cast
