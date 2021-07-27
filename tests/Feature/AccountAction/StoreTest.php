@@ -27,8 +27,8 @@ class StoreTest extends TestCase
             'videoPath' => Str::random(10),
             'rule' => [
                 'required' => true,
-                'requiredUserIds' => [1, 2, 3],
-                'unrequiredUserIds' => [4, 5, 6, 7],
+                'rawRequiredUsers' => [1 => [], 2 => [], 3 => []],
+                'rawUnrequiredUsers' => [4 => [], 5 => [], 6 => [], 7 => []],
             ],
             '_requiredModelRelationships' => ['rule']
         ];
@@ -52,16 +52,16 @@ class StoreTest extends TestCase
             'video_path' => $data['videoPath'],
         ]);
 
-        foreach ($data['rule']['requiredUserIds'] as $userId) {
+        foreach ($data['rule']['rawRequiredUsers'] as $id => $pivot) {
             $this->assertDatabaseMissing('rule_user_required', [
-                'user_id' => $userId,
+                'user_id' => $id,
                 'rule_id' => $ruleId,
             ]);
         }
 
-        foreach ($data['rule']['unrequiredUserIds'] as $userId) {
+        foreach ($data['rule']['rawUnrequiredUsers'] as $id => $pivot) {
             $this->assertDatabaseHas('rule_user_unrequired', [
-                'user_id' => $userId,
+                'user_id' => $id,
                 'rule_id' => $ruleId,
             ]);
         }

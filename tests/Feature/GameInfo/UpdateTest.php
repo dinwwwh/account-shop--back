@@ -25,8 +25,8 @@ class UpdateTest extends TestCase
             'description' => Str::random(80),
             'rule' => [
                 'required' => false,
-                'requiredUserIds' => [1, 2, 3],
-                'unrequiredUserIds' => [4, 5, 6, 7],
+                'rawRequiredUsers' => [1 => [], 2 => [], 3 => []],
+                'rawUnrequiredUsers' => [4 => [], 5 => [], 6 => [], 7 => []],
             ],
             '_requiredModelRelationships' => ['rule']
         ];
@@ -47,16 +47,16 @@ class UpdateTest extends TestCase
             'description' => $data['description'],
         ]);
 
-        foreach ($data['rule']['requiredUserIds'] as $userId) {
+        foreach ($data['rule']['rawRequiredUsers'] as $id => $pivot) {
             $this->assertDatabaseHas('rule_user_required', [
-                'user_id' => $userId,
+                'user_id' => $id,
                 'rule_id' => $ruleId,
             ]);
         }
 
-        foreach ($data['rule']['unrequiredUserIds'] as $userId) {
+        foreach ($data['rule']['rawUnrequiredUsers'] as $id => $pivot) {
             $this->assertDatabaseMissing('rule_user_unrequired', [
-                'user_id' => $userId,
+                'user_id' => $id,
                 'rule_id' => $ruleId,
             ]);
         }
