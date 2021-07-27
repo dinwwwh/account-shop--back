@@ -22,9 +22,11 @@ trait HelperForRule
             ArrayHelper::convertArrayKeysToSnakeCase($data)
         )->refresh();
         if ($rule->required) {
+            $rule->requiredUsers()->sync([]);
             $rule->unrequiredUsers()->sync($data['rawUnrequiredUsers'] ?? []);
         } else {
             $rule->requiredUsers()->sync($data['rawRequiredUsers'] ?? []);
+            $rule->unrequiredUsers()->sync([]);
         }
         return $rule;
     }
