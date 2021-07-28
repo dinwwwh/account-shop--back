@@ -13,17 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 use App\Http\Requests\Request;
-use App\Models\Account;
-use App\Http\Resources\AuditResource;
-use App\Http\Resources\AccountResource;
-use Illuminate\Validation\Rule;
-use App\Helpers\ValidationHelper;
-use App\Models\AccountType;
-use App\Models\Rule as ModelsRule;
-use App\Rules\ValidateForKeys;
 
-Route::post('test', function (Request $request) {
-    return array_map(fn ($field) => dd($field), [2 => 2, 3]);
+Route::get('test', function (Request $request) {
 });
 
 // ====================================================
@@ -104,30 +95,37 @@ Route::prefix('game')->group(function () {
     // Index
     Route::get('', [GameController::class, 'index'])
         ->name('game.index');
-    // Show
-    Route::get('{game}', [GameController::class, 'show'])
-        ->name('game.show');
 
-    Route::middleware(['auth', 'verified'])->group(function () {
-        // Store
-        Route::post('', [GameController::class, 'store'])
-            ->middleware('can:create,App\Models\Game')
-            ->name('game.store');
+    // Store
+    Route::post('', [GameController::class, 'store'])
+        ->middleware(['auth', 'verified', 'can:create,App\Models\Game'])
+        ->name('game.store');
+    // allow discount code
+    Route::post('allow-discount-code/{game}/{discountCode}', [GameController::class, 'allowDiscountCode'])
+        ->middleware(['auth', 'verified', 'can:allowDiscountCode,game,discountCode'])
+        ->name('game.allow-discount-code');
+    // get usable game to create an account
+    Route::get('all/usable', [GameController::class, 'getUsableGame'])
+        ->middleware(['auth', 'verified'])
+        ->name('game.get-usable');
+
+    Route::prefix('{game}')->group(function () {
+        // Show
+        Route::get('', [GameController::class, 'show'])
+            ->name('game.show');
         // Update
-        Route::put('{game}', [GameController::class, 'update'])
-            ->middleware('can:update,game')
+        Route::put('', [GameController::class, 'update'])
+            ->middleware(['auth', 'verified', 'can:update,game'])
             ->name('game.update');
         // Destroy
-        // Route::delete('{game}', [GameController::class, 'destroy'])
-        //     ->middleware('can:delete,game')
+        // Route::delete('', [GameController::class, 'destroy'])
+        //     ->middleware(['auth', 'verified', 'can:delete,game'])
         //     ->name('game.destroy');
-        // allow discount code
-        Route::post('allow-discount-code/{game}/{discountCode}', [GameController::class, 'allowDiscountCode'])
-            ->middleware('can:allowDiscountCode,game,discountCode')
-            ->name('game.allow-discount-code');
-        // get usable game to create an account
-        Route::get('all/usable', [GameController::class, 'getUsableGame'])
-            ->name('game.get-usable');
+        Route::prefix('account')->group(function () {
+            // Get accounts of this game
+            Route::get('', [GameController::class, 'getAccounts'])
+                ->name('game.account.index');
+        });
     });
 });
 

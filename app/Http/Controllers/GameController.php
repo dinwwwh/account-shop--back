@@ -13,9 +13,12 @@ use App\Http\Requests\UpdateGameRequest;
 use App\Models\DiscountCode;
 use App\Http\Requests\Request;
 use App\Http\Requests\AllowDiscountCodeInGameRequest;
+use App\Http\Resources\AccountResource;
+use App\Models\Account;
 use App\Models\File;
 use Illuminate\Database\Eloquent\Collection;
 
+use function PHPUnit\Framework\isNull;
 
 class GameController extends Controller
 {
@@ -29,6 +32,22 @@ class GameController extends Controller
     {
         $games = Game::with($this->requiredModelRelationships)->paginate(5);
         return GameResource::collection($games);
+    }
+
+    /**
+     * Get accounts of this game
+     *
+     * @param \App\Models\Game $game
+     * @return \Illuminate\Http\Response
+     */
+    public function getAccounts(Game $game)
+    {
+        $accountTypeIds = $game->accountTypes->pluck('id');
+        $accounts = Account::whereIn('account_type_id', $accountTypeIds)
+            ->with($this->requiredModelRelationships)
+            ->paginate(12);
+
+        return AccountResource::collection($accounts);
     }
 
     /**
