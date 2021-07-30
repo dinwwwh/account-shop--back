@@ -72,6 +72,11 @@ Route::post('logout', [AuthController::class, 'logout'])
 Route::get('profile', [AuthController::class, 'profile'])
     ->middleware('auth')
     ->name('auth.profile');
+// Update password
+Route::patch('password', [AuthController::class, 'updatePassword'])
+    ->middleware(['auth', 'verified', 'password.confirm-directly'])
+    ->name('auth.update-password');
+// Get ability of auth
 Route::get('can/{ability}', [AuthController::class, 'can'])
     ->middleware('auth')
     ->name('auth.can');

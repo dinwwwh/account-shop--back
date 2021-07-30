@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginAuthRequest;
 use App\Http\Resources\UserResource;
+use Hash;
+use Response;
 
 class AuthController extends Controller
 {
@@ -55,6 +57,29 @@ class AuthController extends Controller
     public function profile()
     {
         return UserResource::withLoadRelationships(auth()->user());
+    }
+
+    /**
+     * Update auth password
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'newPassword' => 'required',
+        ]);
+
+        try {
+            auth()->user()->update([
+                'password' => Hash::make($request->newPassword),
+            ]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+
+        return response()->json([], 204);
     }
 
     /**
