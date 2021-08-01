@@ -16,6 +16,7 @@ class PermissionSeeder extends Seeder
     {
         $this->makeBasePermissions();
         $this->makeGamePermissions();
+        $this->makeRechargePhonecardPermissions();
     }
 
 
@@ -33,6 +34,7 @@ class PermissionSeeder extends Seeder
             'permission' => 'quyền hạn',
             'game' => 'game',
             'discount_code' => 'mã giảm giá',
+            'recharge_phonecard' => 'thẻ nạp vào hệ thống',
         ];
 
         foreach ($modules as $key => $name) {
@@ -110,5 +112,19 @@ class PermissionSeeder extends Seeder
      */
     public function makeGamePermissions()
     {
+    }
+
+    public function makeRechargePhonecardPermissions()
+    {
+        Permission::firstOrCreate(
+            [
+                'key' => 'approve_recharge_phonecard',
+            ],
+            [
+                'name' => 'phê duyệt thẻ cào nạp vào hệ thống',
+                'description' => 'Xác định xem người dùng có thể phê duyệt thẻ cào nạp vào hệ thống',
+                'parent_key' => 'module_recharge_phonecard',
+            ],
+        );
     }
 }

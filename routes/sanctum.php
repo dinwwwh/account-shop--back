@@ -391,3 +391,25 @@ Route::prefix('discount-code-trading')->group(function () {
             ->name('discount-code-trading.buy');
     });
 });
+
+use App\Http\Controllers\RechargePhonecardController;
+
+Route::prefix('recharge-phonecard')->group(function () {
+    Route::post('', [RechargePhonecardController::class, 'store'])
+        ->middleware(['auth', 'verified'])
+        ->name('recharge-phonecard.store');
+    Route::get('approvable', [RechargePhonecardController::class, 'getApprovable'])
+        ->middleware(['auth', 'verified'])
+        ->name('recharge-phonecard.get-approvable');
+
+    Route::prefix('{rechargePhonecard}')->group(function () {
+        Route::get('', [RechargePhonecardController::class, 'show'])
+            ->name('recharge-phonecard.show');
+        Route::patch('start-approving', [RechargePhonecardController::class, 'startApproving'])
+            ->middleware(['auth', 'verified', 'can:start-approving,rechargePhonecard'])
+            ->name('recharge-phonecard.start-approving');
+        Route::patch('end-approving', [RechargePhonecardController::class, 'endApproving'])
+            ->middleware(['auth', 'verified', 'can:end-approving,rechargePhonecard'])
+            ->name('recharge-phonecard.end-approving');
+    });
+});
