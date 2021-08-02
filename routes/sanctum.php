@@ -13,8 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 use App\Http\Requests\Request;
+use App\Helpers\ValidationHelper;
 
-Route::get('test', function (Request $request) {
+Route::post('test', function (Request $request) {
+    $request->validate(ValidationHelper::parseRulesByArray('array', [
+        'rootRules' => ['array', 'keys:string,min:1,max:50'],
+        '*' => ['array', 'keys:integer'],
+        '*.*' => ['integer', 'min:0', 'max:100'],
+    ]));
+
+    dd($request->array);
 });
 
 // ====================================================

@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use App\Casts\RulesCast;
+use App\Helpers\ValidationHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
+use Validator;
 
 class Setting extends Model
 {
@@ -21,7 +24,7 @@ class Setting extends Model
     ];
 
     protected $casts = [
-        'data' => 'json',
+        'data' => 'array',
         'rules_of_data' => RulesCast::class,
     ];
 
@@ -59,16 +62,24 @@ class Setting extends Model
         return $this->belongsTo(User::class, 'latest_updater_id');
     }
 
-    static public function getAndMerge(string $key, $idealValue = null)
+    static public function getValidatedOrFail(string $key, bool $full = false)
     {
-        $setting = static::where('key', $key)->first();
+        $setting = static::where('key', $key)->firstOrFail();
 
-        if (is_null($setting)) return $idealValue;
+        $validator = Validator::make(
+            [
+                'data' =>  $setting->data
+            ],
+            ValidationHelper::parseRulesByArray('data', $setting->rules_of_data)
+        );
+        if (
+            $validator->fails()
+        ) {
+            throw new ValidationException($validator);
+        }
 
-        if (!is_array($idealValue)) return $setting;
-
-        if (!is_array($setting)) return $idealValue;
-
-        return array_merge($idealValue,  $setting);
+        return $full
+            ? $setting
+            : $setting->data;
     }
 }
