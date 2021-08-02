@@ -16,8 +16,11 @@ class CreateSettingsTable extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->string('key');
+            $table->string('key')->unique();
             $table->json('data');
+            $table->json('rules_of_data')->default(json_encode([]));
+            $table->string('structure_description')->nullable();
+            $table->string('description')->nullable();
 
             $table->foreignIdFor(User::class, 'creator_id')->nullable();
             $table->foreignIdFor(User::class, 'latest_updater_id')->nullable();

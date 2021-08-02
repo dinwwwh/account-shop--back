@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\RulesCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,10 +15,14 @@ class Setting extends Model
     protected $fillable = [
         'key',
         'data',
+        'rules_of_data',
+        'structure_description',
+        'description',
     ];
 
     protected $casts = [
-        'data' => 'json'
+        'data' => 'json',
+        'rules_of_data' => RulesCast::class,
     ];
 
     protected static function boot()
