@@ -5,7 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
-
+use Validator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,6 +40,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+
+        // Rule for check keys of array
+        Validator::extend('keys', function ($attribute, $value, $parameters, $validator) {
+            if (!is_array($value)) return false;
+            $keys = array_keys($value);
+            $validation = Validator::make([
+                'keys' => $keys,
+            ], [
+                'keys.*' => $parameters
+            ]);
+            return !$validation->fails();
+        });
+        Validator::replacer('keys', function ($message, $attribute, $rule, $parameters) {
+            return 'Keys of this object must pass rules[' . implode(', ', $parameters) . '].';
+        });
     }
 }
