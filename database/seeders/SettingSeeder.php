@@ -34,5 +34,18 @@ class SettingSeeder extends Seeder
                 'public' => true,
             ]
         );
+
+        Setting::firstOrCreate(
+            ['key' => 'recharge_phonecard_manual_enable'],
+            [
+                'data' => true,
+                'rules_of_data' => [
+                    'boolean'
+                ],
+                'structure_description' => 'is_enable:boolean',
+                'description' => 'Quyết định liệu có sử dụng cổng nạp thẻ thủ công không [yes/no].',
+                'public' => true,
+            ]
+        );
     }
 }
