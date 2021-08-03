@@ -26,6 +26,16 @@ Route::post('test', function (Request $request) {
 });
 
 // ====================================================
+// Setting routes
+// ====================================================
+use App\Http\Controllers\SettingController;
+
+Route::prefix('setting')->group(function () {
+    Route::get('public', [SettingController::class, 'getPublicSettings'])
+        ->name('setting.get-public-settings');
+});
+
+// ====================================================
 // User routes
 // ====================================================
 use App\Http\Controllers\UserController;
