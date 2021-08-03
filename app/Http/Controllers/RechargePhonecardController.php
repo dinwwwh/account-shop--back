@@ -6,6 +6,7 @@ use App\Helpers\ArrayHelper;
 use App\Http\Requests\RechargePhonecard\StoreRequest;
 use App\Http\Resources\RechargePhoneCardResource;
 use App\Models\RechargePhonecard;
+use App\Models\Setting;
 use DB;
 use Illuminate\Http\Request;
 
@@ -111,15 +112,17 @@ class RechargePhonecardController extends Controller
             'success' => ['required', 'boolean'],
         ]);
 
+        $telcos = Setting::getValidatedOrFail('recharge_phonecard_manual_telcos');
         $newStatus = $request->success
             ? config('recharge-phonecard.statuses.success')
             : config('recharge-phonecard.statuses.error');
+        $receivedValue = (int)($rechargePhonecard->face_value * $telcos[$rechargePhonecard->telco][$rechargePhonecard->face_value] / 100);
 
         try {
             DB::beginTransaction();
             $rechargePhonecard->update([
                 'status' => $newStatus,
-                'received_value' => '123456'
+                'received_value' => $receivedValue
             ]);
             DB::commit();
         } catch (\Throwable $th) {

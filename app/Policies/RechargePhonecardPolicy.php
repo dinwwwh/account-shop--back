@@ -34,6 +34,22 @@ class RechargePhonecardPolicy
     }
 
     /**
+     * Determine whether the user can read sensitive infos of the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\RechargePhonecard  $rechargePhonecard
+     * @return mixed
+     */
+    public function readSensitiveInfos(User $user, RechargePhonecard $rechargePhonecard)
+    {
+        if ($user->getKey() === $rechargePhonecard->creator_id) return true;
+
+        if ($user->hasPermissionTo('manage_recharge_phonecard')) return true;
+
+        return $this->endApproving($user, $rechargePhonecard);
+    }
+
+    /**
      * Determine whether the user can create models.
      *
      * @param  \App\Models\User  $user

@@ -19,7 +19,7 @@ class RechargePhoneCardResource extends Resource
 
             // Merge base ability
             $this->mergeWhen(
-                auth()->check() && auth()->user()->can('end-approving', $this->resource),
+                auth()->check() && auth()->user()->can('read-sensitive-infos', $this->resource),
                 function () {
                     return [
                         'code' => $this->code,
