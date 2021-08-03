@@ -19,5 +19,6 @@ class ForTestSeeder extends Seeder
         Seeder::call(ForTests\ModuleUserSeeder::class);
         Seeder::call(ForTests\ModuleGameSeeder::class);
         Seeder::call(ForTests\ModuleDiscountCodeSeeder::class);
+        Seeder::call(ForTests\ModuleRecharge::class);
     }
 }

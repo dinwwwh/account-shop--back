@@ -3,6 +3,7 @@
 namespace Tests\Feature\RechargePhonecard;
 
 use App\Helpers\ArrayHelper;
+use App\Models\Setting;
 use Arr;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -15,13 +16,14 @@ class StoreTest extends TestCase
     {
         $this->actingAs($this->makeAuth());
         $route = route('recharge-phonecard.store');
+        $telcos = Setting::getValidatedOrFail('recharge_phonecard_manual_telcos');
         $data = [
-            'telco' => 'VIETTEL',
+            'telco' => Arr::random(array_keys($telcos)),
             'serial' => Str::random(),
             'code' => Str::random(),
-            'faceValue' => Arr::random(config('recharge-phonecard.face-values', [])),
-            'port' => Arr::random(config('recharge-phonecard.ports', [])),
+            'port' => config('recharge-phonecard.ports.manual'),
         ];
+        $data['faceValue'] = Arr::random(array_keys($telcos[$data['telco']]));
 
         $res = $this->json('post', $route, $data);
         $res->assertStatus(201);
