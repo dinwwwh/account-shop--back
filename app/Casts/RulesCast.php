@@ -31,21 +31,26 @@ class RulesCast implements CastsAttributes
      */
     public function set($model, $key, $value, $attributes)
     {
-
-        function checkRecursively(array $array)
-        {
-            $valid = true;
-            foreach ($array as $item) {
-                if (is_array($item)) $valid = checkRecursively($item);
-                elseif (!is_string($item)) {
-                    $valid = false;
-                    break;
-                }
-            }
-            return $valid;
-        }
-
-        if (!is_array($value) || !checkRecursively($value)) return json_encode([]);
+        if (!is_array($value) || !$this->checkRecursively($value)) return json_encode([]);
         return json_encode($value);
+    }
+
+    /**
+     * Check where given data is string rules
+     *
+     * @param array $array
+     * @return bool
+     */
+    public function checkRecursively(array $array): bool
+    {
+        $valid = true;
+        foreach ($array as $item) {
+            if (is_array($item)) $valid = $this->checkRecursively($item);
+            elseif (!is_string($item)) {
+                $valid = false;
+                break;
+            }
+        }
+        return $valid;
     }
 }
