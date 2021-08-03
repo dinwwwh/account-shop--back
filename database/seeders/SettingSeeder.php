@@ -31,6 +31,7 @@ class SettingSeeder extends Seeder
                 ],
                 'structure_description' => '{"telco": {"face_value": "percent_discount", ...}, ...}',
                 'description' => 'Chứa thông tin loại thẻ, mệnh giá và chiết khấu của cổng nạp tiền thẻ thủ công.',
+                'public' => true,
             ]
         );
     }

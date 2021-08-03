@@ -21,6 +21,7 @@ class CreateSettingsTable extends Migration
             $table->json('rules_of_data')->default(json_encode([]));
             $table->string('structure_description')->nullable();
             $table->string('description')->nullable();
+            $table->boolean('public')->default(false);
 
             $table->foreignIdFor(User::class, 'creator_id')->nullable();
             $table->foreignIdFor(User::class, 'latest_updater_id')->nullable();

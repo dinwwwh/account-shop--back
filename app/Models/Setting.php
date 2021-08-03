@@ -21,11 +21,13 @@ class Setting extends Model
         'rules_of_data',
         'structure_description',
         'description',
+        'public',
     ];
 
     protected $casts = [
         'data' => 'array',
         'rules_of_data' => RulesCast::class,
+        'public' => 'boolean',
     ];
 
     protected static function boot()
