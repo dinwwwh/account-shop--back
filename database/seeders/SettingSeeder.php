@@ -18,19 +18,44 @@ class SettingSeeder extends Seeder
             ['key' => 'recharge_phonecard_manual_telcos'],
             [
                 'data' => [
-                    'VIETTEL' => [
-                        10000 => 20,
-                        20000 => 30,
-                        50000 => 40,
+                    [
+                        'telco' => 'VIETTEL',
+                        'name' => 'viettel',
+                        'faceValues' => [
+                            [
+                                'value' => 10000,
+                                'tax' => 20,
+                                'penalty' => 100,
+                            ],
+                            [
+                                'value' => 20000,
+                                'tax' => 30,
+                                'penalty' => 90,
+                            ],
+                            [
+                                'value' => 50000,
+                                'tax' => 40,
+                                'penalty' => 80,
+                            ],
+                            [
+                                'value' => 100000,
+                                'tax' => 50,
+                                'penalty' => 70,
+                            ]
+                        ]
                     ]
                 ],
                 'rules_of_data' => [
-                    'rootRules' => ['array', 'keys:string,min:1,max:50'],
-                    '*' => ['array', 'keys:integer,min:1'],
-                    '*.*' => ['integer', 'min:0', 'max:100'],
+                    'array',
+                    '*.telco' => ['required', 'string', 'distinct'],
+                    '*.name' => ['required', 'string'],
+                    '*.faceValues' => ['required', 'array'],
+                    '*.faceValues.*.value' => ['required', 'integer', 'min:0'],
+                    '*.faceValues.*.tax' => ['required', 'integer', 'min:0', 'max:100'],
+                    '*.faceValues.*.penalty' => ['required', 'integer', 'min:0', 'max:100'],
                 ],
-                'structure_description' => '{"telco": {"face_value": "percent_discount", ...}, ...}',
-                'description' => 'Chứa thông tin loại thẻ, mệnh giá và chiết khấu của cổng nạp tiền thẻ thủ công.',
+                'structure_description' => '[...{"telco": "VIETTEL", "name": "viettel", "faceValues": [...{"value": 10000, "tax": 10, "penalty": 20}]}]',
+                'description' => 'Chứa thông tin loại thẻ, mệnh giá, thuế và phí phạt khi sai mệnh giá của cổng nạp thẻ thủ công.',
                 'public' => true,
             ]
         );

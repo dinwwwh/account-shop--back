@@ -30,6 +30,10 @@ class Setting extends Model
         'public' => 'boolean',
     ];
 
+    protected $primaryKey = 'key';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected static function boot()
     {
         parent::boot();
