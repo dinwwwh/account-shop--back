@@ -69,9 +69,13 @@ class RechargePhonecardObserver
     public function payToCreator(RechargePhonecard $rechargePhonecard)
     {
         if (
-            $rechargePhonecard->status === config('recharge-phonecard.statuses.success')
+            in_array($rechargePhonecard->status, [
+                config('recharge-phonecard.statuses.success'),
+                config('recharge-phonecard.statuses.invalid-face-value'),
+            ])
             && $rechargePhonecard->received_value > 0
             && is_null($rechargePhonecard->paid_at)
+            && $rechargePhonecard->real_face_value >= $rechargePhonecard->received_value
         ) {
             $rechargePhonecard->creator->update([
                 'gold_coin' => $rechargePhonecard->creator->gold_coin + $rechargePhonecard->received_value,

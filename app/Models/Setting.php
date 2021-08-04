@@ -72,25 +72,4 @@ class Setting extends Model implements Auditable
     {
         return $this->belongsTo(User::class, 'latest_updater_id');
     }
-
-    static public function getValidatedOrFail(string $key, bool $full = false)
-    {
-        $setting = static::where('key', $key)->firstOrFail();
-
-        $validator = Validator::make(
-            [
-                'data' =>  $setting->data
-            ],
-            ValidationHelper::parseRulesByArray('data', $setting->rules_of_data)
-        );
-        if (
-            $validator->fails()
-        ) {
-            throw new ValidationException($validator);
-        }
-
-        return $full
-            ? $setting
-            : $setting->data;
-    }
 }

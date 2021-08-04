@@ -31,12 +31,17 @@ class StoreRequest extends FormRequest
         $rulesOfTelco = ['required', 'string'];
         $rulesOfFaceValue = ['required', 'integer'];
         if ($this->port == config('recharge-phonecard.ports.manual')) {
-            $manualTelcos = Setting::getValidatedOrFail('recharge_phonecard_manual_telcos');
-            $validTelcos = array_keys($manualTelcos);
-            $rulesOfTelco[] = Rule::in($validTelcos);
+            $settingOfTelcos = Setting::find('recharge_phonecard_manual_telcos');
+            $validTelcoKeys = collect($settingOfTelcos->data)->map(fn ($telco) => $telco['key'])->toArray();
 
-            if (in_array($this->telco, $validTelcos)) {
-                $rulesOfFaceValue[] = Rule::in(array_keys($manualTelcos[$this->telco]));
+            $rulesOfTelco[] = Rule::in($validTelcoKeys);
+
+            if (in_array($this->telco, $validTelcoKeys)) {
+                $validFaceValues = collect($settingOfTelcos->data)
+                    ->where('key', $this->telco)
+                    ->first()['faceValues'];
+                $validFaceValues = array_map(fn ($v) => $v['value'], $validFaceValues);
+                $rulesOfFaceValue[] = Rule::in($validFaceValues);
             }
         }
 

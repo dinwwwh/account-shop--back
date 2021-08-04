@@ -19,42 +19,42 @@ class SettingSeeder extends Seeder
             [
                 'data' => [
                     [
-                        'telco' => 'VIETTEL',
+                        'key' => 'VIETTEL',
                         'name' => 'viettel',
                         'faceValues' => [
                             [
                                 'value' => 10000,
                                 'tax' => 20,
-                                'penalty' => 100,
+                                'taxForInvalidFaceValue' => 100,
                             ],
                             [
                                 'value' => 20000,
                                 'tax' => 30,
-                                'penalty' => 90,
+                                'taxForInvalidFaceValue' => 90,
                             ],
                             [
                                 'value' => 50000,
                                 'tax' => 40,
-                                'penalty' => 80,
+                                'taxForInvalidFaceValue' => 80,
                             ],
                             [
                                 'value' => 100000,
                                 'tax' => 50,
-                                'penalty' => 70,
+                                'taxForInvalidFaceValue' => 70,
                             ]
                         ]
                     ]
                 ],
                 'rules_of_data' => [
                     'array',
-                    '*.telco' => ['required', 'string', 'distinct'],
+                    '*.key' => ['required', 'string', 'distinct'],
                     '*.name' => ['required', 'string'],
                     '*.faceValues' => ['required', 'array'],
                     '*.faceValues.*.value' => ['required', 'integer', 'min:0'],
                     '*.faceValues.*.tax' => ['required', 'integer', 'min:0', 'max:100'],
-                    '*.faceValues.*.penalty' => ['required', 'integer', 'min:0', 'max:100'],
+                    '*.faceValues.*.taxForInvalidFaceValue' => ['required', 'integer', 'min:0', 'max:100'],
                 ],
-                'structure_description' => '[...{"telco": "VIETTEL", "name": "viettel", "faceValues": [...{"value": 10000, "tax": 10, "penalty": 20}]}]',
+                'structure_description' => '[...{"key": "VIETTEL", "name": "viettel", "faceValues": [...{"value": 10000, "tax": 10, "taxForInvalidFaceValue": 20}]}]',
                 'description' => 'Chứa thông tin loại thẻ, mệnh giá, thuế và phí phạt khi sai mệnh giá của cổng nạp thẻ thủ công.',
                 'public' => true,
             ]

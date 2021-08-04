@@ -20,6 +20,7 @@ class CreateRechargePhonecardsTable extends Migration
             $table->string('code');
             $table->string('telco');
             $table->integer('face_value');
+            $table->integer('real_face_value')->nullable();
             $table->integer('received_value')->nullable();
             $table->unsignedTinyInteger('status');
 

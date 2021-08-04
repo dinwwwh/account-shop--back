@@ -6,6 +6,7 @@ use App\Helpers\ArrayHelper;
 use App\Models\RechargePhonecard;
 use App\Models\Setting;
 use App\Models\User;
+use Arr;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -13,22 +14,32 @@ use Tests\TestCase;
 
 class EndApprovingTest extends TestCase
 {
-    public function test_controller_with_success_is_true()
+    public function test_controller_with_status_is_success()
     {
-        $telcos = Setting::getValidatedOrFail('recharge_phonecard_manual_telcos');
+        $settingOfTelcos = Setting::find('recharge_phonecard_manual_telcos')->data;
         $rechargePhonecard = RechargePhonecard::inRandomOrder()
             ->where('status', config('recharge-phonecard.statuses.approving'))
             ->first();
         $this->actingAs($this->makeAuth());
 
+        $faceValue = collect($settingOfTelcos)
+            ->where('key', $rechargePhonecard->telco)
+            ->first()['faceValues'];
+        $faceValue = collect($faceValue)
+            ->where('value', $rechargePhonecard->face_value)
+            ->first();
+        $tax = $faceValue['tax'];
+
+        $receivedValue = 0;
+        $receivedValue = $rechargePhonecard->face_value -  (int)($rechargePhonecard->face_value * $tax / 100);
+
+
         $oldGoldCoin = $rechargePhonecard->creator->gold_coin;
-        $newGoldCoin =
-            $oldGoldCoin
-            + (int)($rechargePhonecard->face_value * $telcos[$rechargePhonecard->telco][$rechargePhonecard->face_value] / 100);
+        $newGoldCoin = $oldGoldCoin + $receivedValue;
 
         $route = route('recharge-phonecard.end-approving', ['rechargePhonecard' => $rechargePhonecard]);
         $res = $this->json('patch', $route, [
-            'success' => true,
+            'status' => config('recharge-phonecard.statuses.success'),
         ]);
         $res->assertStatus(204);
 
@@ -49,7 +60,53 @@ class EndApprovingTest extends TestCase
         );
     }
 
-    public function test_controller_with_success_is_false()
+    public function test_controller_with_status_is_invalid_face_value()
+    {
+        $settingOfTelcos = Setting::find('recharge_phonecard_manual_telcos')->data;
+        $rechargePhonecard = RechargePhonecard::inRandomOrder()
+            ->where('status', config('recharge-phonecard.statuses.approving'))
+            ->first();
+        $this->actingAs($this->makeAuth());
+
+        $faceValues = collect($settingOfTelcos)
+            ->where('key', $rechargePhonecard->telco)
+            ->first()['faceValues'];
+        $faceValue = collect($faceValues)
+            ->where('value', $rechargePhonecard->face_value)
+            ->first();
+        $taxForInvalidFaceValue = $faceValue['taxForInvalidFaceValue'];
+
+        $realFaceValue = Arr::random(array_map(fn ($v) => $v['value'], $faceValues));
+        $receivedValue = $realFaceValue - (int)($realFaceValue * $taxForInvalidFaceValue / 100);
+
+        $oldGoldCoin = $rechargePhonecard->creator->gold_coin;
+        $newGoldCoin = $oldGoldCoin + $receivedValue;
+
+        $route = route('recharge-phonecard.end-approving', ['rechargePhonecard' => $rechargePhonecard]);
+        $res = $this->json('patch', $route, [
+            'status' => config('recharge-phonecard.statuses.invalid-face-value'),
+            'realFaceValue' => $realFaceValue,
+        ]);
+        $res->assertStatus(204);
+
+        $this->assertDatabaseHas(
+            'recharge_phonecards',
+            [
+                'id' => $rechargePhonecard->getKey(),
+                'status' => config('recharge-phonecard.statuses.invalid-face-value'),
+            ]
+        );
+
+        $this->assertDatabaseHas(
+            'users',
+            [
+                'id' => $rechargePhonecard->creator->getKey(),
+                'gold_coin' => $newGoldCoin,
+            ]
+        );
+    }
+
+    public function test_controller_with_status_is_error()
     {
         $rechargePhonecard = RechargePhonecard::inRandomOrder()
             ->where('status', config('recharge-phonecard.statuses.approving'))
@@ -60,7 +117,7 @@ class EndApprovingTest extends TestCase
 
         $route = route('recharge-phonecard.end-approving', ['rechargePhonecard' => $rechargePhonecard]);
         $res = $this->json('patch', $route, [
-            'success' => false,
+            'status' => config('recharge-phonecard.statuses.error'),
         ]);
         $res->assertStatus(204);
 

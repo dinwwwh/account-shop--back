@@ -16,21 +16,25 @@ class StoreTest extends TestCase
     {
         $this->actingAs($this->makeAuth());
         $route = route('recharge-phonecard.store');
-        $telcos = Setting::getValidatedOrFail('recharge_phonecard_manual_telcos');
+        $telcos = Setting::find('recharge_phonecard_manual_telcos')->data;
+
+        $randomTelco = Arr::random($telcos);
+        $telco = $randomTelco['key'];
+        $faceValue = Arr::random(array_map(fn ($fv) => $fv['value'], $randomTelco['faceValues']));
         $data = [
-            'telco' => Arr::random(array_keys($telcos)),
+            'telco' => $telco,
             'serial' => Str::random(),
             'code' => Str::random(),
             'port' => config('recharge-phonecard.ports.manual'),
+            'faceValue' => $faceValue
         ];
-        $data['faceValue'] = Arr::random(array_keys($telcos[$data['telco']]));
 
         $res = $this->json('post', $route, $data);
         $res->assertStatus(201);
 
         $this->assertDatabaseHas(
             'recharge_phonecards',
-            ArrayHelper::convertArrayKeysToSnakeCase($data)
+            ArrayHelper::convertArrayKeysToSnakeCase($data, 1)
         );
     }
 

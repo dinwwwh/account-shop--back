@@ -11,6 +11,7 @@ return [
         'approving' => 10,
         'success' => 20,
         'error' => 30,
+        'invalid-face-value' => 40,
     ],
 
     /**

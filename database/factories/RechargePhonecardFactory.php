@@ -25,9 +25,10 @@ class RechargePhonecardFactory extends Factory
      */
     public function definition()
     {
-        $telcos = Setting::getValidatedOrFail('recharge_phonecard_manual_telcos');
-        $telco = Arr::random(array_keys($telcos));
-        $faceValue = Arr::random(array_keys($telcos[$telco]));
+        $telcos = Setting::find('recharge_phonecard_manual_telcos')->data;
+        $randomTelco = Arr::random($telcos);
+        $telco = $randomTelco['key'];
+        $faceValue = Arr::random(array_map(fn ($fv) => $fv['value'], $randomTelco['faceValues']));
         $status = Arr::random(config('recharge-phonecard.statuses'));
         $port = Arr::random(config('recharge-phonecard.ports'));
 

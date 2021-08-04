@@ -8,6 +8,7 @@ use App\Http\Resources\RechargePhoneCardResource;
 use App\Models\RechargePhonecard;
 use App\Models\Setting;
 use DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 
 class RechargePhonecardController extends Controller
@@ -108,21 +109,53 @@ class RechargePhonecardController extends Controller
      */
     public function endApproving(Request $request, RechargePhonecard $rechargePhonecard)
     {
+        $settingOfTelcos = Setting::find('recharge_phonecard_manual_telcos')->data;
+        $telco = collect($settingOfTelcos)
+            ->where('key', $rechargePhonecard->telco)
+            ->first();
+        $faceValues = $telco['faceValues'];
+
         $request->validate([
-            'success' => ['required', 'boolean'],
+            'status' => ['required', 'integer', Rule::in(config('recharge-phonecard.statuses'))],
+            'realFaceValue' => [
+                Rule::requiredIf($request->status == config('recharge-phonecard.statuses.invalid-face-value')),
+                'integer',
+                Rule::in(array_map(fn ($v) => $v['value'], $faceValues))
+            ],
         ]);
 
-        $telcos = Setting::getValidatedOrFail('recharge_phonecard_manual_telcos');
-        $newStatus = $request->success
-            ? config('recharge-phonecard.statuses.success')
-            : config('recharge-phonecard.statuses.error');
-        $receivedValue = (int)($rechargePhonecard->face_value * $telcos[$rechargePhonecard->telco][$rechargePhonecard->face_value] / 100);
+        $faceValue = collect($faceValues)
+            ->where('value', $rechargePhonecard->face_value)
+            ->first();
+        $tax = $faceValue['tax'];
+        $taxForInvalidFaceValue = $faceValue['taxForInvalidFaceValue'];
+
+        $receivedValue = 0;
+        $realFaceValue = 0;
+        $newStatus = config('recharge-phonecard.statuses.error');
+
+        if ($request->status == config('recharge-phonecard.statuses.success')) {
+
+            $realFaceValue = $rechargePhonecard->face_value;
+            $taxValue = (int)($realFaceValue * $tax / 100);
+            $taxValue = $taxValue > 0 ? $taxValue : 0;
+            $receivedValue = $realFaceValue - $taxValue;
+            $newStatus = $request->status;
+        } elseif ($request->status == config('recharge-phonecard.statuses.invalid-face-value')) {
+
+            $realFaceValue = $request->realFaceValue;
+            $taxValue = (int)($realFaceValue * $taxForInvalidFaceValue / 100);
+            $taxValue = $taxValue > 0 ? $taxValue : 0;
+            $receivedValue = $realFaceValue - $taxValue;
+            $newStatus = $request->status;
+        }
 
         try {
             DB::beginTransaction();
             $rechargePhonecard->update([
                 'status' => $newStatus,
-                'received_value' => $receivedValue
+                'real_face_value' => $realFaceValue,
+                'received_value' => $receivedValue,
             ]);
             DB::commit();
         } catch (\Throwable $th) {

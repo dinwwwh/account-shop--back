@@ -23,14 +23,14 @@ class GetPublicSettingsTest extends TestCase
         $res->assertStatus(200);
 
         foreach ($res->getData()->data as $setting) {
-            $this->assertTrue($expectedSettings->contains($setting->id));
+            $this->assertTrue($expectedSettings->contains($setting->key));
             $this->assertTrue($setting->public);
         }
 
         foreach ($expectedSettings as $expectedSetting) {
             $fail = true;
             foreach ($res->getData()->data as $setting) {
-                if ($setting->id === $expectedSetting->getKey()) $fail = false;
+                if ($setting->key === $expectedSetting->getKey()) $fail = false;
             }
             $this->assertTrue(!$fail);
         }

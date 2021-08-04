@@ -21,6 +21,7 @@ class RechargePhonecard extends Model
         'code',
         'telco',
         'face_value',
+        'real_face_value',
         'received_value',
         'status',
         'port',
