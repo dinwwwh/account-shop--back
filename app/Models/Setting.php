@@ -8,12 +8,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Validator;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Setting extends Model
+class Setting extends Model implements Auditable
 {
-    use HasFactory;
+    use HasFactory,
+        \OwenIt\Auditing\Auditable;
 
-    protected $hidden = [];
+
+    protected $hidden = [
+        'audits', #Contain history changes of this model
+    ];
 
     protected $fillable = [
         'key',
