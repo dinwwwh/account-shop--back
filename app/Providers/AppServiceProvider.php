@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Config;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Schema;
 use Validator;
 
 class AppServiceProvider extends ServiceProvider
@@ -55,5 +57,15 @@ class AppServiceProvider extends ServiceProvider
         Validator::replacer('keys', function ($message, $attribute, $rule, $parameters) {
             return 'Keys of this object must pass rules[' . implode(', ', $parameters) . '].';
         });
+
+        // Set runtime config from App\Models\Config
+        if (Schema::hasTable(app(Config::class)->getTable())) {
+            $configs = Config::all();
+            $mappedConfigs = [];
+            foreach ($configs as $config) {
+                $mappedConfigs[$config->key] = $config->data;
+            }
+            config($mappedConfigs);
+        }
     }
 }
