@@ -15,7 +15,7 @@ class CreateConfigsTable extends Migration
     public function up()
     {
         Schema::create('configs', function (Blueprint $table) {
-            $table->uuid('key');
+            $table->string('key')->unique();
             $table->json('data')->nullable();
             $table->json('rules_of_data')->default(json_encode([]));
             $table->string('structure_description')->nullable();

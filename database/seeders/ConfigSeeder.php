@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Setting;
+use App\Models\Config;
 use Illuminate\Database\Seeder;
 
-class SettingSeeder extends Seeder
+class ConfigSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,8 +14,8 @@ class SettingSeeder extends Seeder
      */
     public function run()
     {
-        Setting::firstOrCreate(
-            ['key' => 'recharge_phonecard_manual_telcos'],
+        Config::firstOrCreate(
+            ['key' => 'recharge-phonecard.manual_telcos'],
             [
                 'data' => [
                     [
@@ -60,8 +60,8 @@ class SettingSeeder extends Seeder
             ]
         );
 
-        Setting::firstOrCreate(
-            ['key' => 'recharge_phonecard_manual_enable'],
+        Config::firstOrCreate(
+            ['key' => 'recharge-phonecard.port_manual_enable'],
             [
                 'data' => true,
                 'rules_of_data' => [

@@ -4,7 +4,6 @@ namespace Tests\Feature\RechargePhonecard;
 
 use App\Helpers\ArrayHelper;
 use App\Models\RechargePhonecard;
-use App\Models\Setting;
 use App\Models\User;
 use Arr;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,7 +15,7 @@ class EndApprovingTest extends TestCase
 {
     public function test_controller_with_status_is_success()
     {
-        $settingOfTelcos = Setting::find('recharge_phonecard_manual_telcos')->data;
+        $settingOfTelcos = config('recharge-phonecard.manual_telcos', []);
         $rechargePhonecard = RechargePhonecard::inRandomOrder()
             ->where('status', config('recharge-phonecard.statuses.approving'))
             ->first();
@@ -62,7 +61,7 @@ class EndApprovingTest extends TestCase
 
     public function test_controller_with_status_is_invalid_face_value()
     {
-        $settingOfTelcos = Setting::find('recharge_phonecard_manual_telcos')->data;
+        $settingOfTelcos = config('recharge-phonecard.manual_telcos', []);
         $rechargePhonecard = RechargePhonecard::inRandomOrder()
             ->where('status', config('recharge-phonecard.statuses.approving'))
             ->first();

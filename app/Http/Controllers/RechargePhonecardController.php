@@ -6,7 +6,6 @@ use App\Helpers\ArrayHelper;
 use App\Http\Requests\RechargePhonecard\StoreRequest;
 use App\Http\Resources\RechargePhoneCardResource;
 use App\Models\RechargePhonecard;
-use App\Models\Setting;
 use DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
@@ -113,7 +112,7 @@ class RechargePhonecardController extends Controller
      */
     public function endApproving(Request $request, RechargePhonecard $rechargePhonecard)
     {
-        $settingOfTelcos = Setting::find('recharge_phonecard_manual_telcos')->data;
+        $settingOfTelcos = config('recharge-phonecard.manual_telcos', []);
         $telco = collect($settingOfTelcos)
             ->where('key', $rechargePhonecard->telco)
             ->first();

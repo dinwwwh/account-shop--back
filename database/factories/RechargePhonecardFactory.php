@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\RechargePhonecard;
-use App\Models\Setting;
 use App\Models\User;
 use Arr;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -25,7 +24,7 @@ class RechargePhonecardFactory extends Factory
      */
     public function definition()
     {
-        $telcos = Setting::find('recharge_phonecard_manual_telcos')->data;
+        $telcos = config('recharge-phonecard.manual_telcos', []);
         $randomTelco = Arr::random($telcos);
         $telco = $randomTelco['key'];
         $faceValue = Arr::random(array_map(fn ($fv) => $fv['value'], $randomTelco['faceValues']));

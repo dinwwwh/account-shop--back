@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
         Seeder::call(PermissionSeeder::class);
         Seeder::call(RoleSeeder::class);
         Seeder::call(AuthSeeder::class);
-        Seeder::call(SettingSeeder::class);
+        Seeder::call(ConfigSeeder::class);
         // Seeder::call(ForTestSeeder::class); Never call it, if you don't know what you do
     }
 }

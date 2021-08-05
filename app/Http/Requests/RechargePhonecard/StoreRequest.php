@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\RechargePhonecard;
 
-use App\Models\Setting;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -31,13 +30,13 @@ class StoreRequest extends FormRequest
         $rulesOfTelco = ['required', 'string'];
         $rulesOfFaceValue = ['required', 'integer'];
         if ($this->port == config('recharge-phonecard.ports.manual')) {
-            $settingOfTelcos = Setting::find('recharge_phonecard_manual_telcos');
-            $validTelcoKeys = collect($settingOfTelcos->data)->map(fn ($telco) => $telco['key'])->toArray();
+            $settingOfTelcos = config('recharge-phonecard.manual_telcos', []);
+            $validTelcoKeys = collect($settingOfTelcos)->map(fn ($telco) => $telco['key'])->toArray();
 
             $rulesOfTelco[] = Rule::in($validTelcoKeys);
 
             if (in_array($this->telco, $validTelcoKeys)) {
-                $validFaceValues = collect($settingOfTelcos->data)
+                $validFaceValues = collect($settingOfTelcos)
                     ->where('key', $this->telco)
                     ->first()['faceValues'];
                 $validFaceValues = array_map(fn ($v) => $v['value'], $validFaceValues);

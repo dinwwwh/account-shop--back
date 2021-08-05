@@ -15,6 +15,41 @@ return [
     ],
 
     /**
+     * Config for manual port where user can recharge phonecards
+     * and approve manually
+     *
+     */
+    'port_manual_enable' => true,
+    'manual_telcos' => [
+        [
+            'key' => 'VIETTEL',
+            'name' => 'viettel',
+            'faceValues' => [
+                [
+                    'value' => 10000,
+                    'tax' => 20, #20%
+                    'taxForInvalidFaceValue' => 100, #100%
+                ],
+                [
+                    'value' => 20000,
+                    'tax' => 30,
+                    'taxForInvalidFaceValue' => 90,
+                ],
+                [
+                    'value' => 50000,
+                    'tax' => 40,
+                    'taxForInvalidFaceValue' => 80,
+                ],
+                [
+                    'value' => 100000,
+                    'tax' => 50,
+                    'taxForInvalidFaceValue' => 70,
+                ]
+            ]
+        ],
+    ],
+
+    /**
      * Include ports of recharge-phonecard
      *
      */

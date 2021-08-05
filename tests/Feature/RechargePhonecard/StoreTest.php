@@ -3,7 +3,6 @@
 namespace Tests\Feature\RechargePhonecard;
 
 use App\Helpers\ArrayHelper;
-use App\Models\Setting;
 use Arr;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -16,7 +15,7 @@ class StoreTest extends TestCase
     {
         $this->actingAs($this->makeAuth());
         $route = route('recharge-phonecard.store');
-        $telcos = Setting::find('recharge_phonecard_manual_telcos')->data;
+        $telcos = config('recharge-phonecard.manual_telcos', []);
 
         $randomTelco = Arr::random($telcos);
         $telco = $randomTelco['key'];

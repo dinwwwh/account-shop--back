@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-class SettingResource extends Resource
+class ConfigResource extends Resource
 {
     /**
      * Transform the resource into an array.

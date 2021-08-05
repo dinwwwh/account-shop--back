@@ -26,13 +26,13 @@ Route::post('test', function (Request $request) {
 });
 
 // ====================================================
-// Setting routes
+// Config routes
 // ====================================================
-use App\Http\Controllers\SettingController;
+use App\Http\Controllers\ConfigController;
 
-Route::prefix('setting')->group(function () {
-    Route::get('public', [SettingController::class, 'getPublicSettings'])
-        ->name('setting.get-public-settings');
+Route::prefix('config')->group(function () {
+    Route::get('public', [ConfigController::class, 'getPublicConfigs'])
+        ->name('config.get-public-configs');
 });
 
 // ====================================================
