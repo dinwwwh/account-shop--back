@@ -84,7 +84,7 @@ class EndApprovingTest extends TestCase
 
         $route = route('recharge-phonecard.end-approving', ['rechargePhonecard' => $rechargePhonecard]);
         $res = $this->json('patch', $route, [
-            'status' => config('recharge-phonecard.statuses.invalid-face-value'),
+            'status' => config('recharge-phonecard.statuses.invalid_face_value'),
             'realFaceValue' => $realFaceValue,
         ]);
         $res->assertStatus(204);
@@ -93,7 +93,7 @@ class EndApprovingTest extends TestCase
             'recharge_phonecards',
             [
                 'id' => $rechargePhonecard->getKey(),
-                'status' => config('recharge-phonecard.statuses.invalid-face-value'),
+                'status' => config('recharge-phonecard.statuses.invalid_face_value'),
             ]
         );
 

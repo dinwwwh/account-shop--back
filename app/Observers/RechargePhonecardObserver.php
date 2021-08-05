@@ -71,7 +71,7 @@ class RechargePhonecardObserver
         if (
             in_array($rechargePhonecard->status, [
                 config('recharge-phonecard.statuses.success'),
-                config('recharge-phonecard.statuses.invalid-face-value'),
+                config('recharge-phonecard.statuses.invalid_face_value'),
             ])
             && $rechargePhonecard->received_value > 0
             && is_null($rechargePhonecard->paid_at)

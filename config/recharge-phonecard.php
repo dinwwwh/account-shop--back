@@ -11,7 +11,7 @@ return [
         'approving' => 10,
         'success' => 20,
         'error' => 30,
-        'invalid-face-value' => 40,
+        'invalid_face_value' => 40,
     ],
 
     /**
@@ -23,11 +23,4 @@ return [
         'thesieure' => 1,
         'naptudong' => 2,
     ],
-
-
-    /**
-     * Include invalid face values
-     *
-     */
-    'face-values' => [10000, 20000, 30000, 50000, 100000, 200000, 300000, 500000, 1000000, 2000000, 5000000, 10000000],
 ];

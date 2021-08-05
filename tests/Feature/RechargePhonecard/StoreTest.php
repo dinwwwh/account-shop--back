@@ -46,7 +46,6 @@ class StoreTest extends TestCase
             'telco' => 'VIETTEL',
             'serial' => Str::random(),
             'code' => Str::random(),
-            // 'faceValue' => Arr::random(config('recharge-phonecard.face-values', [])),
             'port' => Arr::random(config('recharge-phonecard.ports', [])),
         ];
 

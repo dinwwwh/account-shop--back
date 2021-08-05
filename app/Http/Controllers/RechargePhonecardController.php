@@ -122,7 +122,7 @@ class RechargePhonecardController extends Controller
         $request->validate([
             'status' => ['required', 'integer', Rule::in(config('recharge-phonecard.statuses'))],
             'realFaceValue' => [
-                Rule::requiredIf($request->status == config('recharge-phonecard.statuses.invalid-face-value')),
+                Rule::requiredIf($request->status == config('recharge-phonecard.statuses.invalid_face_value')),
                 'integer',
                 Rule::in(array_map(fn ($v) => $v['value'], $faceValues))
             ],
@@ -145,7 +145,7 @@ class RechargePhonecardController extends Controller
             $taxValue = $taxValue > 0 ? $taxValue : 0;
             $receivedValue = $realFaceValue - $taxValue;
             $newStatus = $request->status;
-        } elseif ($request->status == config('recharge-phonecard.statuses.invalid-face-value')) {
+        } elseif ($request->status == config('recharge-phonecard.statuses.invalid_face_value')) {
 
             $realFaceValue = $request->realFaceValue;
             $taxValue = (int)($realFaceValue * $taxForInvalidFaceValue / 100);
