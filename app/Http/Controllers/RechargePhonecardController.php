@@ -20,7 +20,10 @@ class RechargePhonecardController extends Controller
      */
     public function index()
     {
-        //
+        $rechargePhonecards = RechargePhonecard::with($this->requiredModelRelationships)
+            ->paginate(15);
+
+        return RechargePhoneCardResource::collection($rechargePhonecards);
     }
 
     /**
@@ -32,9 +35,10 @@ class RechargePhonecardController extends Controller
     {
         $rechargePhonecard = RechargePhonecard::where('status', config('recharge-phonecard.statuses.pending'))
             ->where('port', config('recharge-phonecard.ports.manual'))
+            ->with($this->requiredModelRelationships)
             ->paginate(15);
 
-        return RechargePhoneCardResource::withLoadMissingRelationships($rechargePhonecard);
+        return RechargePhoneCardResource::collection($rechargePhonecard);
     }
 
     /**

@@ -413,6 +413,8 @@ Route::prefix('discount-code-trading')->group(function () {
 use App\Http\Controllers\RechargePhonecardController;
 
 Route::prefix('recharge-phonecard')->group(function () {
+    Route::get('', [RechargePhonecardController::class, 'index'])
+        ->name('recharge-phonecard.index');
     Route::post('', [RechargePhonecardController::class, 'store'])
         ->middleware(['auth', 'verified'])
         ->name('recharge-phonecard.store');
