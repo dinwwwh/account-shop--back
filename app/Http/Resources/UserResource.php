@@ -23,6 +23,13 @@ class UserResource extends Resource
             'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),
 
             'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
+
+            $this->mergeWhen(
+                auth()->check() && auth()->user()->is($this->resource),
+                fn () => [
+                    'email' => $this->email,
+                ]
+            )
         ]);
     }
 }
