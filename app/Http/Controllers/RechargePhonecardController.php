@@ -20,6 +20,7 @@ class RechargePhonecardController extends Controller
     public function index()
     {
         $rechargePhonecards = RechargePhonecard::with($this->requiredModelRelationships)
+            ->orderBy('id', 'DESC')
             ->paginate(15);
 
         return RechargePhoneCardResource::collection($rechargePhonecards);
