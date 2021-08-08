@@ -1,0 +1,528 @@
+[33mcommit 2ce95ac9e98af6934e8d9db7bef1da76f029b425[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Merge: 7a4880b 0fd8d16
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Aug 8 08:57:58 2021 +0700
+
+    chore: test merge git branches
+
+[33mcommit 7a4880bd36a26601fbc3308c51bcf39773002b09[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Aug 8 08:55:34 2021 +0700
+
+    chore: commit test for git branch
+
+[33mcommit 0fd8d166aede967a91e82dd03618dd06097da8e2[m[33m ([m[1;32mFeature/Coupon[m[33m)[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Aug 8 08:52:20 2021 +0700
+
+    chore: test for git branch
+
+[33mcommit f303dfd64ef1323a646c5763ce3352fdfb1f08ec[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sat Aug 7 20:12:50 2021 +0700
+
+    build: update ``UserResource`` when auth get profile will contain user email
+
+[33mcommit fdaeb8b9457b6dca6cdbc616ca67d682b37a9831[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sat Aug 7 15:39:34 2021 +0700
+
+    chore: use order id by desc for ``recharge-phonecard.index route``
+
+[33mcommit 3e8b94ac5c9bdde4648060f52badc0fd252cdf9c[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Fri Aug 6 15:57:36 2021 +0700
+
+    build: add abilities of auth in ``RechargePhonecardResource``
+
+[33mcommit 55d05173d3775410a29db5d45baab65746c39215[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Thu Aug 5 21:06:46 2021 +0700
+
+    refactor: use ``Config model`` instead ``Setting model``
+    
+    and remove related ``Setting model``
+
+[33mcommit 03c6f0c6d34423bed31a856ad345f3dd1b40c80d[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Thu Aug 5 20:23:57 2021 +0700
+
+    refactor: change kebab-case config to snack_key config
+
+[33mcommit f4098c48025aa9fc629e01075dddf02de8de4600[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Thu Aug 5 20:20:29 2021 +0700
+
+    build: new ``Config model`` contain dynamic configs of app
+
+[33mcommit 4a3a68b67ab6f8d7f767be8a5637266f330bf337[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Thu Aug 5 15:16:47 2021 +0700
+
+    feat: ``recharge-phonecard.index route``
+    
+    and fix mini in getApprovale method
+
+[33mcommit 3f887f6674c765464a8d0baef84e2b50c9069a3a[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Wed Aug 4 16:57:02 2021 +0700
+
+    fix: errorly calculate received value for ``RechargePhonecard`` and up-to-date with new setting
+
+[33mcommit 93b4e4740dd841a6b74d360a2544895b3e22ed15[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Wed Aug 4 14:20:39 2021 +0700
+
+    build: auditing ``Setting model`` with ``owen-it/laravel-auditing package``
+
+[33mcommit a48733faa082ebe68bab8321afea582f80b88d75[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Wed Aug 4 14:14:22 2021 +0700
+
+    build: use ``key`` as ``primaryKey`` of ``Setting``
+
+[33mcommit 6b05f2bd8d84d8b37e5c0830fcb85c2ed138bb1f[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Wed Aug 4 13:29:10 2021 +0700
+
+    fix: convert all keys of resource to camel case
+    
+    expected just first-layer of resource
+
+[33mcommit 08e02e35743d0e1c8b49fd5a81dc759e263ddd80[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Tue Aug 3 20:38:31 2021 +0700
+
+    build: add ``recharge_phonecard_manual_enable setting``
+    
+    Determine whether user can use port manual to recharge phonecard
+
+[33mcommit afb3dbf9dec17b0e89c42346cd1d0b05e4990806[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Tue Aug 3 20:29:28 2021 +0700
+
+    feat: ``addition+`` ``setting.get-public-settings route``
+    
+    used to get all public settings
+
+[33mcommit 49dfcab46bf853e036b77afcbe1ae587388ee022[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Tue Aug 3 20:28:22 2021 +0700
+
+    test: test for ``setting.get-public-settings route``
+
+[33mcommit 56c066380dcb88c91e4a85bcd95ed2ae5a562b4f[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Tue Aug 3 20:27:39 2021 +0700
+
+    feat: ``setting.get-public-settings route``
+    
+    used to get all public settings
+
+[33mcommit d945fa41648b298e227567089f7b4cb1eef6a2f4[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Tue Aug 3 17:18:34 2021 +0700
+
+    test: test for ``rechargePhonecard`` store, resource, start-proving, end-aproving
+
+[33mcommit 2989c626fd52c24fc9c7f7620f91a0f3a4982384[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Tue Aug 3 17:17:03 2021 +0700
+
+    build: realize ``recharge-phonecard.{show,store,start-approving,end-approving} routes``
+
+[33mcommit c3ccc3d877272bbcaf69ae8655ab92eb981f15fb[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Tue Aug 3 16:18:57 2021 +0700
+
+    refactor: to fit testing
+
+[33mcommit 88cf926e710cdaaa06150ae264195e421b8aa227[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Aug 2 19:24:26 2021 +0700
+
+    build: add ``Setting::getValidatedOrFail($key)`` method
+    
+    used to get setting
+
+[33mcommit c4d38fa0c5b20de233c364b728470d96fcb11f92[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Aug 2 16:53:26 2021 +0700
+
+    build: update ``setting module`` and make its seeder
+
+[33mcommit 1c0169226ce8c1d530697e68bf8dc5b963e8c0e3[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Aug 2 16:52:41 2021 +0700
+
+    build: add ``RulesCast``
+    
+    cast validatable rules to json and vice versa, just enable string rule of validator
+
+[33mcommit e41df1c540320ca978930307e8f34281fa292ff6[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Aug 2 16:22:32 2021 +0700
+
+    build: add ``keys`` rule for validate keys of an array
+    
+    its parameters are string rules
+
+[33mcommit 7e1c2a90e7149a7eff563769c30b432789e16e74[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Aug 2 14:12:50 2021 +0700
+
+    build: add ``Setting module``
+    
+    used to contain settings of app
+
+[33mcommit abe7448967df4875e18bdf14b635f78857ac23af[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Aug 1 20:36:18 2021 +0700
+
+    feat: ``rechage-phonecard.{store,show,start-approving,end-approving} route``
+    
+    used to recharge phonecard in app
+
+[33mcommit 0cca06e9bf9539a226846f2da8031a04c5fea5c1[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Fri Jul 30 19:45:46 2021 +0700
+
+    feat: ``auth.update-password`` route
+    
+    used to update password for auth
+
+[33mcommit cfdc34274bca6302cba5eaae68d5dd2ca219b237[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Fri Jul 30 19:41:07 2021 +0700
+
+    build: new ``password.confirm-directly`` middleware
+    
+    used to confirm password to do something
+
+[33mcommit 0338a70cb5444ab5ced5ca32eaee543a0fdf05aa[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Wed Jul 28 20:17:57 2021 +0700
+
+    build: remove validate min in password when reset password
+
+[33mcommit e6163198d8783db6b34246faaf612f6bca38f2f6[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Wed Jul 28 19:27:56 2021 +0700
+
+    build: remove confirmed password when register
+
+[33mcommit f996b0484ef7257397e091b8fed8caa44391be3c[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Wed Jul 28 10:32:53 2021 +0700
+
+    feat: new ``game.account.index`` route
+    
+    used to get accounts of game and refactor routes of game
+
+[33mcommit fc1e73831ac97dd3bec3d2e9c83c4a356e299943[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Tue Jul 27 14:56:50 2021 +0700
+
+    fix: do not remove redundant relationships
+
+[33mcommit 27e1f68aaaabacb64420fa93901818e5167918e4[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Tue Jul 27 14:55:39 2021 +0700
+
+    test: up-to-date with change in ``Rule``
+
+[33mcommit bb4edc8732035b9f9dcacde2a6547df78dc4688b[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Jul 26 19:48:29 2021 +0700
+
+    build: remove some redundant files
+
+[33mcommit c8e9e58c8e83d4fef5cbdc1e12afb4301e14cf55[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 25 19:23:56 2021 +0700
+
+    build: remove auditing in pivot models
+    
+    because has error when work with ``sync`` method
+
+[33mcommit c3f7f2d72fe6212ebb479d4e3bf91c069e8224f1[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 25 16:34:55 2021 +0700
+
+    fix: lack value of primary key in some relationship with Models/Pivot model
+
+[33mcommit cb1bc2db16dfc92861734ddad4919bd0064bbdf5[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 25 16:33:04 2021 +0700
+
+    build: integrate ``laravel/tinker``
+    
+    used to debug easier
+
+[33mcommit f37447ea420c2be12c90c79cd408d022b1aa8ef9[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 25 16:31:46 2021 +0700
+
+    fix: change add ``raw`` to relationship request
+
+[33mcommit 7d4b348bebab3aa4946e46f3ab32b2e4543b094b[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 25 16:31:20 2021 +0700
+
+    fix: change add ``raw`` to relationship request
+
+[33mcommit 61a7800a9e54861769ee2dda9f444b7794333be9[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 18 21:07:47 2021 +0700
+
+    build: tighten request from client
+    
+    add check structure ...
+
+[33mcommit 96e7a852c06986de1e341d9b6eb6e92ca80d2f6e[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 18 19:37:34 2021 +0700
+
+    refactor: change ``value`` field to ``values``
+
+[33mcommit 9b676b9b09bdde6a786927ab2631b7aa01e0b820[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 18 19:26:55 2021 +0700
+
+    test: up-to-date with last update about ``Rule``
+
+[33mcommit 9dc771da04db4c42830e1fa50710676d34f94316[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 18 19:18:37 2021 +0700
+
+    build: update ``nunomaduro/collision`` package to ``5.5``
+
+[33mcommit 9a0f29deb9775e02cf2ec50b9e78d48ab62ce8ba[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 18 16:35:15 2021 +0700
+
+    build: update logic validate of rule and reduce redundant ``Rule``
+
+[33mcommit bc595883fe82fc77884bbbebf466b173d079bc64[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 18 14:53:43 2021 +0700
+
+    build: integrate ``telescope`` package
+    
+    used to monitor system
+
+[33mcommit 7fb337cbeb587a6e7f501d41e3a627d87c92278c[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 18 10:46:30 2021 +0700
+
+    refactor: property keys in relationships ``Account``
+
+[33mcommit 0781de4223e04cbc31505455d935519d6f37db94[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Fri Jul 16 15:25:21 2021 +0700
+
+    fix: ``game.get-usable`` route with lastest big update
+
+[33mcommit 2be9611792a00e236452bc7045d1eca31141aded[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Fri Jul 16 14:24:41 2021 +0700
+
+    chore: add pivot attribute to ``Resource``
+
+[33mcommit 5e3b1640148afa08684cdfd85c08d950c86b8332[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Wed Jul 14 13:35:12 2021 +0700
+
+    feat: add ``user.search`` route used to search users
+
+[33mcommit 5e9106302239b0837cb3fea45a2b02e022e12d9b[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Tue Jul 13 20:11:27 2021 +0700
+
+    build: rebuild logic policy of game module
+
+[33mcommit debed39d05d50d2ac27bda34c8c85093ba970f6a[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Tue Jul 13 16:27:36 2021 +0700
+
+    build: BIG UPDATE FOR MODULE GAME !!
+
+[33mcommit eaed179da0aab2fb045f0a2a4d7a2539db78ab74[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Thu Jul 8 14:09:09 2021 +0700
+
+    test: refactor add test
+    
+    but account wait refactor policy will make test for it
+
+[33mcommit 346158d1d08d06d077997c89f26668d1c563ad8f[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Thu Jul 8 13:48:11 2021 +0700
+
+    refactor: change name of route and its method of controller
+
+[33mcommit 5c5dc4360ce377f8cbaf4fe85f33005ceb5a6e07[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Thu Jul 8 13:41:57 2021 +0700
+
+    build: enable creators can buy their accounts
+
+[33mcommit ae92cdf24c5fae78a0fe31779dcbee05c45edf61[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Tue Jul 6 20:26:39 2021 +0700
+
+    buld: less redundant ``Permissions``
+
+[33mcommit 60f08a325c96e2692ebd3421e7ebf0c4e42ef3a9[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Tue Jul 6 16:59:02 2021 +0700
+
+    chore: related ``protection``
+
+[33mcommit d9012dc9515e682e8393a7eda58f6dbbce4c50eb[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Jul 5 19:00:34 2021 +0700
+
+    fix: call is() method on null
+    
+    Since creater of models can be null => can not call is() method in this
+
+[33mcommit ea26c3344f2d322ebbffd6b7524f69ca273cc031[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Jul 5 18:49:33 2021 +0700
+
+    perf: improve ``v2`` check whether user has permission
+
+[33mcommit ca974abe8d9e11edbee3ecd3e589c4eb271e7d1a[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Jul 5 17:17:56 2021 +0700
+
+    perf: improve check whether user has permission
+
+[33mcommit 14a9c9ebaef195b8ae0d3d69ab930be071e8de04[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Jul 5 16:15:17 2021 +0700
+
+    refactor: remove ``PivotModels`` to ``Models\Pivot``
+
+[33mcommit ab2f793f669a3630f26e3a5a9073f6c1421fd09c[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Jul 5 16:06:03 2021 +0700
+
+    build: add resources of pivot model
+    
+    not see pivot treat defaut relationship in getAttributes method of ``Resources\Resource``
+
+[33mcommit 9973045b9cf491cadc949eb517b9485bd8ffcd8f[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Jul 5 15:19:35 2021 +0700
+
+    build: up-to-date with latest commit
+
+[33mcommit 584717f7a6913867f9f00448a92e54f8355b7272[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Jul 5 15:08:13 2021 +0700
+
+    build: remove ``DeleteFile`` model and relative ones
+
+[33mcommit cefe5c949117afb352fefebf9c81fa79b3fafbff[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Jul 5 15:04:04 2021 +0700
+
+    build: add ``creator`` and ``latestUpdater`` in all own model
+    
+    realationshiops to ``User`` model
+
+[33mcommit f661035b484c71398434ef3680d1d93fda2ab529[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Mon Jul 5 10:26:38 2021 +0700
+
+    fix: ``Resources`` relationships
+    
+    some relationships need mutate before response, if not use ``resource`` for relationship, Cant not accomplish that.
+
+[33mcommit 1a8ff5f8aa618a3f98379a27e8c4217e1ba617e2[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 4 21:01:24 2021 +0700
+
+    fix: ``requiredModelRelationships`` in ``Controller`` is null
+    
+    because can not get  ``config`` setted in ``middleware``
+
+[33mcommit ba706e79d6c123f1ede287bab18a7282d9a3d84a[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 4 20:12:22 2021 +0700
+
+    build: add special relationship to ``Resources``
+
+[33mcommit ac8de670e4bb754eefab694c77e9266fcae186bb[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 4 20:02:22 2021 +0700
+
+    test: up-to-date when ``Game`` model changed
+
+[33mcommit 2df4a14a89442d45d0bd0c7b11debe0f92562dde[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 4 20:01:29 2021 +0700
+
+    build: integrate ``File`` model for ``Game`` model
+    
+    and some other changes about ``Account``
+
+[33mcommit ea1958831e4c0518c4d5846c7a2a9112200eaf88[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 4 19:32:48 2021 +0700
+
+    test: up-to-date with lastest commit
+
+[33mcommit 31b4dbb682340ccbfb03d9e4dae447f5cc9363cf[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 4 19:31:45 2021 +0700
+
+    build: use ``File`` model for ``Account``
+    
+    remove ``AccountImage`` and change something => just use file in ``File`` model
+
+[33mcommit 150a7088e3bddc0811a4c4db7c66c7ba196f3323[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sun Jul 4 19:29:54 2021 +0700
+
+    build: remodel ``StoragePublicFile`` just build relative path
+    
+    just change ``public`` to ``storage`` in path, absolute path just build in ``resource``
+
+[33mcommit edba1612b20d40ff64463458fbf55c5d5ae2779e[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sat Jul 3 21:12:54 2021 +0700
+
+    build: add ``File`` Model
+    
+    used to mange all files
+
+[33mcommit ddd216a02bf81012273f8de64db1cb0042a4511f[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sat Jul 3 20:42:30 2021 +0700
+
+    build: add attributeModifiers for all models & pivot models
+    
+    used to modify data before store it in database in ``laravel-auditing`` package
+
+[33mcommit a304ade177c6f0a6fcb1b0bba4f955993eaca885[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sat Jul 3 20:40:29 2021 +0700
+
+    build: add case collection for load relationship
+
+[33mcommit 681792a31dcc45d3adb8833a6fd8a7961c3510f8[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sat Jul 3 20:39:05 2021 +0700
+
+    fix: error load invalid relationships
+
+[33mcommit ae0c18d700272309d54c996aa80544bab9b7863a[m
+Author: dinhdjj <dinhdjj@gmail.com>
+Date:   Sat Jul 3 19:38:09 2021 +0700
+
+    build: turn on tracking ``timestamps``
+    
+    tracking ``created_at`` ``updated_at`` ``deleted_at`` in model will store in old and new values of audit
