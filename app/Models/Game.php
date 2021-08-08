@@ -119,22 +119,6 @@ class Game extends Model implements Auditable
     }
 
     /**
-     * Get all discount codes that it can use in this game
-     *
-     * @return Illuminate\Database\Eloquent\Factories\Relationship
-     */
-    public function usableDiscountCodes()
-    {
-        return $this->morphToMany(
-            DiscountCode::class,
-            'model',
-            'discount_code_supported_models',
-        )
-            ->withPivot('type_code')
-            ->withTimestamps();
-    }
-
-    /**
      * Relationship one-many with Models\GameInfo
      *
      * @return Illuminate\Database\Eloquent\Factories\Relationship

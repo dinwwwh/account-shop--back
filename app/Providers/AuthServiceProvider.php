@@ -23,7 +23,6 @@ class AuthServiceProvider extends ServiceProvider
         'App\Models\AccountAction' => 'App\Policies\AccountActionPolicy',
         'App\Models\Account' => 'App\Policies\AccountPolicy',
         'App\Models\AccountFee' => 'App\Policies\AccountFeePolicy',
-        'App\Models\DiscountCode' => 'App\Policies\DiscountCodePolicy',
         'App\Models\RechargePhonecard' => 'App\Policies\RechargePhonecardPolicy',
     ];
 

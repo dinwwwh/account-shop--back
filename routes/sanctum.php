@@ -124,10 +124,6 @@ Route::prefix('game')->group(function () {
     Route::post('', [GameController::class, 'store'])
         ->middleware(['auth', 'verified', 'can:create,App\Models\Game'])
         ->name('game.store');
-    // allow discount code
-    Route::post('allow-discount-code/{game}/{discountCode}', [GameController::class, 'allowDiscountCode'])
-        ->middleware(['auth', 'verified', 'can:allowDiscountCode,game,discountCode'])
-        ->name('game.allow-discount-code');
     // get usable game to create an account
     Route::get('all/usable', [GameController::class, 'getUsableGame'])
         ->middleware(['auth', 'verified'])
@@ -368,46 +364,6 @@ Route::prefix('account-trading')->group(function () {
         Route::post('buy/{account}', [AccountTradingController::class, 'buy'])
             ->middleware('can:buy,account')
             ->name('account-trading.buy');
-    });
-});
-
-// ====================================================
-// Discount code routes
-// ====================================================
-use App\Http\Controllers\DiscountCodeController;
-
-Route::prefix('discount-code')->group(function () {
-    // show
-    Route::get('{discountCode}', [DiscountCodeController::class, 'show'])
-        ->name('discount-code.show');
-
-    Route::middleware(['auth', 'verified'])->group(function () {
-        // store
-        Route::post('', [DiscountCodeController::class, 'store'])
-            ->middleware('can:create,App\Models\DiscountCode')
-            ->name('discount-code.store');
-        // update
-        Route::put('{discountCode}', [DiscountCodeController::class, 'update'])
-            ->middleware('can:update,discountCode')
-            ->name('discount-code.update');
-        // destroy
-        Route::delete('{discountCode}', [DiscountCodeController::class, 'destroy'])
-            ->middleware('can:delete,discountCode')
-            ->name('discount-code.destroy');
-    });
-});
-
-// ====================================================
-// Discount code trading routes
-// ====================================================
-use App\Http\Controllers\DiscountCodeTradingController;
-
-Route::prefix('discount-code-trading')->group(function () {
-    Route::middleware(['auth', 'verified'])->group(function () {
-        // buy
-        Route::post('{discountCode}', [DiscountCodeTradingController::class, 'buy'])
-            ->middleware('can:buy,discountCode')
-            ->name('discount-code-trading.buy');
     });
 });
 

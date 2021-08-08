@@ -18,7 +18,6 @@ class ForTestSeeder extends Seeder
         Artisan::call('migrate:fresh --seed');
         Seeder::call(ForTests\ModuleUserSeeder::class);
         Seeder::call(ForTests\ModuleGameSeeder::class);
-        Seeder::call(ForTests\ModuleDiscountCodeSeeder::class);
         Seeder::call(ForTests\ModuleRecharge::class);
     }
 }

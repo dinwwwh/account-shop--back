@@ -2,8 +2,6 @@
 
 namespace App\ModelTraits;
 
-use App\Models\DiscountCode;
-
 trait ManagePriceInAccount
 {
     /**
@@ -27,13 +25,7 @@ trait ManagePriceInAccount
      */
     public function calculatePrice($discountCode = null, $detail = false)
     {
-        $discountCode = DiscountCode::mustBeDiscountCode($discountCode);
-        if (
-            is_null($discountCode)
-            || !$discountCode->supportedGames->contains($this->accountType->game)
-        ) {
-            $discountCode = null;
-        }
+        $discountCode = null;
 
         $discount = is_null($discountCode)
             ? 0
