@@ -123,7 +123,7 @@ Route::prefix('game')->group(function () {
     Route::post('', [GameController::class, 'store'])
         ->middleware(['auth', 'verified', 'can:create,App\Models\Game'])
         ->name('game.store');
-    // allow discount code
+    // allow discount codes
     Route::post('allow-discount-code/{game}/{discountCode}', [GameController::class, 'allowDiscountCode'])
         ->middleware(['auth', 'verified', 'can:allowDiscountCode,game,discountCode'])
         ->name('game.allow-discount-code');
