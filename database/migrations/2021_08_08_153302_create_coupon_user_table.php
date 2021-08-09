@@ -1,10 +1,11 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDiscountCodeHasBeenBoughtByUsersTable extends Migration
+class CreateCouponUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +14,9 @@ class CreateDiscountCodeHasBeenBoughtByUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('discount_code_has_been_bought_by_users', function (Blueprint $table) {
-            $table->id();
-            $table->bigInteger('user_id');
-            $table->string('discount_code');
+        Schema::create('coupon_user', function (Blueprint $table) {
+            $table->foreignIdFor(User::class)->constrained('users')->onDelete('cascade');
+            $table->foreignUuid('coupon_code')->references('code')->on('coupons')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateDiscountCodeHasBeenBoughtByUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('discount_code_has_been_bought_by_users');
+        Schema::dropIfExists('coupon_user');
     }
 }

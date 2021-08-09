@@ -14,6 +14,7 @@ abstract class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->refreshDatabase();
         // DB::rollBack();
         // DB::beginTransaction();
         // $this->seed(\Database\Seeders\ForTestSeeder::class);

@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Models\DiscountCode;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -89,20 +88,6 @@ class GamePolicy
 
         return $user->hasPermissionTo('delete_game')
             && $user->is($game->creator);
-    }
-
-    /**
-     * Determine whether the user can allow a discount code
-     * for $game to discount price.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Game  $game
-     * @param  \App\Models\DiscountCode  $discountCode
-     * @return mixed
-     */
-    public function allowDiscountCode(User $user, Game $game, DiscountCode $discountCode)
-    {
-        return $this->update($user, $game);
     }
 
     /**

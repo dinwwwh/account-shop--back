@@ -2,10 +2,11 @@
 
 namespace Database\Seeders\ForTests;
 
-use App\Models\DiscountCode;
+use App\Models\Coupon;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
-class ModuleDiscountCodeSeeder extends Seeder
+class CouponSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,6 +15,6 @@ class ModuleDiscountCodeSeeder extends Seeder
      */
     public function run()
     {
-        $discountCodes = DiscountCode::factory()->count(100)->create();
+        $coupons = Coupon::factory()->count(100)->create();
     }
 }

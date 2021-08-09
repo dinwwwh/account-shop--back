@@ -1,10 +1,11 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDiscountCodesTable extends Migration
+class CreateCouponsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,28 +14,30 @@ class CreateDiscountCodesTable extends Migration
      */
     public function up()
     {
-        Schema::create('discount_codes', function (Blueprint $table) {
-            $table->id();
-            $table->string('discount_code')->unique();
-            $table->integer('price')->default(0);
-            $table->boolean('buyable')->default(false);
+        Schema::create('coupons', function (Blueprint $table) {
+            $table->uuid('code')->primary();
             $table->string('name')->nullable();
             $table->string('description')->nullable();
+            $table->integer('amount')->nullable();
+            $table->integer('used_amount')->default(0);
 
-            $table->integer('maximum_price')->nullable();
-            $table->integer('minimum_price')->nullable();
+            $table->integer('maximum_value')->nullable();
+            $table->integer('minimum_value')->nullable();
             $table->integer('maximum_discount')->nullable();
             $table->integer('minimum_discount')->nullable();
             $table->integer('percentage_discount')->default(0);
             $table->integer('direct_discount')->default(0);
             $table->timestamp('usable_at')->nullable();
             $table->timestamp('usable_closed_at')->nullable();
+
+            $table->integer('price')->nullable();
             $table->timestamp('offered_at')->nullable();
             $table->timestamp('offer_closed_at')->nullable();
 
-            $table->unsignedBigInteger('latest_updater_id')->nullable();
-            $table->unsignedBigInteger('creator_id')->nullable();
+            $table->foreignIdFor(User::class, 'creator_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignIdFor(User::class, 'latest_updater_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -45,6 +48,6 @@ class CreateDiscountCodesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('discount_codes');
+        Schema::dropIfExists('coupons');
     }
 }

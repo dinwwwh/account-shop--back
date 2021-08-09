@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Coupon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
 
@@ -18,7 +19,7 @@ class ForTestSeeder extends Seeder
         Artisan::call('migrate:fresh --seed');
         Seeder::call(ForTests\ModuleUserSeeder::class);
         Seeder::call(ForTests\ModuleGameSeeder::class);
-        Seeder::call(ForTests\ModuleDiscountCodeSeeder::class);
         Seeder::call(ForTests\ModuleRecharge::class);
+        Seeder::call(ForTests\CouponSeeder::class);
     }
 }
