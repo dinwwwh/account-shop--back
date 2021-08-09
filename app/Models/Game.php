@@ -127,4 +127,14 @@ class Game extends Model implements Auditable
     {
         return $this->hasMany(GameInfo::class);
     }
+
+    /**
+     * Get all of the usable coupons for this game.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function coupons()
+    {
+        return $this->morphToMany(Coupon::class, 'couponnable');
+    }
 }
