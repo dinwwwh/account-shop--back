@@ -1,16 +1,16 @@
 <?php
 
-namespace Tests\Feature\AccountTrading;
+namespace Tests\Feature\Account;
 
 use App\Models\Account;
-use App\Models\User;
+use App\Models\AccountStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class BuyTest extends TestCase
+class BuyTest extends Helper
 {
-    public function test_controller_and_middleware_success()
+    public function test_controller_and_middleware_success_approver()
     {
         $config = config('account.buyable_status_codes', []);
         $count = 0;
@@ -26,7 +26,7 @@ class BuyTest extends TestCase
         );
 
         $oldStatusCode = $account->latestAccountStatus->code;
-        $route = route('account-trading.buy', ['account' => $account]);
+        $route = route('account.buy', ['account' => $account]);
         $user = $this->makeAuth([], [], true);
         $price = $account->calculateTemporaryPrice();
         $goldCoin = rand($price, $price + 200000);
@@ -35,7 +35,7 @@ class BuyTest extends TestCase
 
         # Case: enough gold coin to buy account
         $res = $this->actingAs($user)
-            ->json('post', $route);
+            ->json('patch', $route);
         $res->assertStatus(204);
         $this->assertDatabaseHas('users', [
             'id' => $user->getKey(),
@@ -68,11 +68,11 @@ class BuyTest extends TestCase
             )
         );
 
-        $route = route('account-trading.buy', ['account' => $account]);
+        $route = route('account.buy', ['account' => $account]);
         $user = $this->makeAuth([], [], true);
         $this->actingAs($user);
 
-        $res = $this->json('post', $route);
+        $res = $this->json('patch', $route);
         $res->assertStatus(403);
     }
 
@@ -91,7 +91,7 @@ class BuyTest extends TestCase
             )
         );
 
-        $route = route('account-trading.buy', ['account' => $account]);
+        $route = route('account.buy', ['account' => $account]);
         $user = $this->makeAuth([], [], true);
         $price = $account->calculateTemporaryPrice();
         $user->gold_coin = $price - 1;
@@ -99,7 +99,7 @@ class BuyTest extends TestCase
 
         # Case: enough gold coin to buy account
         $res = $this->actingAs($user)
-            ->json('post', $route);
-        $res->assertStatus(422);
+            ->json('patch', $route);
+        $res->assertStatus(403);
     }
 }

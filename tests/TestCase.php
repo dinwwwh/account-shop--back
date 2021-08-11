@@ -11,22 +11,22 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
+    static protected $reFreshDatabaseBefore = true;
     protected function setUp(): void
     {
         parent::setUp();
-        $this->refreshDatabase();
-        // DB::rollBack();
-        // DB::beginTransaction();
-        // $this->seed(\Database\Seeders\ForTestSeeder::class);
+
+        if (static::$reFreshDatabaseBefore) {
+            $this->refreshDatabase();
+            static::$reFreshDatabaseBefore = false;
+        }
+
+        $this->runFirst();
     }
 
-    /**
-     * Run this method per end of classes
-     */
-    public function test_prepare()
+    public function runFirst()
     {
-        $this->refreshDatabase();
-        $this->assertTrue(true);
+        //
     }
 
     public function refreshDatabase(): void

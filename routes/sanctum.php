@@ -275,9 +275,6 @@ Route::prefix('account')->group(function () {
     // Index
     Route::get('', [AccountController::class, 'index'])
         ->name('account.index');
-    // Show
-    Route::get('{account}', [AccountController::class, 'show'])
-        ->name('account.show');
 
     // Routes required verified auth
     Route::middleware(['auth', 'verified'])->group(function () {
@@ -324,6 +321,16 @@ Route::prefix('account')->group(function () {
                 ->name('account.manage.index');
         });
     });
+
+    Route::prefix('{account}')->group(function () {
+        Route::get('', [AccountController::class, 'show'])
+            ->name('account.show');
+        Route::get('price', [AccountController::class, 'getPrice'])
+            ->name('account.get-price');
+        Route::patch('buy', [AccountController::class, 'buy'])
+            ->middleware(['auth', 'verified', 'can:buy,account'])
+            ->name('account.buy');
+    });
 });
 
 // ====================================================
@@ -346,24 +353,6 @@ Route::prefix('account-fee')->group(function () {
         Route::delete('{accountFee}', [AccountFeeController::class, 'destroy'])
             ->middleware('can:delete,accountFee')
             ->name('account-fee.destroy');
-    });
-});
-
-// ====================================================
-// Account trading routes
-// ====================================================
-use App\Http\Controllers\AccountTradingController;
-
-Route::prefix('account-trading')->group(function () {
-    // Get calculated detail price
-    Route::get('detail-price/{account}', [AccountTradingController::class, 'getDetailedPrice'])
-        ->name('account-trading.detailed-price');
-
-    Route::middleware(['auth', 'verified'])->group(function () {
-        // buy
-        Route::post('buy/{account}', [AccountTradingController::class, 'buy'])
-            ->middleware('can:buy,account')
-            ->name('account-trading.buy');
     });
 });
 

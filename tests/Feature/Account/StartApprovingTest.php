@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class StartApprovingTest extends TestCase
+class StartApprovingTest extends Helper
 {
     public function test_controller_and_middleware_success_approver()
     {
