@@ -23,6 +23,8 @@ class CreateCouponnablesTable extends Migration
             $table->unsignedSmallInteger('type')->nullable();
 
             $table->timestamps();
+
+            $table->primary(['coupon_code', 'couponnable_id', 'couponnable_type']);
         });
     }
 
