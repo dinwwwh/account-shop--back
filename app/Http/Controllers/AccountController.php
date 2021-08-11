@@ -18,6 +18,7 @@ use App\Http\Requests\Request;
 use App\Http\Requests\Account\StoreRequest;
 use App\Models\AccountStatus;
 use App\Models\File;
+use Illuminate\Http\JsonResponse;
 
 class AccountController extends Controller
 {
@@ -209,6 +210,64 @@ class AccountController extends Controller
     public function show(Account $account)
     {
         return AccountResource::withLoadMissingRelationships($account);
+    }
+
+    /**
+     * Calculate detail price include cost and fee of account.
+     *
+     */
+    public function getPrice(Request $request, Account $account): JsonResponse
+    {
+        return response()->json([
+            'data' => ['data' => $account->calculatePrice($request->couponCode, true),],
+        ]);
+    }
+
+    /**
+     * Buy an account
+     *
+     */
+    public function buy(Request $request, Account $account): JsonResponse
+    {
+        $bestPrice = $account->calculatePriceAndUseCouponNow($request->couponCode);
+
+        try {
+            DB::beginTransaction();
+            $oldStatusCode = $account->latestAccountStatus->code;
+
+            // Do something before send account for user
+            switch ($oldStatusCode) {
+                case 480:
+                    $newStatusCode = 880;
+                    break;
+                case 440:
+                    $newStatusCode = 840;
+                    break;
+                default:
+                    abort(500, "Lack case handle for account with status $oldStatusCode.");
+            }
+
+            // Handle on user
+            auth()->user()->reduceGoldCoin($bestPrice);
+
+            // Handle on account
+            $account->update([
+                'buyer_id' => auth()->user()->getKey(),
+                'sold_at_price' => $bestPrice,
+                'sold_at' => now(),
+            ]);
+            $account->accountStatuses()->create([
+                'code' => $newStatusCode,
+                'short_description' => AccountStatus::SHORT_DESCRIPTION_OF_SOLD
+            ]);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollback();
+            throw $th;
+        }
+
+        return response()->json([], 204);
     }
 
     /**

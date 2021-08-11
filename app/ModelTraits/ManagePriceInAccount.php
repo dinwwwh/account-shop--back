@@ -2,6 +2,8 @@
 
 namespace App\ModelTraits;
 
+use App\Models\Coupon;
+
 trait ManagePriceInAccount
 {
     /**
@@ -23,17 +25,37 @@ trait ManagePriceInAccount
      * @param string $discountCode
      * @return int or array
      */
-    public function calculatePrice($discountCode = null, $detail = false)
+    public function calculatePrice($couponCode = null, $detail = false)
     {
-        $discountCode = null;
+        $coupon = Coupon::find($couponCode);
 
-        $discount = is_null($discountCode)
+        $discount = is_null($coupon)
             ? 0
-            : $discountCode->calculateDiscount($this->calculateFee(), $this->cost);
+            : $coupon->calculateDiscount($this->calculateFee(), $this->cost);
         $fee = $this->calculateFee() <= $discount
             ? 0
             : $this->calculateFee() - $discount;
 
+        if ($detail) {
+            return [
+                'cost' => $this->cost,
+                'fee' => $fee,
+            ];
+        }
+
+        return (int)($this->cost + $fee);
+    }
+
+    public function calculatePriceAndUseCouponNow($couponCode = null, $detail = false)
+    {
+        $coupon = Coupon::find($couponCode);
+
+        $discount = is_null($coupon)
+            ? 0
+            : $coupon->calculateDiscountAndUseNow($this->calculateFee(), $this->cost);
+        $fee = $this->calculateFee() <= $discount
+            ? 0
+            : $this->calculateFee() - $discount;
 
         if ($detail) {
             return [

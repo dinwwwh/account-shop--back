@@ -7,6 +7,7 @@ use App\Models\Game;
 use App\Models\AccountType;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Request;
 
 class AccountPolicy
 {
@@ -206,6 +207,13 @@ class AccountPolicy
      */
     public function buy(User $user, Account $account)
     {
+        $bestPrice = $account->calculatePrice(
+            app('request')->couponCode
+        );
+
+        if (!$user->checkEnoughGoldCoin($bestPrice))
+            return false;
+
         return  in_array(
             $account->latestAccountStatus->code,
             config('account.buyable_status_codes', [])
