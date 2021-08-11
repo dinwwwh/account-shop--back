@@ -17,7 +17,10 @@ class CreateCouponUserTable extends Migration
         Schema::create('coupon_user', function (Blueprint $table) {
             $table->foreignIdFor(User::class)->constrained('users')->onDelete('cascade');
             $table->foreignUuid('coupon_code')->references('code')->on('coupons')->onDelete('cascade');
+
             $table->timestamps();
+
+            $table->primary(['coupon_code', 'user_id']);
         });
     }
 
