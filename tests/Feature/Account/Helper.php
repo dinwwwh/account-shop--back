@@ -15,6 +15,11 @@ use Tests\TestCase;
 
 class Helper extends TestCase
 {
+    public function runFirst()
+    {
+        $this->refreshDatabase();
+    }
+
     public function makeDataForAccountInfos(AccountType $accountType, User $user)
     {
         $accountInfos = $accountType->accountInfos;
