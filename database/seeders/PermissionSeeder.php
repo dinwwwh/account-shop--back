@@ -33,7 +33,7 @@ class PermissionSeeder extends Seeder
             'role' => 'vai trò',
             'permission' => 'quyền hạn',
             'game' => 'game',
-            'discount_code' => 'mã giảm giá',
+            'coupon' => 'phiếu giảm giá',
             'recharge_phonecard' => 'thẻ nạp vào hệ thống',
         ];
 
@@ -99,6 +99,17 @@ class PermissionSeeder extends Seeder
                 [
                     'name' => 'xoá ' . $name,
                     'description' => 'Xác định liệu người dùng có thể xoá một ' . $name . ' do chính họ tạo ra.',
+                    'parent_key' => $parent->key,
+                ],
+            );
+
+            Permission::firstOrCreate(
+                [
+                    'key' => 'force_delete_' . $key,
+                ],
+                [
+                    'name' => 'xoá vĩnh viễn ' . $name,
+                    'description' => 'Xác định liệu người dùng có thể xoá vĩnh viễn một ' . $name . ' do chính họ tạo ra.',
                     'parent_key' => $parent->key,
                 ],
             );

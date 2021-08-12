@@ -379,3 +379,31 @@ Route::prefix('recharge-phonecard')->group(function () {
             ->name('recharge-phonecard.end-approving');
     });
 });
+
+/**
+ * Coupon routes
+ *
+ */
+
+use App\Http\Controllers\CouponController;
+
+Route::prefix('coupon')->group(function () {
+
+    Route::get('', [CouponController::class, 'index'])
+        ->name('coupon.index');
+
+    Route::post('', [CouponController::class, 'store'])
+        ->middleware(['auth', 'verified', 'can:create,App\Models\Coupon'])
+        ->name('coupon.store');
+
+    Route::prefix('{coupon}')->group(function () {
+        Route::get('', [CouponController::class, 'show'])
+            ->name('coupon.show');
+        Route::put('', [CouponController::class, 'update'])
+            ->middleware(['auth', 'verified', 'can:update,coupon'])
+            ->name('coupon.update');
+        Route::delete('', [CouponController::class, 'destroy'])
+            ->middleware(['auth', 'verified', 'can:delete,coupon'])
+            ->name('coupon.destroy');
+    });
+});
