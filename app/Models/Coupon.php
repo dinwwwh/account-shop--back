@@ -21,6 +21,7 @@ class Coupon extends Model implements Auditable
      */
     protected $hidden = [
         'audits', #Contain history changes of this model
+        'code',
     ];
 
     protected $primaryKey = 'code';
