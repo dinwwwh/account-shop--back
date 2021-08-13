@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Coupon;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,11 +17,11 @@ class CreateCouponUserTable extends Migration
     {
         Schema::create('coupon_user', function (Blueprint $table) {
             $table->foreignIdFor(User::class)->constrained('users')->onDelete('cascade');
-            $table->foreignUuid('coupon_code')->references('code')->on('coupons')->onDelete('cascade');
+            $table->foreignIdFor(Coupon::class)->constrained('coupons')->onDelete('cascade');
 
             $table->timestamps();
 
-            $table->primary(['coupon_code', 'user_id']);
+            $table->primary(['coupon_id', 'user_id']);
         });
     }
 
