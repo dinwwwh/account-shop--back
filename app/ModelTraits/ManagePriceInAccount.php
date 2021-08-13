@@ -27,7 +27,7 @@ trait ManagePriceInAccount
      */
     public function calculatePrice($couponCode = null, $detail = false)
     {
-        $coupon = Coupon::find($couponCode);
+        $coupon = Coupon::where('code', $couponCode)->first();
 
         $discount = is_null($coupon)
             ? 0
@@ -48,7 +48,7 @@ trait ManagePriceInAccount
 
     public function calculatePriceAndUseCouponNow($couponCode = null, $detail = false)
     {
-        $coupon = Coupon::find($couponCode);
+        $coupon = Coupon::where('code', $couponCode)->first();
 
         $discount = is_null($coupon)
             ? 0
