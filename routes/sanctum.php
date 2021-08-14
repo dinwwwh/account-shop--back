@@ -184,29 +184,34 @@ Route::prefix('game-info')->group(function () {
 use App\Http\Controllers\AccountTypeController;
 
 Route::prefix('account-type')->group(function () {
-    // Index
+
     Route::get('', [AccountTypeController::class, 'index'])
         ->name('account-type.index');
-    // Show
+
     Route::get('{accountType}', [AccountTypeController::class, 'show'])
         ->name('account-type.show');
-    // Calculate fee for an cost
-    Route::get('{accountType}/calculate-fee', [AccountTypeController::class, 'calculateFee'])
-        ->name('account-type.calculate-fee');
 
-    Route::middleware(['auth', 'verified'])->group(function () {
-        // Store
-        Route::post('{game}', [AccountTypeController::class, 'store'])
-            ->middleware('can:create,App\Models\AccountType,game')
-            ->name('account-type.store');
-        // Update
-        Route::put('{accountType}', [AccountTypeController::class, 'update'])
-            ->middleware('can:update,accountType')
+    Route::post('{game}', [AccountTypeController::class, 'store'])
+        ->middleware(['auth', 'verified', 'can:create,App\Models\AccountType,game'])
+        ->name('account-type.store');
+
+    Route::prefix('{accountType}')->group(function () {
+        Route::get('calculate-fee', [AccountTypeController::class, 'calculateFee'])
+            ->name('account-type.calculate-fee');
+        Route::put('', [AccountTypeController::class, 'update'])
+            ->middleware(['auth', 'verified', 'can:update,accountType'])
             ->name('account-type.update');
-        // Destroy
-        // Route::delete('{accountType}', [AccountTypeController::class, 'destroy'])
-        //     ->middleware('can:delete,accountType')
-        //     ->name('account-type.destroy');
+
+        Route::prefix('coupon')->group(function () {
+            Route::prefix('{coupon}')->group(function () {
+                Route::post('', [AccountTypeController::class, 'attachCoupon'])
+                    ->middleware(['auth', 'verified', 'can:attach-coupon,accountType,coupon'])
+                    ->name('account-type.coupon.attach');
+                Route::delete('', [AccountTypeController::class, 'detachCoupon'])
+                    ->middleware(['auth', 'verified', 'can:detach-coupon,accountType,coupon'])
+                    ->name('account-type.coupon.detach');
+            });
+        });
     });
 });
 
