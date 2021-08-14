@@ -8,11 +8,13 @@ use App\Models\Role;
 use App\Http\Requests\StoreAccountTypeRequest;
 use App\Http\Requests\UpdateAccountTypeRequest;
 use App\Http\Resources\AccountTypeResource;
+use App\Models\Coupon;
 use App\Models\Game;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Validation\Rule;
 
 class AccountTypeController extends Controller
 {
@@ -162,6 +164,37 @@ class AccountTypeController extends Controller
         }
 
         return AccountTypeResource::withLoadRelationships($accountType);
+    }
+
+    /**
+     * Attach coupon to the account type
+     *
+     */
+    public function attachCoupon(Request $request, AccountType $accountType, Coupon $coupon): JsonResponse
+    {
+        $request->validate([
+            'type' => [
+                'required',
+                Rule::in([config('coupon.types.discount_to_fees')]),
+            ]
+        ]);
+
+        $accountType->coupons()->attach($coupon, [
+            'type' => $request->type
+        ]);
+
+        return response()->json([], 204);
+    }
+
+    /**
+     * Detach coupon to the account type
+     *
+     */
+    public function detachCoupon(Request $request, AccountType $accountType, Coupon $coupon): JsonResponse
+    {
+        $accountType->coupons()->detach($coupon);
+
+        return response()->json([], 204);
     }
 
     /**

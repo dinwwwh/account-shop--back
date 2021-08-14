@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\AccountType;
+use App\Models\Coupon;
 use App\Models\User;
 use App\Models\Game;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -68,6 +69,26 @@ class AccountTypePolicy
     {
         return $user->can('update', $accountType->game)
             || $this->manage($user);
+    }
+
+    /**
+     * Determine whether the user can attach coupon to this account type.
+     * To use it discount account of this account type.
+     *
+     */
+    public function attachCoupon(User $user, AccountType $accountType, Coupon $coupon): bool
+    {
+        return $this->update($user, $accountType);
+    }
+
+    /**
+     * Determine whether the user can detach coupon to this account type.
+     * To disable coupon for account of this account type.
+     *
+     */
+    public function detachCoupon(User $user, AccountType $accountType, Coupon $coupon): bool
+    {
+        return $this->update($user, $accountType);
     }
 
     /**

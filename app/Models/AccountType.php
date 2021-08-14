@@ -10,6 +10,7 @@ use App\ModelTraits\ManageAccountInfoInAccountType;
 use App\ModelTraits\ManageAccountActionInAccountType;
 use App\ModelTraits\ManageAccountFeeInAccountType;
 use App\ModelTraits\ManageUserInAccountType;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use OwenIt\Auditing\Contracts\Auditable;
 
 
@@ -173,5 +174,15 @@ class AccountType extends Model implements Auditable
     public function accounts()
     {
         return $this->hasMany(Account::class);
+    }
+
+    /**
+     * Get coupons can use for account of this account type
+     *
+     */
+    public function coupons(): MorphToMany
+    {
+        return $this->morphToMany(Coupon::class, 'couponnable')
+            ->withTimestamps();
     }
 }
