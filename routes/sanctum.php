@@ -205,10 +205,10 @@ Route::prefix('account-type')->group(function () {
         Route::prefix('coupon')->group(function () {
             Route::prefix('{coupon}')->group(function () {
                 Route::post('', [AccountTypeController::class, 'attachCoupon'])
-                    ->middleware(['auth', 'verified', 'can:attach-coupon,accountType,coupon'])
+                    ->middleware(['auth', 'verified', 'can:attach-coupon,accountType'])
                     ->name('account-type.coupon.attach');
                 Route::delete('', [AccountTypeController::class, 'detachCoupon'])
-                    ->middleware(['auth', 'verified', 'can:detach-coupon,accountType,coupon'])
+                    ->middleware(['auth', 'verified', 'can:detach-coupon,accountType'])
                     ->name('account-type.coupon.detach');
             });
         });

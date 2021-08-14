@@ -76,7 +76,7 @@ class AccountTypePolicy
      * To use it discount account of this account type.
      *
      */
-    public function attachCoupon(User $user, AccountType $accountType, Coupon $coupon): bool
+    public function attachCoupon(User $user, AccountType $accountType): bool
     {
         return $this->update($user, $accountType);
     }
@@ -86,7 +86,7 @@ class AccountTypePolicy
      * To disable coupon for account of this account type.
      *
      */
-    public function detachCoupon(User $user, AccountType $accountType, Coupon $coupon): bool
+    public function detachCoupon(User $user, AccountType $accountType): bool
     {
         return $this->update($user, $accountType);
     }
