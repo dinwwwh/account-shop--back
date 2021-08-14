@@ -40,12 +40,12 @@ class UpdateRequest extends FormRequest
             'maximumDiscount' => ['nullable', 'integer', 'min:0', 'gte:minimumDiscount'],
             'percentageDiscount' => ['integer', 'min:0', 'max:100'],
             'directDiscount' => ['integer', 'min:0'],
-            'usableAt' => ['nullable', 'date', 'after_or_equal:today'],
-            'usableClosedAt' => ['nullable', 'date', 'after_or_equal:today', 'after_or_equal:usableAt'],
+            'usableAt' => ['nullable', 'date'],
+            'usableClosedAt' => ['nullable', 'date', 'after_or_equal:usableAt'],
 
             'price' => ['nullable', 'integer', 'min:0'],
-            'offeredAt' => ['nullable', 'date', 'after_or_equal:today'],
-            'offerClosedAt' => ['nullable', 'date', 'after_or_equal:today', 'after_or_equal:offeredAt'],
+            'offeredAt' => ['nullable', 'date'],
+            'offerClosedAt' => ['nullable', 'date', 'after_or_equal:offeredAt'],
         ];
     }
 }
