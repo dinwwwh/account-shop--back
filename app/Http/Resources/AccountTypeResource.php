@@ -27,6 +27,8 @@ class AccountTypeResource extends Resource
             'accountFees' => AccountFeeResource::collection($this->whenLoaded('accountFees')),
 
             'accounts' => AccountResource::collection($this->whenLoaded('accounts')),
+
+            'coupons' => CouponResource::collection($this->whenLoaded('coupons')),
         ]);
     }
 }
