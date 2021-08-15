@@ -3,6 +3,7 @@
 namespace App\ModelTraits;
 
 use App\Models\Coupon;
+use App\Models\User;
 
 trait ManagePriceInAccount
 {
@@ -46,13 +47,13 @@ trait ManagePriceInAccount
         return (int)($this->cost + $fee);
     }
 
-    public function calculatePriceAndUseCouponNow($couponCode = null, $detail = false)
+    public function calculatePriceAndUseCouponNow(User $user, $couponCode = null, $detail = false)
     {
         $coupon = Coupon::where('code', $couponCode)->first();
 
         $discount = is_null($coupon)
             ? 0
-            : $coupon->calculateDiscountAndUseNow($this->calculateFee(), $this->cost);
+            : $coupon->calculateDiscountAndUseNow($user, $this->calculateFee(), $this->cost);
         $fee = $this->calculateFee() <= $discount
             ? 0
             : $this->calculateFee() - $discount;
