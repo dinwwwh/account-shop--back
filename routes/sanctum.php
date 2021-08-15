@@ -331,6 +331,7 @@ Route::prefix('account')->group(function () {
         Route::get('', [AccountController::class, 'show'])
             ->name('account.show');
         Route::get('price', [AccountController::class, 'getPrice'])
+            ->middleware(['auth', 'verified'])
             ->name('account.get-price');
         Route::patch('buy', [AccountController::class, 'buy'])
             ->middleware(['auth', 'verified', 'can:buy,account'])

@@ -208,6 +208,7 @@ class AccountPolicy
     public function buy(User $user, Account $account)
     {
         $bestPrice = $account->calculatePrice(
+            $user,
             app('request')->couponCode
         );
 

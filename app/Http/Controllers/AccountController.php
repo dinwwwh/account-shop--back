@@ -219,7 +219,7 @@ class AccountController extends Controller
     public function getPrice(Request $request, Account $account): JsonResponse
     {
         return response()->json([
-            'data' => ['data' => $account->calculatePrice($request->couponCode, true),],
+            'data' => $account->calculatePrice(auth()->user(), $request->couponCode, true),
         ]);
     }
 
@@ -229,10 +229,12 @@ class AccountController extends Controller
      */
     public function buy(Request $request, Account $account): JsonResponse
     {
-        $bestPrice = $account->calculatePriceAndUseCouponNow($request->couponCode);
+
 
         try {
             DB::beginTransaction();
+            $bestPrice = $account->calculatePriceAndUseCouponNow(auth()->user(), $request->couponCode);
+
             $oldStatusCode = $account->latestAccountStatus->code;
 
             // Do something before send account for user
