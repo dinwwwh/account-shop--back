@@ -19,6 +19,9 @@ class CreateCouponUserTable extends Migration
             $table->foreignIdFor(User::class)->constrained('users')->onDelete('cascade');
             $table->foreignIdFor(Coupon::class)->constrained('coupons')->onDelete('cascade');
 
+            $table->unsignedSmallInteger('amount');
+            $table->unsignedSmallInteger('used_amount')->default(0);
+
             $table->timestamps();
 
             $table->primary(['coupon_id', 'user_id']);

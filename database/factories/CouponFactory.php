@@ -67,8 +67,13 @@ class CouponFactory extends Factory
         })->afterCreating(function (Coupon $coupon) {
 
             if (!is_null($coupon->price)) {
+                $amount = rand(1, 10);
                 $coupon->buyers()->attach(
-                    User::inRandomOrder()->first()
+                    User::inRandomOrder()->first(),
+                    [
+                        'amount' => $amount,
+                        'used_amount' => rand(0, $amount)
+                    ]
                 );
             }
         });
