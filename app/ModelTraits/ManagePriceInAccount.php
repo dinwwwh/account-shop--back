@@ -26,13 +26,13 @@ trait ManagePriceInAccount
      * @param string $discountCode
      * @return int or array
      */
-    public function calculatePrice($couponCode = null, $detail = false)
+    public function calculatePrice(?User $user, $couponCode = null, $detail = false)
     {
         $coupon = Coupon::where('code', $couponCode)->first();
 
-        $discount = is_null($coupon)
-            ? 0
-            : $coupon->calculateDiscount($this->calculateFee(), $this->cost);
+        $discount = !is_null($coupon) && $coupon->isUsable($user)
+            ? $coupon->calculateDiscount($this->calculateFee(), $this->cost)
+            : 0;
         $fee = $this->calculateFee() <= $discount
             ? 0
             : $this->calculateFee() - $discount;
