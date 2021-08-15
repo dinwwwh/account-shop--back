@@ -219,7 +219,7 @@ class AccountController extends Controller
     public function getPrice(Request $request, Account $account): JsonResponse
     {
         return response()->json([
-            'data' => ['data' => $account->calculatePrice($request->couponCode, true),],
+            'data' => $account->calculatePrice($request->couponCode, true),
         ]);
     }
 
