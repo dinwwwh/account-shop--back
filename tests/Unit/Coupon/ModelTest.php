@@ -8,7 +8,7 @@ use Tests\TestCase;
 
 class ModelTest extends TestCase
 {
-    public function test_calculateDiscountAndUseNow()
+    public function test_price_is_null_calculateDiscountAndUseNow()
     {
         $coupon = Coupon::factory()->state([
             'price' => null,
@@ -21,6 +21,30 @@ class ModelTest extends TestCase
 
         $this->assertDatabaseHas($coupon->getTable(), [
             $coupon->getKeyName() =>  $coupon->getKey(),
+            'used_amount' => $oldUsedAmount + 1,
+        ]);
+    }
+
+    public function test_price_is_not_null_calculateDiscountAndUseNow()
+    {
+        $coupon = Coupon::factory()->state([
+            'price' => 1000,
+            'usable_at' => now()->subMinute(),
+            'usable_closed_at' => now()->addMinute(),
+        ])->create();
+
+        $buyer = $coupon->buyers->random();
+        $buyer->pivot->update([
+            'used_amount' => $buyer->pivot->amount - 1,
+        ]);
+
+        $oldUsedAmount = $buyer->pivot->used_amount;
+
+        $coupon->calculateDiscountAndUseNow($buyer, 999);
+
+        $this->assertDatabaseHas($buyer->pivot->getTable(), [
+            'coupon_' . $coupon->getKeyName() =>  $coupon->getKey(),
+            'user_' . $buyer->getKeyName() =>  $buyer->getKey(),
             'used_amount' => $oldUsedAmount + 1,
         ]);
     }
@@ -78,6 +102,38 @@ class ModelTest extends TestCase
         # case expected false
         $this->assertFalse(
             $coupon->isBuyer(
+                User::whereNotIn('id', $coupon->buyers->pluck('id')->toArray())
+                    ->inRandomOrder()
+                    ->first()
+            )
+        );
+    }
+
+    public function test_isBuyerAndHasUsableAmount()
+    {
+        $coupon = Coupon::factory()->state([
+            'price' => 20000
+        ])->create();
+
+        # case is null
+        $this->assertFalse($coupon->isBuyerAndHasUsableAmount(null));
+
+        # case expected true has usable amount
+        $buyer = $coupon->buyers->random();
+        $buyer->pivot->update([
+            'used_amount' => $buyer->pivot->amount - 1
+        ]);
+        $this->assertTrue($coupon->isBuyerAndHasUsableAmount($buyer));
+
+        $buyer->pivot->update([
+            'used_amount' => $buyer->pivot->amount
+        ]);
+        # case expected false not has usable amount
+        $this->assertFalse($coupon->isBuyerAndHasUsableAmount($buyer));
+
+        # case expected false
+        $this->assertFalse(
+            $coupon->isBuyerAndHasUsableAmount(
                 User::whereNotIn('id', $coupon->buyers->pluck('id')->toArray())
                     ->inRandomOrder()
                     ->first()

@@ -96,6 +96,7 @@ class Coupon extends Model implements Auditable
     public function buyers(): BelongsToMany
     {
         return $this->belongsToMany(User::class)
+            ->withPivot(['amount', 'used_amount'])
             ->withTimestamps();
     }
 
@@ -121,9 +122,16 @@ class Coupon extends Model implements Auditable
     {
         if (!$this->isUsable($user)) return 0;
 
-        $this->update([
-            'used_amount' => $this->used_amount + 1,
-        ]);
+        if ($this->isBuyer($user)) {
+            $buyer = $this->buyers()->where($user->getKeyName(), $user->getKey())->first();
+            $buyer->pivot->update([
+                'used_amount' => $buyer->pivot->used_amount + 1,
+            ]);
+        } else {
+            $this->update([
+                'used_amount' => $this->used_amount + 1,
+            ]);
+        }
 
         return $this->calculateDiscount($usedToCalculateDiscount, $usedToLimitValue);
     }
@@ -172,7 +180,7 @@ class Coupon extends Model implements Auditable
      */
     public function isUsable(?User $user): bool
     {
-        if (!$this->isBuyer($user)) {
+        if (!$this->isBuyerAndHasUsableAmount($user)) {
             if (!$this->canUseByEveryone())
                 return false;
 
@@ -207,6 +215,20 @@ class Coupon extends Model implements Auditable
         return !is_null(
             $this->buyers()->where($user->getKeyName(), $user->getKey())->first()
         );
+    }
+
+    /**
+     * Determine whether user bought this coupon
+     *
+     */
+    public function isBuyerAndHasUsableAmount(?User $user): bool
+    {
+        if (is_null($user)) return false;
+
+        $buyer = $this->buyers()->where($user->getKeyName(), $user->getKey())->first();
+        if (is_null($buyer)) return false;
+
+        return $buyer->pivot->amount > $buyer->pivot->used_amount;
     }
 
     /**
