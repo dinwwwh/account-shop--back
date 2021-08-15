@@ -35,6 +35,21 @@ class AccountController extends Controller
     }
 
     /**
+     * Get accounts that current auth bought
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getBoughtAccountsByMe()
+    {
+        $boughtAccounts = Account::where('buyer_' . auth()->user()->getKeyName(), auth()->user()->getKey())
+            ->with($this->requiredModelRelationships)
+            ->orderBy('sold_at', 'desc')
+            ->paginate(15);
+
+        return AccountResource::collection($boughtAccounts);
+    }
+
+    /**
      * Display a listing of the resource to manage.
      *
      * @return \Illuminate\Http\Response
