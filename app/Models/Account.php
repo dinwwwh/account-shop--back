@@ -45,7 +45,7 @@ class Account extends Model implements Auditable
         'password' => RightRedactor::class,
     ];
 
-    protected $with = ['accountType.accountFees'];
+    protected $with = ['accountType.accountFees', 'latestAccountStatus'];
 
     /**
      * Attributes should guarded
