@@ -145,6 +145,8 @@ Route::prefix('game')->group(function () {
             // Get accounts of this game
             Route::get('', [GameController::class, 'getAccounts'])
                 ->name('game.account.index');
+            Route::get('buyable', [GameController::class, 'getBuyableAccounts'])
+                ->name('game.account.get-buyable');
         });
     });
 });

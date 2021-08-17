@@ -49,6 +49,29 @@ class GameController extends Controller
     }
 
     /**
+     * Get buyable accounts of this game
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getBuyableAccounts(Game $game)
+    {
+        $accountTypeIds = $game->accountTypes->pluck('id');
+        $accounts = Account::whereIn('account_type_id', $accountTypeIds)
+            ->where('sold_at', null)
+            ->with($this->requiredModelRelationships)
+            ->get();
+
+        $buyableAccounts = $accounts->filter(function ($account) {
+            return in_array(
+                $account->latestAccountStatus->code,
+                config('account.buyable_status_codes', [])
+            );
+        })->paginate(15);
+
+        return AccountResource::collection($buyableAccounts);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
