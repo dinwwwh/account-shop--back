@@ -58,14 +58,20 @@ class AppServiceProvider extends ServiceProvider
             return 'Keys of this object must pass rules[' . implode(', ', $parameters) . '].';
         });
 
-        // Set runtime config from App\Models\Config
-        if (Schema::hasTable(app(Config::class)->getTable())) {
-            $configs = Config::all();
-            $mappedConfigs = [];
-            foreach ($configs as $config) {
-                $mappedConfigs[$config->key] = $config->data;
+
+        try { // If can't connect to database this code not affect in runtime
+
+            // Set runtime config from App\Models\Config
+            if (Schema::hasTable(app(Config::class)->getTable())) {
+                $configs = Config::all();
+                $mappedConfigs = [];
+                foreach ($configs as $config) {
+                    $mappedConfigs[$config->key] = $config->data;
+                }
+                config($mappedConfigs);
             }
-            config($mappedConfigs);
+        } catch (\Throwable $th) {
+            //throw $th;
         }
     }
 }
