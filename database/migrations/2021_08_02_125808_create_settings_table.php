@@ -17,7 +17,7 @@ class CreateSettingsTable extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->uuid('key');
             $table->json('data');
-            $table->json('rules_of_data')->default(json_encode([]));
+            $table->json('rules_of_data')->nullable();
             $table->string('structure_description')->nullable();
             $table->string('description')->nullable();
             $table->boolean('public')->default(false);

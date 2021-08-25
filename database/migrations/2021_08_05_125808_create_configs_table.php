@@ -17,7 +17,7 @@ class CreateConfigsTable extends Migration
         Schema::create('configs', function (Blueprint $table) {
             $table->string('key')->unique();
             $table->json('data')->nullable();
-            $table->json('rules_of_data')->default(json_encode([]));
+            $table->json('rules_of_data')->nullable();
             $table->string('structure_description')->nullable();
             $table->string('description')->nullable();
             $table->boolean('public')->default(false);
