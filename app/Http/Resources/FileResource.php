@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Storage;
 use URL;
 
 class FileResource extends Resource
@@ -17,7 +18,7 @@ class FileResource extends Resource
         return array_merge(parent::getAttributes($request), [
 
             // special attributes
-            'path' => URL::asset($this->path),
+            'path' => URL::asset(Storage::url($this->path)),
 
             // Relationships
             'fileable' => new Resource($this->whenLoaded('fileable')),

@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Casts\StoragePublicFile;
 use App\ModelTraits\HelperForFile;
 use App\Observers\FileObserver;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -66,9 +65,7 @@ class File extends Model implements Auditable
      *
      * @var array
      */
-    protected $casts = [
-        'path' => StoragePublicFile::class,
-    ];
+    protected $casts = [];
 
     /**
      * To boot model
