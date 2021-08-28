@@ -18,7 +18,7 @@ class FileResource extends Resource
         return array_merge(parent::getAttributes($request), [
 
             // special attributes
-            'path' => URL::asset(Storage::url($this->path)),
+            'path' => config('app.url') . Storage::url($this->path),
 
             // Relationships
             'fileable' => new Resource($this->whenLoaded('fileable')),
