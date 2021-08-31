@@ -58,6 +58,8 @@ Route::prefix('user')->group(function () {
         // Find user by search keyword
         Route::get('search', [UserController::class, 'search'])
             ->name('user.search');
+        Route::get('accounts', [UserController::class, 'getAccounts'])
+            ->name('user.get-accounts');
     });
 });
 

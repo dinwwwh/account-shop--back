@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Requests\RegisterUserRequest;
+use App\Http\Resources\AccountResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Auth\Events\Registered;
@@ -13,6 +14,22 @@ use App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {
+    /**
+     * Get user's accounts
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getAccounts()
+    {
+        $accounts = auth()
+            ->user()
+            ->accounts()
+            ->with($this->requiredModelRelationships)
+            ->paginate(15);
+
+        return AccountResource::collection($accounts);
+    }
+
     /**
      * Register and store user to database
      *
