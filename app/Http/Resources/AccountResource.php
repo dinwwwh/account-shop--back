@@ -47,6 +47,25 @@ class AccountResource extends Resource
                     ];
                 }
             ),
+
+            // Merge when client request permissions
+            $this->mergeWhen(
+                auth()->check() && request('_isRequiredPermissions'),
+                function () {
+                    return [
+                        'canReadLoginInfos' => auth()->user()->can('readLoginInfos', [$this->resource]),
+                        'canReadAccountInfos' => auth()->user()->can('readAccountInfos', [$this->resource]),
+                        'canStartApproving' => auth()->user()->can('startApproving', [$this->resource]),
+                        'canEndApproving' => auth()->user()->can('endApproving', [$this->resource]),
+                        'canBuy' => auth()->user()->can('buy', [$this->resource]),
+                        'canUpdateGameInfos' => auth()->user()->can('updateGameInfos', [$this->resource]),
+                        'canUpdateAccountInfos' => auth()->user()->can('updateAccountInfos', [$this->resource]),
+                        'canUpdateLoginInfos' => auth()->user()->can('updateLoginInfos', [$this->resource]),
+                        'canUpdateImages' => auth()->user()->can('updateImages', [$this->resource]),
+                        'canUpdateCost' => auth()->user()->can('updateCost', [$this->resource]),
+                    ];
+                }
+            ),
         ]);
     }
 }
