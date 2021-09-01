@@ -48,9 +48,20 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/web.php'));
 
             Route::prefix('sanctum')
-                ->middleware(app()->isProduction() ? 'api' : 'web') // Make the postman can work with sanctum when develop
+                ->middleware('api')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/sanctum.php'));
+
+            /**
+             * Routes for post man
+             * Make the postman can work with sanctum when develop
+             */
+            if (!app()->isProduction()) {
+                Route::prefix('postman-sanctum')
+                    ->middleware('web')
+                    ->namespace($this->namespace)
+                    ->group(base_path('routes/sanctum.php'));
+            }
         });
     }
 
