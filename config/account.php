@@ -20,6 +20,13 @@ return [
         */
         200,
 
+        /*
+        |--------------------------------------------------------------------------
+        | Transitioning account from 'waiting approve' to 'reject' by approver
+        | 300 -> 399
+        |--------------------------------------------------------------------------
+        */
+        300, #From 200 status
 
         /*
         |--------------------------------------------------------------------------
@@ -90,15 +97,16 @@ return [
     'status_codes_approving' => [200],
     'status_codes_after_created' => [0, 440, 480],
     'status_codes_after_approved' => [440, 480],
+    'status_codes_after_approved_fail' => [300],
 
     'buyer' => [
         'readable_login_infos_status_codes' => [840, 880, 1140, 1180],
         'readable_account_infos_status_codes' => [1140, 1180],
     ],
     'creator' => [
-        'readable_login_infos_status_codes' => [0, 440],
+        'readable_login_infos_status_codes' => [0, 440, 300],
         'updatable_login_infos_status_codes' => [0, 440],
-        'readable_account_infos_status_codes' => [0, 440],
+        'readable_account_infos_status_codes' => [0, 440, 300],
         'updatable_account_infos_status_codes' => [0, 440],
         'updatable_game_infos_status_codes' => [0, 440],
         'updatable_cost_status_codes' => [0, 440],

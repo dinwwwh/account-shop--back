@@ -194,16 +194,26 @@ class AccountController extends Controller
      */
     public function endApproving(Request $request, Account $account)
     {
-        $newStatusCode = $account->accountType
-            ->approvableUsers()->where('user_id', auth()->user()->id)
-            ->first()->pivot->status_code;
+        $request->validate([
+            'success' => ['required', 'boolean'],
+            'description' => ['nullable', 'string']
+        ]);
+
+        if ($request->success) {
+            $newStatusCode = $account->accountType
+                ->approvableUsers()->where('user_id', auth()->user()->id)
+                ->first()->pivot->status_code;
+        } else {
+            $newStatusCode = 300;
+        }
+
 
         try {
             DB::beginTransaction();
 
             $account->accountStatuses()->create([
                 'code' => $newStatusCode,
-                'short_description' => AccountStatus::SHORT_DESCRIPTION_OF_END_APPROVING,
+                'short_description' => $request->description,
             ]);
 
             DB::commit();
