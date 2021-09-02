@@ -14,7 +14,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Redactors\RightRedactor;
 
 
-class User extends Authenticatable implements MustVerifyEmail, Auditable
+class User extends Authenticatable implements Auditable
 {
     use HasFactory,
         Notifiable,
