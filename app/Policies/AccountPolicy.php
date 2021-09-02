@@ -188,6 +188,13 @@ class AccountPolicy
      */
     public function endApproving(User $user, Account $account)
     {
+        if (!in_array(
+            $account->latestAccountStatus->code,
+            config('account.status_codes_approving', [])
+        )) {
+            return false;
+        }
+
         if (
             !$user->is($account->latestAccountStatus->creator)
             && !$this->manage($user)
