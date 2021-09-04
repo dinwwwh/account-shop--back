@@ -5,16 +5,14 @@ namespace App\Models;
 use App\Casts\RulesCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
 
-class Config extends Model implements Auditable
+class Config extends Model
 {
-    use HasFactory,
-        \OwenIt\Auditing\Auditable;
+    use HasFactory;
 
 
     protected $hidden = [
-        'audits', #Contain history changes of this model
+        'data',
     ];
 
     protected $fillable = [

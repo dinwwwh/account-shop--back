@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Config\UpdateRequest;
 use App\Http\Resources\ConfigResource;
 use App\Models\Config;
+use DB;
 use Illuminate\Http\Request;
 
 class ConfigController extends Controller
@@ -15,7 +17,9 @@ class ConfigController extends Controller
      */
     public function index()
     {
-        //
+        $configs = Config::with($this->requiredModelRelationships)->paginate(15);
+
+        return ConfigResource::collection($configs);
     }
 
     /**
@@ -54,13 +58,24 @@ class ConfigController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Config  $setting
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Config $setting)
+    public function update(UpdateRequest $request, Config $config)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $config->update($request->only([
+                'data',
+                'description',
+            ]));
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+
+        return response()->json([
+            'message' => 'Config was updated successfully.'
+        ]);
     }
 
     /**

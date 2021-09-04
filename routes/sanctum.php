@@ -32,8 +32,17 @@ Route::post('test', function (Request $request) {
 use App\Http\Controllers\ConfigController;
 
 Route::prefix('config')->group(function () {
+    Route::get('', [ConfigController::class, 'index'])
+        ->name('config.index');
+
     Route::get('public', [ConfigController::class, 'getPublicConfigs'])
         ->name('config.get-public-configs');
+
+    Route::prefix('{config}')->group(function () {
+        Route::put('', [ConfigController::class, 'update'])
+            ->middleware(['auth', 'verified', 'can:update,config'])
+            ->name('config.update');
+    });
 });
 
 // ====================================================

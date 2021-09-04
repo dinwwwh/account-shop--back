@@ -25,6 +25,7 @@ class AuthServiceProvider extends ServiceProvider
         'App\Models\AccountFee' => 'App\Policies\AccountFeePolicy',
         'App\Models\RechargePhonecard' => 'App\Policies\RechargePhonecardPolicy',
         'App\Models\Coupon' => 'App\Policies\CouponPolicy',
+        'App\Models\Config' => 'App\Policies\ConfigPolicy',
     ];
 
     /**

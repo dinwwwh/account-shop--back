@@ -35,6 +35,7 @@ class PermissionSeeder extends Seeder
             'game' => 'game',
             'coupon' => 'phiếu giảm giá',
             'recharge_phonecard' => 'thẻ nạp vào hệ thống',
+            'config' => 'cấu hình',
         ];
 
         foreach ($modules as $key => $name) {
