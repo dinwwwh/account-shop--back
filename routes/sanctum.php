@@ -432,3 +432,15 @@ Route::prefix('coupon')->group(function () {
             ->name('coupon.destroy');
     });
 });
+
+// ====================================================
+// Thesieure.com routes
+// ====================================================
+use App\Http\Controllers\ThesieureController;
+
+Route::prefix('thesieure')->group(function () {
+    Route::get('telcos', [ThesieureController::class, 'getTelcos'])
+        ->name('thesieure.get-telcos');
+    Route::post('callback', [ThesieureController::class, 'callback'])
+        ->name('thesieure.callback');
+});

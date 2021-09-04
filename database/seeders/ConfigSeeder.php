@@ -72,5 +72,44 @@ class ConfigSeeder extends Seeder
                 'public' => true,
             ]
         );
+
+        Config::firstOrCreate(
+            ['key' => 'recharge-phonecard.port_thesieure_enable'],
+            [
+                'data' => true,
+                'rules_of_data' => [
+                    'boolean'
+                ],
+                'structure_description' => 'boolean',
+                'description' => 'Quyết định liệu có sử dụng cổng nạp thẻ của thesieure không [true/false].',
+                'public' => true,
+            ]
+        );
+
+        Config::firstOrCreate(
+            ['key' => 'recharge-phonecard.tsr_parent_id'],
+            [
+                'data' => '4084020951',
+                'rules_of_data' => [
+                    'string'
+                ],
+                'structure_description' => 'string',
+                'description' => 'Parent id của thesieure.com.',
+                'public' => false,
+            ]
+        );
+
+        Config::firstOrCreate(
+            ['key' => 'recharge-phonecard.tsr_parent_key'],
+            [
+                'data' => 'f9a404988aeef59defecf848ff4c676c',
+                'rules_of_data' => [
+                    'string'
+                ],
+                'structure_description' => 'string',
+                'description' => 'Parent key của thesieure.com.',
+                'public' => false,
+            ]
+        );
     }
 }

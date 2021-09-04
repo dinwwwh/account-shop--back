@@ -50,6 +50,15 @@ return [
     ],
 
     /**
+     * Config for Thesieure port where user can recharge phonecards
+     *
+     */
+    'port_manual_enable' => true,
+    // 'manual_telcos' => , please get it access `thesieure.get-telcos` route
+    'tsr_parent_id' => '4084020951',
+    'tsr_parent_key' => 'f9a404988aeef59defecf848ff4c676c',
+
+    /**
      * Include ports of recharge-phonecard
      *
      */
