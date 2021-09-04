@@ -47,12 +47,11 @@ class ConfigController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Config  $setting
      * @return \Illuminate\Http\Response
      */
-    public function show(Config $setting)
+    public function show(Config $config)
     {
-        //
+        return ConfigResource::withLoadMissingRelationships($config);
     }
 
     /**

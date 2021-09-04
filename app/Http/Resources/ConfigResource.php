@@ -14,12 +14,10 @@ class ConfigResource extends Resource
     {
         return array_merge(parent::getAttributes($request), [
 
-            $this->mergeWhen(
-                auth()->check() && auth()->user()->can('readData', $this->resource),
-                fn () => [
-                    'data' => $this->data,
-                ]
-            ),
+            // Special attributes
+            'data' => auth()->check() && auth()->user()->can('readData', $this->resource)
+                ? $this->data
+                : null,
 
             // Relationships
 

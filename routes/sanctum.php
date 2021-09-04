@@ -39,6 +39,8 @@ Route::prefix('config')->group(function () {
         ->name('config.get-public-configs');
 
     Route::prefix('{config}')->group(function () {
+        Route::get('', [ConfigController::class, 'show'])
+            ->name('config.show');
         Route::put('', [ConfigController::class, 'update'])
             ->middleware(['auth', 'verified', 'can:update,config'])
             ->name('config.update');

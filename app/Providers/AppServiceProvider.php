@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Config;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -42,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // JsonResource::withoutWrapping();
 
         // Rule for check keys of array
         Validator::extend('keys', function ($attribute, $value, $parameters, $validator) {
