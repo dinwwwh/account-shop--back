@@ -69,6 +69,10 @@ class RechargePhonecardPolicy
      */
     public function startApproving(User $user, RechargePhonecard $rechargePhonecard)
     {
+        if (
+            $rechargePhonecard->port !== config('recharge-phonecard.ports.manual')
+        ) return false;
+
         return $user->hasPermissionTo('approve_recharge_phonecard')
             && $rechargePhonecard->status === config('recharge-phonecard.statuses.pending');
     }
@@ -82,6 +86,10 @@ class RechargePhonecardPolicy
      */
     public function endApproving(User $user, RechargePhonecard $rechargePhonecard)
     {
+        if (
+            $rechargePhonecard->port !== config('recharge-phonecard.ports.manual')
+        ) return false;
+
         if (
             $user->hasPermissionTo('approve_recharge_phonecard')
             && $rechargePhonecard->status === config('recharge-phonecard.statuses.approving')
