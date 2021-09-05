@@ -28,6 +28,16 @@ class RechargePhonecardController extends Controller
         return RechargePhoneCardResource::collection($rechargePhonecards);
     }
 
+    public function getOwn()
+    {
+        $rechargePhonecards = RechargePhonecard::where('creator_id', auth()->user()->getKey())
+            ->with($this->requiredModelRelationships)
+            ->orderBy('id', 'DESC')
+            ->paginate(15);
+
+        return RechargePhoneCardResource::collection($rechargePhonecards);
+    }
+
     /**
      * Get approvable recharge phonecards.
      *

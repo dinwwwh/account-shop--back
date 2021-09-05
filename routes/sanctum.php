@@ -386,6 +386,9 @@ use App\Http\Controllers\RechargePhonecardController;
 Route::prefix('recharge-phonecard')->group(function () {
     Route::get('', [RechargePhonecardController::class, 'index'])
         ->name('recharge-phonecard.index');
+    Route::get('own', [RechargePhonecardController::class, 'getOwn'])
+        ->middleware(['auth', 'verified'])
+        ->name('recharge-phonecard.get-own');
     Route::post('', [RechargePhonecardController::class, 'store'])
         ->middleware(['auth', 'verified'])
         ->name('recharge-phonecard.store');
