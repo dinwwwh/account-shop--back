@@ -23,6 +23,7 @@ class RechargePhoneCardResource extends Resource
                 function () {
                     return [
                         'code' => $this->code,
+                        '_data' => $this->data,
                     ];
                 }
             ),
