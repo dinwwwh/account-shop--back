@@ -67,13 +67,11 @@
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
             "@php artisan telescope:publish --ansi",
             "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:meta",
-            "@php artisan ide-helper:models --nowrite"
+            "@php artisan ide-helper:meta"
         ],
         "post-install-cmd": [
             "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:meta",
-            "@php artisan ide-helper:models --nowrite"
+            "@php artisan ide-helper:meta"
         ]
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Schema;
+use URL;
 use Validator;
 
 class AppServiceProvider extends ServiceProvider
@@ -44,6 +45,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         // JsonResource::withoutWrapping();
+
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
 
         // Rule for check keys of array
         Validator::extend('keys', function ($attribute, $value, $parameters, $validator) {
