@@ -4,7 +4,7 @@ services:
   laravel.test:
     build:
       context: ./vendor/laravel/sail/runtimes/7.4
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       args:
         WWWGROUP: "${WWWGROUP}"
     image: sail-7.4/app
