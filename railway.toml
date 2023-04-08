@@ -1,0 +1,13 @@
+[build]
+builder = "nixpacks"
+nixpacksConfigPath = "nixpacks.toml"
+
+[environments.demo.build]
+builder = "nixpacks"
+nixpacksConfigPath = "nixpacks.demo.toml"
+
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3

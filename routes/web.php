@@ -14,6 +14,12 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::get('health', function () {
+    \App\Models\User::first();
+
+    return response()->json(['status' => 'ok']);
+});
+
 Route::post('/test-csrf', function () {
     return response(['message' => 'success!!']);
 })->name('test.csrf');
