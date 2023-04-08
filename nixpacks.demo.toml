@@ -1,7 +1,8 @@
 [phases.build]
 cmds = [
     "...",
-    "php artisan db:seed --class='Database\\Seeders\\ForTestSeeder' --force",
+    "php artisan migrate:fresh --seed --force",
+    "php artisan db:seed --class='Database\\Seeders\\ForDemoSeeder' --force",
     "php artisan config:cache",
     "php artisan cache:clear",
     "php artisan event:cache",
